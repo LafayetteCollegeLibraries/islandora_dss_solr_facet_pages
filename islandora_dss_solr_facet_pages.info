@@ -1,0 +1,9 @@
+name = Lafayette College Libraries Islandora Solr Facet Pages
+description = Extends Islandora Solr Facet Pages for LCL
+dependencies[] = islandora_solr_facet_pages
+dependencies[] = islandora_solr
+package = Islandora
+version = 7.x-dev
+core = 7.x
+
+scripts[] = 'js/date_range_slider.js'
