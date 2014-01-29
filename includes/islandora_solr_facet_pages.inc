@@ -366,7 +366,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
       $fields = $_fields;
     }
 
-  break;
+    break;
   }
 
   return $fields;

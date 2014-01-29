@@ -21,9 +21,13 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
   if(preg_match('/(.+?)\./', $query_field, $m) or preg_match('/(.+?)\./', $filter, $m) ) {
 
     $query_field_namespace = $m[1];
+
     switch($query_field_namespace) {
 
     case 'cdm':
+
+      return $_fields;
+
     case 'eastasia':
     case 'ldr':
     case 'mdl_prints':
@@ -142,10 +146,17 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	
 	$result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower);
       }
+
       // Merge uppercase with lowercase.
       $result_fields = array_merge($result_fields, $result_fields_lower);
 
       $child_items = array();
+      $child_items_class = array('islandora-solr-facet-list');
+      if(preg_match('/\.?[dD]ate\.?/', $solr_field)) {
+
+	$child_items_class[] = 'islandora-solr-facet-date';
+      }
+
       if(!empty($result_fields)) {
 
 	// Sort by the most populated facets
@@ -153,6 +164,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	
 	// Top 5 facets
 	$result_fields = array_slice($result_fields, 0, 5);
+
+	//dpm($result_fields);
 
 	foreach($result_fields as $result => $count) {
 
@@ -168,11 +181,13 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	      $class[] = 'islandora-solr-facet-date';
 	      //$child_items[] = l(truncate_utf8(date('F, Y', strtotime($result)), 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
-	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
+	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
+												       //'attributes' => array('class' => $class),
 												       'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	    } else {
 	      
-	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
+	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
+												       //'attributes' => array('class' => $class),
 												       'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	      break;
 	    }
@@ -185,11 +200,13 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$child_items[] = l('View all values...', "browse/{$value['path']}");
       }
 
+      //dpm($child_items);
+
       if(!empty($child_items)) {
 
 	$items[] = theme('item_list', array('items' => $child_items,
 					    'type' => 'ul',
-					    'attributes' => array('class' => 'islandora-solr-facet-list',
+					    'attributes' => array('class' => $child_items_class,
 								  )));
       }
     }
