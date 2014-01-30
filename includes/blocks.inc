@@ -81,14 +81,43 @@ function _islandora_dss_solr_facet_pages_block_callback() {
     $filters = array();
     $filtered_facets = array();
 
-    if($path == '*:*' && array_key_exists('f', $query_params)) {
+    /*
+    //if($path == '*:*' && array_key_exists('f', $query_params)) {
+    if($path == '*:*') {
+
+      if(array_key_exists('f', $query_params)) {
+
+	foreach($query_params['f'] as $filtered_facet) {
+
+	  $filters = $query_params['f'];
+
+	  if(preg_match('/"(.+)"/', $filtered_facet, $matches)) {
+	    
+	    $filtered_facets[] = $matches[1]; 
+	  }
+	}
+      }
+    } elseif(preg_match('/islandora\/search\/(.+)?(\/|#)?/', current_path(), $m)) {
+
+      dpm($query_params);
+
+      $islandora_solr_query = $m[1];
+    }
+    */
+
+    if(preg_match('/islandora\/search\/(.+)?(\/|#)?/', current_path(), $m)) {
+
+      $islandora_solr_query = $m[1];
+    }
+
+    if(array_key_exists('f', $query_params)) {
 
       foreach($query_params['f'] as $filtered_facet) {
 
 	$filters = $query_params['f'];
 
 	if(preg_match('/"(.+)"/', $filtered_facet, $matches)) {
-
+	    
 	  $filtered_facets[] = $matches[1]; 
 	}
       }
@@ -120,23 +149,46 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       $solr = new Apache_Solr_Service($parsed_url['host'], $parsed_url['port'], $parsed_url['path']);
 
-      $query = "$solr_field:[* TO *]";
+      /*
+      if(isset($islandora_solr_query)) {
+
+	$islandora_solr_facet_query = "$solr_field:[* TO *]";
+      } else {
+
+	$islandora_solr_facet_query = "$solr_field:[* TO *]";
+      }
+      */
+
+      $islandora_solr_facet_query = isset($islandora_solr_query) ? $islandora_solr_query : "$solr_field:[* TO *]";
 
       if(!empty($filters)) {
 
+	/*
 	$query = implode(' AND ', $filters);
 
 	// Collect results.
 	$result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $query);
+	*/
+
+	$query = implode(' AND ', $filters);
+      }
+
+      // Collect results.
+      $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);
+
+      /*
       } else {
 	
 	// Collect results.
 	$result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix);
       }
+      */
 
       // Collect results with lowercase.
       $prefix_lower = strtolower($prefix);
+      $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower, $islandora_solr_facet_query);
 
+      /*
       if(!empty($filters)) {
 
 	$query = implode(' AND ', $filters);
@@ -146,6 +198,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	
 	$result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower);
       }
+      */
 
       // Merge uppercase with lowercase.
       $result_fields = array_merge($result_fields, $result_fields_lower);
@@ -162,14 +215,29 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	// Sort by the most populated facets
 	arsort($result_fields);
 	
+	//dpm($result_fields);
+
 	// Top 5 facets
 	$result_fields = array_slice($result_fields, 0, 5);
 
 	//dpm($result_fields);
 
+	$islandora_solr_path = 'islandora/search/';
+
+	if(isset($islandora_solr_query)) {
+
+	  $islandora_solr_path .= $islandora_solr_query;
+
+
+	} else {
+
+	  $islandora_solr_path .= '*:*';
+	}
+
 	foreach($result_fields as $result => $count) {
 
 	  if(!in_array($result, $filtered_facets)) {
+	    //if(true) {
 
 	    $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
 
@@ -181,15 +249,16 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	      $class[] = 'islandora-solr-facet-date';
 	      //$child_items[] = l(truncate_utf8(date('F, Y', strtotime($result)), 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
-	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
+	      //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
+	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), $islandora_solr_path, array(
 												       //'attributes' => array('class' => $class),
 												       'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	    } else {
 	      
-	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
+	      //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
+	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), $islandora_solr_path, array(
 												       //'attributes' => array('class' => $class),
 												       'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
-	      break;
 	    }
 	  }
 	}

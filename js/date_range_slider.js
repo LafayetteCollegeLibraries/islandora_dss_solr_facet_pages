@@ -170,6 +170,8 @@ SolrQuery.prototype = {
 		maxFacet: (facets.length == 1 ? 0 : facets.length - 2),
 	    });
 
+	this.facetDateHandler = function() {
+
 	$('.islandora-solr-facet-date').each(function(i, e) {
 
 		var $dateSlider = $('<div class="islandora-solr-facet-date-slider"></div>');
@@ -269,6 +271,46 @@ SolrQuery.prototype = {
 		$dateSlider.slider(options);
 		$facetList.children('li').hide();
 	    });
+
+	};
+	this.facetDateHandler();
+
+	var that = this;
+
+	this.facetLinkHandler = function(e, element) {
+
+	    e.preventDefault();
+
+	    var facetedSearchAnchor = element || $(this);
+
+	    var facets = facetedSearchAnchor.attr('href').split(/f\[\d\]/);
+	    $(document).data('islandoraDssDateRangeSlider', {
+		    query: /(\/islandora\/search\/.+)/.exec( facetedSearchAnchor.attr('href') )[1],
+			maxFacet: (facets.length == 1 ? 0 : facets.length - 2),
+			});
+
+	    $.get(facetedSearchAnchor.attr('href'), function(data) {
+
+		    $(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
+
+		    that.facetDateHandler();
+
+		    if(!facetedSearchAnchor.hasClass('islandora-solr-facet-token') ) {
+
+			var parentUrl = facetedSearchAnchor.attr('href').split('=').slice(0, -1).join('=').replace(/(&|\?)f\[\d\]$/, '');
+
+			$('#block-islandora-solr-facet-pages-islandora-solr-facet-pages h2.block-title').after($('<a href="' + parentUrl + '" class="islandora-solr-facet-token">' + facetedSearchAnchor.text() + '</a>').click(function(e) {
+
+				    that.facetLinkHandler(e, $(this));
+				    $(this).remove();
+				}).wrap('<div class="islandora-solr-facet islandora-solr-facet-filter"></div>'));
+
+			$(data).find('.main-container').children().appendTo($('.main-container').empty());
+		    }
+		});
+	};
+
+	$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
     };
 
     // @todo: Refactor
