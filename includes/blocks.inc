@@ -170,7 +170,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $query);
 	*/
 
-	$query = implode(' AND ', $filters);
+	$islandora_solr_facet_query = implode(' AND ', array_merge(array($islandora_solr_facet_query), $filters));
       }
 
       // Collect results.
@@ -214,13 +214,9 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	// Sort by the most populated facets
 	arsort($result_fields);
-	
-	//dpm($result_fields);
 
 	// Top 5 facets
 	$result_fields = array_slice($result_fields, 0, 5);
-
-	//dpm($result_fields);
 
 	$islandora_solr_path = 'islandora/search/';
 
@@ -277,13 +273,27 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 					    'type' => 'ul',
 					    'attributes' => array('class' => $child_items_class,
 								  )));
+
       }
     }
 
     if(!empty($items)) {
 
+      /*
       $results = implode($items);
+      */
+
+      /*
+	$results = theme('item_list', array('items' => array(),
+					  'type' => 'ul',
+					  'attributes' => array('class' => 'islandora-solr-facet-token-list',),
+					  )) . implode($items);
+      */
+	
+      $results = '<ul class="islandora-solr-facet-token-list"></ul>'. implode($items);
+
       return $results;
+
     } else {
       
       return '';
@@ -306,6 +316,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
     if(!empty($items)) {
 
+      /*
       return theme('item_list', array(
 				      'items' => $items,
 				      'type' => 'ul',
@@ -313,6 +324,15 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							    'class' => 'islandora-solr-facet-filter-list',
 							    ),
 				      ));
+      */
+
+      dpm(theme('item_list', array('items' => array(),
+				      'type' => 'ul',
+				      'attributes' => array('class' => 'islandora-solr-facet-token-list',),
+				   )));
+      dpm('trace');
+
+
     } else {
       
       return FALSE;
@@ -331,6 +351,8 @@ function islandora_dss_solr_facet_pages_block_view_alter(&$data, $block) {
     $path = current_path();
     //if(preg_match('/browse\//', $path) || preg_match('/islandora\/search/', $path)) {
     if(preg_match('/islandora\/search/', $path)) {
+
+      dpm('trace2');
 
       #$path = current_path();
       $data['title'] = 'Refine your search';
