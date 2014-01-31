@@ -9,13 +9,24 @@
  *
  */
 
-FIELD_MAP = { 'Date.Artifact.Lower' : 'eastasia.Date.Artifact.Lower',
-	      'Date.Artifact.Upper' : 'eastasia.Date.Artifact.Lower',
-	      'Date.Image.Lower' : 'eastasia.Date.Image.Lower',
-	      'Date.Image.Upper' : 'eastasia.Date.Image.Lower',
-	      'dc.date.accessioned' : 'ldr.dc.date.accessioned',
-	      'dc.contributor.author' : 'ldr.dc.contributor.author',
-	      'Date' : 'geology_slides.date.search', };
+FIELD_MAP = {
+
+    'Date.Artifact.Lower' : 'eastasia.Date.Artifact.Lower',
+    'Date.Artifact.Upper' : 'eastasia.Date.Artifact.Lower',
+    'Date.Image.Lower' : 'eastasia.Date.Image.Lower',
+    'Date.Image.Upper' : 'eastasia.Date.Image.Lower',
+    'dc.date.accessioned' : 'ldr.dc.date.accessioned',
+    'dc.contributor.author' : 'ldr.dc.contributor.author',
+    'Date' : 'geology_slides_esi.date.original',
+	
+    'eastasia.Date.Artifact.Lower' : 'Date.Artifact.Lower',
+    'eastasia.Date.Artifact.Lower' : 'Date.Artifact.Upper',
+    'eastasia.Date.Image.Lower' : 'Date.Image.Lower',
+    'eastasia.Date.Image.Lower' : 'Date.Image.Upper',
+    'ldr.dc.date.accessioned' : 'dc.date.accessioned',
+    'ldr.dc.contributor.author' : 'dc.contributor.author',
+    'geology_slides_esi.date.original' : 'Date',
+};
     
 function fieldMap(field) {
 	
@@ -49,7 +60,17 @@ SolrQuery.prototype = {
 		 'Date.Image.Upper' : 'eastasia.Date.Image.Lower',
 		 'dc.date.accessioned' : 'ldr.dc.date.accessioned',
 		 'dc.contributor.author' : 'ldr.dc.contributor.author',
-		 'Date' : 'geology_slides.date.search', },
+		 'Date' : 'geology_slides.date.original',
+
+		 'eastasia.Date.Artifact.Lower' : 'Date.Artifact.Lower',
+		 'eastasia.Date.Artifact.Lower' : 'Date.Artifact.Upper',
+		 'eastasia.Date.Image.Lower' : 'Date.Image.Lower',
+		 'eastasia.Date.Image.Lower' : 'Date.Image.Upper',
+		 'ldr.dc.date.accessioned' : 'dc.date.accessioned',
+		 'ldr.dc.contributor.author' : 'dc.contributor.author',
+		 'geology_slides.date.original' : 'Date', 
+
+    },
 
     constructor: SolrQuery,
 
@@ -163,9 +184,92 @@ SolrQuery.prototype = {
 
 	//max: +new Date($(this).text()) }));
 
+	var getQuery = function getQuery(url) {
+
+	    url = decodeURI(url);
+	    url = url.replace(/.+?islandora\/search\//, '');
+
+	    var out = {};
+
+	    //return $.map(url.split(' AND '), function(e, i) {
+	    _queryParams = $.map(url.split(' AND '), function(e, i) {
+
+		    var paramSegments = e.split(/\:|%3A/);
+		    
+		    var obj = {};
+		    obj[paramSegments[0]] = paramSegments[1];
+		    return obj;
+		});
+
+	    $.each(_queryParams, function(i, e) {
+
+		    for(key in e) {
+
+			out[key] = e[key];
+		    }
+		});
+
+	    return out;
+	};
+
+	var getFacets = function getFacets(url) {
+
+	    url = decodeURI(url);
+
+	    var urlSegments = url.split(/\??&?f\[\d\]\=/);
+	    var query = urlSegments[0];
+
+	    var out = {};
+	    
+	    _facetParams = $.map(urlSegments.slice(1), function(e, i) {
+		    
+		    var facetId = 'f[' + i + ']';
+
+		    var obj = {};
+		    // Detecting date range facets
+		    if(/(\:|%3A)\[[\d-]+T/.exec(e)) {
+
+			var paramName = /(.+?)(\:|%3A)/.exec(e)[1];
+
+			// new Date(/\[(.+?)\sT/.exec(decodeURI('geology_slides_esi.date.original%3A[1967-12-01T00%3A00%3A00Z TO 1968-06-01T00%3A00%3A00Z]'))[1].replace('%3A',':','g'))
+			var paramMin = +new Date(/\[(.+?)\sT/.exec(e)[1].replace('%3A',':','g'));
+			var paramMax = +new Date(/TO\s(.+?)\]/.exec(e)[1].replace('%3A',':','g'));
+
+			obj[paramName] = [paramMin, paramMax];
+		    } else {
+
+			var paramSegments = e.split(/\:|%3A/);
+
+			/*
+			  var fieldName = paramSegments[0];
+			  //return { facetId : { fieldName : paramSegments[1] }};
+			  
+			  return { fieldName : paramSegments[1] };
+			*/
+
+			obj[paramSegments[0]] = paramSegments[1];
+		    }
+			return obj;
+		});
+
+	    $.each(_facetParams, function(i, e) {
+
+		    for(key in e) {
+
+			out[key] = e[key];
+		    }
+		});
+
+	    return out;
+	};
+
 	var facets = document.URL.split(/f\[\d\]/);
 
+	var _query = getQuery(document.URL);
+	var _facets = getFacets(document.URL);
+
 	$(document).data('islandoraDssDateRangeSlider', {
+
 		query: /(\/islandora\/search\/.+)/.exec(document.URL)[1],
 		maxFacet: (facets.length == 1 ? 0 : facets.length - 2),
 	    });
@@ -180,8 +284,8 @@ SolrQuery.prototype = {
 		$facetList = $(e);
 
 		$facetList.after($dateSlider);
-		$dateTerm = $('<div class="islandora-solr-facet-date-term">Terminal Date</div>').insertAfter($dateSlider);
-		$dateInit = $('<div class="islandora-solr-facet-date-init">Initial Date</div>').insertAfter($dateSlider);
+		$dateTerm = $('<div class="islandora-solr-facet-date-term"></div>').insertAfter($dateSlider);
+		$dateInit = $('<div class="islandora-solr-facet-date-init"></div>').insertAfter($dateSlider);
 
 		//$facetListItems = $facetList.children('li').slice(0, -1);
 		$facetListItems = $facetList.children('li').slice(0, -1).sort(function(u, v) {
@@ -202,32 +306,19 @@ SolrQuery.prototype = {
 
 		options = {
 
-		    // max: +new Date( $('.islandora-solr-facet-date').first().text()),
-		    // min: +new Date( $('.islandora-solr-facet-date').last().text()),
-
 		    // Restructure with styling
-		    //max: +new Date( $facetList.children('li').first().children('a').text()),
-		    //min: +new Date( $facetList.children('li').slice(-2,-1).children('a').text()),
-		    //max: +new Date( $facetListItems.first().children('a').text()),
-		    //min: +new Date( $facetListItems.last().children('a').text()),
 		    min: +new Date( $facetListItems.first().children('a').text()),
 		    max: +new Date( $facetListItems.last().children('a').text()),
 		    range: true,
 		    slide: function(e, ui) {
 
-			//$(ui.handle);
-		
-			//$('.islandora-solr-facet-date-init').text((new Date(ui.values[0])).toString());
-			//$('.islandora-solr-facet-date-term').text((new Date(ui.values[1])).toString());
-
-			//$dateInit.text((new Date(ui.values[0])).toString());
-			//$dateTerm.text((new Date(ui.values[1])).toString());
-
 			var dateInit = $(ui.handle).parent().next();
-			//$(ui.handle).parent().next().next();
-			dateInit.text((new Date(ui.values[0])).toString());
+			//dateInit.text((new Date(ui.values[0])).toLocaleDateString());
+			dateInit.text((new Date(ui.values[0])).toGMTString());
+
 			var dateTerm = dateInit.next();
-			dateTerm.text((new Date(ui.values[1])).toString());
+			//dateTerm.text((new Date(ui.values[1])).toLocaleDateString());
+			dateTerm.text((new Date(ui.values[1])).toGMTString());
 		    },
 		    stop: function(e, ui) {
 		
@@ -259,14 +350,36 @@ SolrQuery.prototype = {
 
 			$.get(query, function(data) {
 
-				$(data).find('.islandora-solr-search-results').children().appendTo(
-												   $('.islandora-solr-search-results').empty());
+				$(data).find('.islandora-solr-search-results').children().appendTo($('.islandora-solr-search-results').empty());
 			    });
 			
 			$(document).data('islandoraDssDateRangeSlider', $.extend($(document).data('islandoraDssDateRangeSlider'), {query: query, maxFacet: maxFacet} ));
-			
 		    },
 		};
+
+		/**
+		 * Prepropulate the slider with the appropriate value
+		 * Retrieve the values either from the facet queries or queries passed in the GET request
+		 *
+		 */
+		var solrFieldName = fieldMap($facetList.prev().text());
+
+		// Populate from the facet queries first...
+		if(typeof(_facets[solrFieldName]) !== 'undefined') {
+
+		    options['values'] = _facets[solrFieldName];
+		} else if(typeof(_query[solrFieldName]) !== 'undefined') {
+
+		    options['values'] = _query[solrFieldName];
+		} else {
+
+		    options['values'] = [ options['min'], options['max'] ];
+		}
+
+		//$dateTerm.text( new Date(options['values'][1]).toLocaleDateString());
+		//$dateInit.text( new Date(options['values'][0]).toLocateDateString());
+		$dateTerm.text( new Date(options['values'][1]).toGMTString());
+		$dateInit.text( new Date(options['values'][0]).toGMTString());
 
 		$dateSlider.slider(options);
 		$facetList.children('li').hide();
