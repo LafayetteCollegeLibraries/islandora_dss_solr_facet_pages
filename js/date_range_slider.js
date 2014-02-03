@@ -4,6 +4,7 @@
  *
  */
 
+
 /**
  * Class for handling Islandora Solr Queries
  *
@@ -26,7 +27,7 @@ var SolrQuery = function($, options) {
     this.params = $.extend({}, this.options.params);
     this.searchPath = this.options.searchPath || '/islandora/search/';
 
-    this.url = this.options.url || '/islandora/search/*:*';
+    this.url = this.options.url || '/islandora/search/ *:*';
 
     this.query = this.options.query || this.query(this.url);
     */
@@ -57,7 +58,7 @@ SolrQuery.FIELD_MAP = {
     'ldr.dc.date.accessioned' : 'dc.date.accessioned',
     'ldr.dc.contributor.author' : 'dc.contributor.author',
 
-    'geology_slides_esi.date.original' : 'Date',
+    'geology_slides_esi.date.original' : 'Date'
 };
 
 /**
@@ -65,7 +66,7 @@ SolrQuery.FIELD_MAP = {
  *
  */
 
-SolrQuery.fieldMap = function fieldMap(field) {
+SolrQuery.fieldMap = function(field) {
 	
     return SolrQuery.FIELD_MAP[field];
 };
@@ -91,7 +92,7 @@ SolrQuery.prototype = {
 
     params: function params(paramsStr) {
 
-	$ = this.$;
+	var $ = this.$;
 	$.each(paramsStr.split('&'), function(param) {
 
 		var paramName, paramValue = param.split('=');
@@ -103,7 +104,7 @@ SolrQuery.prototype = {
 
     facets: function facets(queryUrl) {
 
-	$ = this.$;
+	var $ = this.$;
 
 	/*
 	facetSubString = queryUrl.split(/f\[0\]/).splice(1);
@@ -132,7 +133,7 @@ SolrQuery.prototype = {
 
     fields: function fields(fieldStr) {
 
-	$ = this.$;
+	var $ = this.$;
 	$.each(fieldStr.split(' AND '), function(i, fieldStr) {
 
 		var fieldSubStr = fieldStr.split(/\:|%3A/);
@@ -222,7 +223,7 @@ SolrQuery.prototype = {
 	    var out = {};
 
 	    //return $.map(url.split(' AND '), function(e, i) {
-	    _queryParams = $.map(url.split(' AND '), function(e, i) {
+	    var _queryParams = $.map(url.split(' AND '), function(e, i) {
 
 		    var paramSegments = e.split(/\:|%3A/);
 		    
@@ -233,7 +234,7 @@ SolrQuery.prototype = {
 
 	    $.each(_queryParams, function(i, e) {
 
-		    for(key in e) {
+		    for(var key in e) {
 
 			out[key] = e[key];
 		    }
@@ -251,7 +252,7 @@ SolrQuery.prototype = {
 
 	    var out = {};
 	    
-	    _facetParams = $.map(urlSegments.slice(1), function(e, i) {
+	    var _facetParams = $.map(urlSegments.slice(1), function(e, i) {
 		    
 		    var facetId = 'f[' + i + ']';
 
@@ -279,7 +280,8 @@ SolrQuery.prototype = {
 
 			obj[paramSegments[0]] = paramSegments[1];
 		    }
-			return obj;
+		
+		    return obj;
 		});
 
 	    $.each(_facetParams, function(i, e) {
@@ -363,10 +365,12 @@ SolrQuery.prototype = {
 	// Handled by Drupal instead
 	//$('#block-islandora-solr-facet-pages-islandora-solr-facet-pages h2.block-title').after('<ul class="islandora-solr-facet-token-list"></ul>');
 
+	var currentQuery = /(\/islandora\/search\/.+)/.exec(document.URL)[1];
+
 	// For sorting/filtering by facet value
 	$(document).data('islandoraDssDateRangeSlider', {
 
-		query: /(\/islandora\/search\/.+)/.exec(document.URL)[1],
+		query: currentQuery,
 		maxFacet: (facets.length == 1 ? 0 : facets.length - 2),
 	    });
 
@@ -385,14 +389,14 @@ SolrQuery.prototype = {
 		    var $facetList = $(e);
 
 		    $facetList.after($dateSlider);
-		    $dateTerm = $('<div class="islandora-solr-facet-date-term"></div>').insertAfter($dateSlider);
-		    $dateInit = $('<div class="islandora-solr-facet-date-init"></div>').insertAfter($dateSlider);
+		    var $dateTerm = $('<div class="islandora-solr-facet-date-term"></div>').insertAfter($dateSlider);
+		    var $dateInit = $('<div class="islandora-solr-facet-date-init"></div>').insertAfter($dateSlider);
 
 		    //$facetListItems = $facetList.children('li').slice(0, -1);
-		    $facetListItems = $facetList.children('li').slice(0, -1).sort(function(u, v) {
+		    var $facetListItems = $facetList.children('li').slice(0, -1).sort(function(u, v) {
 
-			    uDate = +new Date($(u).children('a').text());
-			    vDate = +new Date($(v).children('a').text());
+			    var uDate = +new Date($(u).children('a').text());
+			    var vDate = +new Date($(v).children('a').text());
 
 			    if( uDate > vDate ) {
 
@@ -465,60 +469,77 @@ SolrQuery.prototype = {
 			    //dateTerm.text((new Date(ui.values[1])).toLocaleDateString());
 			    dateTerm.text((new Date(ui.values[1])).toGMTString());
 			},
-		    stop: function(e, ui) {
+
+			stop: function(e, ui) {
 		
-			//$('.islandora-solr-facet-date-init').text((new Date(ui.values[0])).toString());
-			//$('.islandora-solr-facet-date-term').text((new Date(ui.values[1])).toString());
+			    //$('.islandora-solr-facet-date-init').text((new Date(ui.values[0])).toString());
+			    //$('.islandora-solr-facet-date-term').text((new Date(ui.values[1])).toString());
 
-			var dateField = SolrQuery.fieldMap($(ui.handle).parent().prev().prev().text());
+			    var dateField = SolrQuery.fieldMap($(ui.handle).parent().prev().prev().text());
 
-			//var dateField = /f\[\d\]\=(.+?)\:/.exec();
+			    //var dateField = /f\[\d\]\=(.+?)\:/.exec();
 
-			//var query = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
-			//var query = document.URL + ' AND ' + dateField + ':"' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']' + '"';
+			    //var query = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
+			    //var query = document.URL + ' AND ' + dateField + ':"' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']' + '"';
 
-			// https://digital.dev.lafayette.edu/islandora/search/%2A%3A%2A?f[0]=geology_slides_esi.date.original%3A%221983-01-01T00%3A00%3A00Z%22&f[1]=geology_slides_esi.subject%3A%22Roth%2C%20Mary%20Joel%20S.%22
-			var query = $(document).data('islandoraDssDateRangeSlider')['query'];
-			var maxFacet = $(document).data('islandoraDssDateRangeSlider')['maxFacet'] + 1;
+			    // https://digital.dev.lafayette.edu/islandora/search/%2A%3A%2A?f[0]=geology_slides_esi.date.original%3A%221983-01-01T00%3A00%3A00Z%22&f[1]=geology_slides_esi.subject%3A%22Roth%2C%20Mary%20Joel%20S.%22
+			    var query = $(document).data('islandoraDssDateRangeSlider')['query'];
+			    var maxFacet = $(document).data('islandoraDssDateRangeSlider')['maxFacet'] + 1;
 
-			var menuArgs = /islandora\/search\/(.+)/.exec(query)[1]
+			    var menuArgs = /islandora\/search\/(.+)/.exec(query)[1];
 
-			// query += '&f[' + maxFacet + ']=' + dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
+			    // query += '&f[' + maxFacet + ']=' + dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
 
-			if((new RegExp(dateField + ':')).exec(query) ) {
+			    if((new RegExp(dateField + ':')).exec(query) ) {
 
-			    query = query.replace( (new RegExp(dateField + '\\:\\[.+?\\]')), dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']');
-			} else {
+				//query = query.replace( (new RegExp(dateField + '\\:\\[.+?\\]')), dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']');
+			    } else {
 
-			    query = '/islandora/search/' + dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + '] AND ' + menuArgs;
-			}
+				//query = '/islandora/search/' + dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + '] AND ' + menuArgs;
+			    }
 
-			facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || { };
-			facetQueries[dateField] = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
+			    facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
+			    facetQueries[dateField] = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
+			    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
-			$(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
+			    facetParams = {};
 
-			$.get(query, function(data) {
+			    var i = 0;
+			    for(key in facetQueries) {
 
-				$facetTokens = $('.islandora-solr-facet-token-list li').detach();
-				$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
-				$('.islandora-solr-facet-token-list').append($facetTokens);
-				//that.facetDateHandler();
+				var facetKey = 'f[' + i + ']';
+				facetParams[ facetKey ] = key + ":" + facetQueries[key];
 
-				//$(data).find('.islandora-solr-search-results').children().appendTo($('.islandora-solr-search-results').empty());
-				$(data).find('.main-container').children().appendTo($('.main-container').empty());
-				that.facetDateHandler();
-			    });
+				i++;
+			    }
 
-			$(document).data('islandoraDssDateRangeSlider', $.extend($(document).data('islandoraDssDateRangeSlider'), {query: query, maxFacet: maxFacet} ));
-		    },
-		};
+			    $.get(query, facetParams, function(data) {
 
-		/**
-		 * Prepropulate the slider with the appropriate value
-		 * Retrieve the values either from the facet queries or queries passed in the GET request
-		 *
-		 */
+				    console.log(query);
+				    console.log(facetParams);
+				    console.log(facetQueries);
+
+				    $facetTokens = $('.islandora-solr-facet-token-list li').detach();
+				    $(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
+				    $('.islandora-solr-facet-token-list').append($facetTokens);
+				    //that.facetDateHandler();
+
+				    //$(data).find('.islandora-solr-search-results').children().appendTo($('.islandora-solr-search-results').empty());
+				    $(data).find('.main-container').children().appendTo($('.main-container').empty());
+
+				    that.facetDateHandler();
+				    $('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
+				});
+
+			    $(document).data('islandoraDssDateRangeSlider', $.extend($(document).data('islandoraDssDateRangeSlider'), {query: query, maxFacet: maxFacet} ));
+			},
+		    };
+
+		    /**
+		     * Prepropulate the slider with the appropriate value
+		     * Retrieve the values either from the facet queries or queries passed in the GET request
+		     *
+		     */
 		    var solrFieldName = SolrQuery.fieldMap($facetList.prev().text());
 
 		    facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
@@ -576,6 +597,7 @@ SolrQuery.prototype = {
 	    var facetedSearchAnchor = element || $(this);
 
 	    var facets = facetedSearchAnchor.attr('href').split(/f\[\d\]/);
+
 	    $(document).data('islandoraDssDateRangeSlider', {
 
 		        query: /(\/islandora\/search\/.+)/.exec( facetedSearchAnchor.attr('href') )[1],
@@ -583,45 +605,80 @@ SolrQuery.prototype = {
 			});
 
 	    queryUrl = facetedSearchAnchor.attr('href');
-	    if(true) {
 
-		facetQueries = $(document).data('islandoraDssDateRangeFacetQueries');
-		facetParams = {};
+	    facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
+	    //facetParams = $(document).data('islandoraDssFacetQueryParams') || {};
+	    var facetParams = {};
 
-		var i = 0;
+	    var i = 0;
 
-		//queryUrl.split(/(\?|&)f\[\d\]\=/).splice(1).filter(function(e, i) { return e != '?' && e != '&'; })
-		$.each(queryUrl.split(/(\?|&)f\[\d\]\=/).splice(1).filter(function(e, i) { return e != '?' && e != '&'; }), function(j, e) {
+	    //queryUrl.split(/(\?|&)f\[\d\]\=/).splice(1).filter(function(e, i) { return e != '?' && e != '&'; })
+	    $.each(queryUrl.split(/(\?|&)f\[\d\]\=/).splice(1).filter(function(e, i) { return e != '?' && e != '&' }), function(j, e) {
 
-			var queryExpr = decodeURI(e);
+		    var queryExpr = decodeURI(e);
 
-			var fieldSubStr = queryExpr.split(/\:|%3A/);
+		    var fieldSubStr = queryExpr.split(/\:|%3A/);
+
+		    if(fieldSubStr.length == 2) {
+
 			var fieldName = fieldSubStr[0];
 			var fieldValues = fieldSubStr[1];
+		    } else {
 
-			var facetKey = 'f[' + i + ']';
-			facetParams[facetKey] = fieldName + ':' + fieldValues;
+			fieldSubStr = queryExpr.split(/(\:|%3A)\[/).filter(function(e, i) { return e != ':' && e != '%3A' });
+			var fieldName = fieldSubStr[0];
+			var fieldValues = '[' + fieldSubStr[1].replace('%3A', ':', 'g');
+		    }
 
-			i++;
-		    });
+		    facetQueries[fieldName] = fieldValues;
 
-		queryUrl = queryUrl.split('?')[0];
-
-		for(key in facetQueries) {
-
-		    var facetKey = 'f[' + i + ']';
-		    facetParams[ facetKey ] = key + ":" + facetQueries[key];
-
-		    //queryUrl += key + ":" + facetQueries[key];
+		    //var facetKey = 'f[' + i + ']';
+		    //facetParams[facetKey] = fieldName + ':' + fieldValues;
 
 		    i++;
-		}
+		});
 
-		//queryUrl += $(document).data('islandoraDssDateRangeSlider')['query'];
+	    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
+
+		// Update the active facet queries
+		// Refactor for efficiency
+		for(var fieldName in facetQueries) {
+
+		    if(facetQueries[fieldName] == facetedSearchAnchor.text() || facetQueries[fieldName] == '"' + facetedSearchAnchor.text() + '"') {
+
+			delete facetQueries[fieldName];
+		    }
+		}
 	    }
+	    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
+
+	    queryUrl = queryUrl.split('?')[0];
+
+	    for(key in facetQueries) {
+
+		var facetKey = 'f[' + i + ']';
+		facetParams[ facetKey ] = key + ":" + facetQueries[key];
+
+		//queryUrl += key + ":" + facetQueries[key];
+
+		i++;
+	    }
+
+	    //queryUrl += $(document).data('islandoraDssDateRangeSlider')['query'];
+
+	    //$(document).data('islandoraDssFacetQueryParams', facetParams);
+
+	    /**
+	     * Transmit the GET request with the appropriate parameters
+	     *
+	     */
 
 	    //$.get(facetedSearchAnchor.attr('href'), function(data) {
 	    $.get(queryUrl, facetParams, function(data) {
+
+		    console.log(queryUrl);
+		    console.log(facetParams);
+		    console.log(facetQueries);
 
 		    //$facetTokens = $('.islandora-solr-facet-token').detach();
 		    $facetTokens = $('.islandora-solr-facet-token-list li').detach();
@@ -632,6 +689,10 @@ SolrQuery.prototype = {
 
 		    that.facetDateHandler();
 
+		    /**
+		     * For Islandora Solr tokens (Solr facets actively applied)
+		     *
+		     */
 		    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
 
 			/**
@@ -652,6 +713,7 @@ SolrQuery.prototype = {
 
 			// Remove the parent <li> element
 			facetedSearchAnchor.parent().remove();
+
 		    } else {
 
 			//var parentUrl = facetedSearchAnchor.attr('href').split('=').slice(0, -1).join('=').replace(/(&|\?)f\[\d\]$/, '');

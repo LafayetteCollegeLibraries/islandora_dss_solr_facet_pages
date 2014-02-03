@@ -58,5 +58,4 @@ function islandora_dss_solr_facet_pages_preprocess_html(&$variables) {
   */
 
   drupal_add_library('system', 'ui.slider');
-
-  }
+}
