@@ -402,6 +402,40 @@ SolrQuery.prototype = {
 	var that = this;
 
 	/**
+	 * For updating page contents
+	 * @todo Refactor into a Class
+	 */
+	this.updatePage = function(data, tokenCallback, activeToken, tokens) {
+
+	    if($(data).find('#page-header p.lead a.active').text() != '0 Items Found') {
+
+		$facetTokens = $('.islandora-solr-facet-token-list li').detach();
+		$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
+		$('.islandora-solr-facet-token-list').append($facetTokens);
+
+		$(data).find('.main-container').children().appendTo($('.main-container').empty());
+
+		// Abstract and refactor
+		var infiniteList = new IslandoraDssSolrInfinite($, Drupal.settings.dssSolrInfinite);
+
+		that.facetDateHandler();
+
+		//
+		if(typeof(tokenCallback) == 'function') {
+
+		    tokenCallback(activeToken, tokens);
+		}
+
+		$('.islandora-solr-facet-list li a').filter(function(i, e) {
+
+			return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
+	    } else {
+
+		$(data).find('.main-container').children().appendTo($('.main-container').empty());
+	    }
+	};
+
+	/**
 	 * For the Islandora Solr Facet form
 	 * Please note that this widget merely populates the facet parameters for GET requests transmitted to the Solr endpoint
 	 *
@@ -471,7 +505,9 @@ SolrQuery.prototype = {
 			     *
 			     */
 
-			    var facetedSearchAnchor = $('<a href="' + parentUrl + 'f[' + i + ']' +   + '" class="islandora-solr-facet-token">' + facetQueries[key][k] + '</a>');
+			    parentUrl += /f\[\d\]/.exec(parentUrl) ? '&' : '?';
+			    var facetedSearchAnchor = $("<a href='" + parentUrl + 'f[' + (i - 1) + ']=' + key + ':"' + facetQueries[key][k] + '"\' class="islandora-solr-facet-token">' + facetQueries[key][k] + '</a>');
+			    //var facetedSearchAnchor = $("<a href='" + parentUrl + '"\' class="islandora-solr-facet-token">' + facetQueries[key][k] + '</a>');
 
 			    $('.islandora-solr-facet-token-list').append( $('<li></li>').append( facetedSearchAnchor.click(function(e) {
 
@@ -490,6 +526,7 @@ SolrQuery.prototype = {
 			}
 		    }
 
+		    /*
 		    $.get(query, facetParams, function(data) {
 
 			    $facetTokens = $('.islandora-solr-facet-token-list li').detach();
@@ -504,6 +541,9 @@ SolrQuery.prototype = {
 
 				    return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
 			});
+		    */
+
+		    $.get(query, facetParams, that.updatePage);
 		});
 	};
 
@@ -683,6 +723,7 @@ SolrQuery.prototype = {
 				//i++;
 			    }
 
+			    /*
 			    $.get(query, facetParams, function(data) {
 
 				    console.log(query);
@@ -692,7 +733,7 @@ SolrQuery.prototype = {
 				    /**
 				     * Only update the facet panel if there are more than 0 results returned (otherwise, no facets shall be present)
 				     *
-				     */
+				     * /
 
 				    $facetTokens = $('.islandora-solr-facet-token-list li').detach();
 				    $(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
@@ -709,6 +750,9 @@ SolrQuery.prototype = {
 
 					    return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
 				});
+			    */
+
+			    $.get(query, facetParams, this.updatePage);
 
 			    $(document).data('islandoraDssDateRangeSlider', $.extend($(document).data('islandoraDssDateRangeSlider'), {query: query, maxFacet: maxFacet} ));
 			},
@@ -767,6 +811,67 @@ SolrQuery.prototype = {
 
 	};
 	this.facetDateHandler();
+
+	/**
+	 * Transmit the GET request with the appropriate parameters
+	 *
+	 */
+
+	this.tokenHandler = function(facetedSearchAnchor, $facetTokens) {
+
+	    /**
+	     * For Islandora Solr tokens (Solr facets actively applied)
+	     *
+	     */
+	    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
+
+		/**
+		 * @todo Refactor
+		 *
+		 */
+		if($facetTokens.length > 1) {
+			
+		    $facetTokens.children().each(function(i, facetToken) {
+
+			    $facetToken = $(facetToken);
+			    if(! $facetToken.is(facetedSearchAnchor) ) {
+
+				$facetToken.attr('href', removeFacet( $facetToken, facetedSearchAnchor));
+			    }
+			});
+		}
+
+		// Remove the parent <li> element
+		facetedSearchAnchor.parent().remove();
+
+	    } else {
+
+		var parentUrl = facetedSearchAnchor.attr('href');
+
+		    /**
+		     * Terrible work-around, must refactor this
+		     *
+		     * Scope the other token links for this new filter...
+		     */
+		$facetTokens.children().each(function(i, facetToken) {
+
+			$facetToken = $(facetToken);
+			$facetToken.attr('href', updateFacetTokenUrl( $facetToken, facetedSearchAnchor));
+		    });
+
+		/**
+		 * ...and ensure that the link for this anchor is scoped properly:
+		 *
+		 */
+		parentUrl = getFacetTokenUrl(facetedSearchAnchor);
+
+		$('.islandora-solr-facet-token-list').append( $('<li></li>').append($('<a href="' + parentUrl + '" class="islandora-solr-facet-token">' + facetedSearchAnchor.text() + '</a>').click(function(e) {
+				
+				that.facetLinkHandler(e, $(this));
+			    })
+			));
+	    }
+	};
 
 	this.facetLinkHandler = function(e, element) {
 
@@ -863,11 +968,6 @@ SolrQuery.prototype = {
 
 	    //$(document).data('islandoraDssFacetQueryParams', facetParams);
 
-	    /**
-	     * Transmit the GET request with the appropriate parameters
-	     *
-	     */
-
 	    //$.get(facetedSearchAnchor.attr('href'), function(data) {
 	    $.get(queryUrl, facetParams, function(data) {
 
@@ -878,7 +978,12 @@ SolrQuery.prototype = {
 		    //$facetTokens = $('.islandora-solr-facet-token').detach();
 		    $facetTokens = $('.islandora-solr-facet-token-list li').detach();
 
-		    $(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
+		    // tokenCallback: that.tokenHandler(facetedSearchAnchor, $facetTokens);
+		    that.updatePage(data, that.tokenHandler, facetedSearchAnchor, $facetTokens);
+
+		    if(false) {
+
+			$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
 		    //$('#block-islandora-solr-facet-pages-islandora-solr-facet-pages h2.block-title').after($facetTokens);
 		    $('.islandora-solr-facet-token-list').append($facetTokens);
 
@@ -888,12 +993,16 @@ SolrQuery.prototype = {
 		     * For Islandora Solr tokens (Solr facets actively applied)
 		     *
 		     */
+
+		    that.tokenHandler(facetedSearchAnchor, $facetTokens);
+
+		    /*
 		    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
 
 			/**
 			 * @todo Refactor
 			 *
-			 */
+			 * /
 			if($facetTokens.length > 1) {
 
 			    $facetTokens.children().each(function(i, facetToken) {
@@ -918,7 +1027,7 @@ SolrQuery.prototype = {
 			 * Terrible work-around, must refactor this
 			 *
 			 * Scope the other token links for this new filter...
-			 */
+			 * /
 			$facetTokens.children().each(function(i, facetToken) {
 
 				$facetToken = $(facetToken);
@@ -928,7 +1037,7 @@ SolrQuery.prototype = {
 			/**
 			 * ...and ensure that the link for this anchor is scoped properly:
 			 *
-			 */
+			 * /
 			parentUrl = getFacetTokenUrl(facetedSearchAnchor);
 
 			/*
@@ -937,7 +1046,7 @@ SolrQuery.prototype = {
 				    that.facetLinkHandler(e, $(this));
 				    $(this).remove();
 				}).wrap('<div class="islandora-solr-facet islandora-solr-facet-filter"></div>'));
-			*/
+			* /
 
 			$('.islandora-solr-facet-token-list').append( $('<li></li>').append($('<a href="' + parentUrl + '" class="islandora-solr-facet-token">' + facetedSearchAnchor.text() + '</a>').click(function(e) {
 
@@ -947,14 +1056,15 @@ SolrQuery.prototype = {
 				));
 
 		    }
+		    */
 
 		    $(data).find('.main-container').children().appendTo($('.main-container').empty());
-
-
+		    
 		    //$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
 		    $('.islandora-solr-facet-list li a').filter(function(i, e) {
 
 			    return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
+		    }
 		});
 	};
 
