@@ -446,6 +446,7 @@ SolrQuery.prototype = {
 
 		    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 		    $.fancybox.close();
+		    $('.fancy-box-container').remove();
 
 		    var query = $(document).data('islandoraDssDateRangeSlider')['query'];
 		    facetParams = {};
@@ -500,10 +501,8 @@ SolrQuery.prototype = {
 			    that.facetDateHandler();
 
 			    $('.islandora-solr-facet-list li a').filter(function(i, e) {
-				    
+
 				    return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
-
-
 			});
 		});
 	};
@@ -525,24 +524,14 @@ SolrQuery.prototype = {
 			    var solrField = SolrQuery.fieldMap($(e).parent().parent().prev().text());
 			    $(document).data('islandoraDssBrowsingField', solrField);
 
-			    $('body').append('<div class="fancy-box"></div>').fancybox({
+			    var fancyBoxContainer = $('<div class="fancy-box-container"></div>').appendTo($('body')).load('/islandora/facets/' + solrField, function() {
 
-				    href: '/islandora/facets/' + solrField,
-					//modal: true,
-					type: 'ajax',
-					afterShow: that.facetFormHandler,
-					hideOnContentClick: false,
-					});
-
-			    /*
-			    $.get('/islandora/facets', { solrField: SolrQuery.fieldMap($(e).parent().parent().prev().text()) }, function(data) {
-
-				    // Integrate the handler for the Solr Facet Form here
-				    $(data);
-				    
-				    Drupal.behaviors.initLightbox( $(data) );
-				    });
-			    */
+				    $(this).dialog({ title: solrField,
+						     modal: true,
+						     minHeight: 280,
+						     minWidth: 392 });
+				    that.facetFormHandler();
+				});
 			});
 		});
 	};
@@ -699,6 +688,11 @@ SolrQuery.prototype = {
 				    console.log(query);
 				    console.log(facetParams);
 				    console.log(facetQueries);
+
+				    /**
+				     * Only update the facet panel if there are more than 0 results returned (otherwise, no facets shall be present)
+				     *
+				     */
 
 				    $facetTokens = $('.islandora-solr-facet-token-list li').detach();
 				    $(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());

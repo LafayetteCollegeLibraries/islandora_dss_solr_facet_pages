@@ -76,8 +76,7 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
     break;
   }
 
-  $form['islandora_solr_facets'] = array('fields' => array('#title' => $solr_field,
-							   '#type' => 'checkboxes',
+  $form['islandora_solr_facets'] = array('fields' => array('#type' => 'checkboxes',
 							   '#options' => drupal_map_assoc(array_keys($result_fields)),
 							   ),
 					 'submit' => array('#type' => 'submit',
