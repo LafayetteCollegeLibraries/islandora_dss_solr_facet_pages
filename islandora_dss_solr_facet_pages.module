@@ -36,6 +36,97 @@ function islandora_dss_solr_facet_pages_block_view_islandora_solr_facet_pages_is
 }
 
 /**
+ * The form for refining searches by utilizing all possible facet values
+ * Intended to be rendered using a JavaScript widget, hence, there are no implementations of submission or validation callbacks
+ *
+ */
+function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_field) {
+
+  $prefix = t('ALL');
+  drupal_load('module', 'islandora_solr');
+
+  // Use Solr faceting to get list of names.
+  $parsed_url = parse_url(variable_get('islandora_solr_url', 'http://localhost:8080/solr'));
+  $solr = new Apache_Solr_Service($parsed_url['host'], $parsed_url['port'], $parsed_url['path']);
+
+  // Collect results.
+  $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix);
+  // Collect results with lowercase.
+  $prefix_lower = strtolower($prefix);
+  $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower);
+  // Merge uppercase with lowercase.
+  $result_fields = array_merge($result_fields, $result_fields_lower);
+
+  switch($solr_field) {
+
+  case 'eastasia.Date.Artifact.Upper':
+  case 'eastasia.Date.Artifact.Lower':
+  case 'eastasia.Date.Image.Upper':
+  case 'eastasia.Date.Image.Lower':
+  case 'geology_slides_esi.date.original':
+
+    $_result_fields = array();
+
+    foreach($result_fields as $result_field => $value) {
+
+      $_result_fields[gmdate('Y-m-d', strtotime($result_field))] = $value;
+    }
+
+    $result_fields = $_result_fields;
+    break;
+  }
+
+  $form['islandora_solr_facets'] = array('fields' => array('#title' => $solr_field,
+							   '#type' => 'checkboxes',
+							   '#options' => drupal_map_assoc(array_keys($result_fields)),
+							   ),
+					 'submit' => array('#type' => 'submit',
+							   '#value' => t('Refine'),
+							   )
+					 );
+
+  return $form;
+}
+
+/**
+ * Callback for the AJAX endpoint
+ * Responds with a 403 for non-AJAX requests
+ *
+ */
+function _islandora_dss_solr_facet_pages_facets($paths, $solr_field) {
+
+  //if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+  if(true) {
+
+    if(!isset($solr_field) && array_key_exists('solrField', $_GET)) {
+
+      $solr_field = $_GET['solrField'];
+    }
+
+    print drupal_render(drupal_get_form('islandora_dss_solr_facet_pages_facets_form', $solr_field));
+    exit;
+  } else {
+
+    drupal_access_denied();
+  }
+}
+
+/**
+ * Implements hook_menu()
+ *
+ */
+function islandora_dss_solr_facet_pages_menu() {
+
+  $items['islandora/facets'] = array('page callback' => '_islandora_dss_solr_facet_pages_facets',
+				     'page arguments' => array(2),
+				     'access arguments' => array('search islandora solr'),
+				     'type' => MENU_CALLBACK,
+				     );
+
+  return $items;
+}
+
+/**
  * Implements hook_theme_registry_alter()
  *
  */

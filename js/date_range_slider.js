@@ -379,6 +379,53 @@ SolrQuery.prototype = {
 
 	var that = this;
 
+	/**
+	 * For the Islandora Solr Facet form
+	 * Please note that this widget merely populates the facet parameters for GET requests transmitted to the Solr endpoint
+	 *
+	 */
+
+	this.facetFormHandler = function() {
+	    
+	    $('#islandora-dss-solr-facet-pages-facets-form').submit(function(event) {
+
+		    event.preventDefault();
+
+		    facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
+		    $(this).serializeArray().each(function(i, e) {
+
+			    facetQueries[fieldName] = e.value;
+			});
+		});
+	};
+
+	/**
+	 * For the modal dialog window
+	 *
+	 */
+	this.facetModalHandler = function() {
+
+	    $('.islandora-solr-facet-list .last').each(function(i, e) {
+
+		    $(e).click(function(event) {
+
+			    event.preventDefault();
+
+			    $.get('/islandora/facets', { solrField: $(e).parent().prev().text() }, function(data) {
+
+				    // Integrate the handler for the Solr Facet Form here
+				    $(data);
+				    
+				    Drupal.behaviors.initLightbox( $(data) );
+				});
+			});
+		});
+	};
+
+	/**
+	 * For the Date slider widget
+	 *
+	 */
 	this.facetDateHandler = function() {
 
 	    $('.islandora-solr-facet-date').each(function(i, e) {
@@ -499,7 +546,11 @@ SolrQuery.prototype = {
 			    }
 
 			    facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
-			    facetQueries[dateField] = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
+
+			    //facetQueries[dateField] = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
+			    facetQueries[dateField] = facetQueries[dateField] || [];
+			    facetQueries[dateField] = facetQueries[dateField].concat( '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']');
+
 			    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
 			    facetParams = {};
@@ -507,10 +558,13 @@ SolrQuery.prototype = {
 			    var i = 0;
 			    for(key in facetQueries) {
 
-				var facetKey = 'f[' + i + ']';
-				facetParams[ facetKey ] = key + ":" + facetQueries[key];
+				for(k in facetQueries[key]) {
 
-				i++;
+				    var facetKey = 'f[' + i + ']';
+				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+				    i++;
+				}
+				//i++;
 			    }
 
 			    $.get(query, facetParams, function(data) {
@@ -558,32 +612,33 @@ SolrQuery.prototype = {
 
 		    //console.log( facetQueries );
 
-		// Populate from the facet queries first...
-		if(typeof(_facets[solrFieldName]) !== 'undefined') {
+		    // Populate from the facet queries first...
+		    if(typeof(_facets[solrFieldName]) !== 'undefined') {
 
-		    options['values'] = _facets[solrFieldName];
-		} else if(typeof(_query[solrFieldName]) !== 'undefined') {
+			options['values'] = _facets[solrFieldName];
+		    } else if(typeof(_query[solrFieldName]) !== 'undefined') {
 
-		    options['values'] = _query[solrFieldName];
+			options['values'] = _query[solrFieldName];
+		    } else if(typeof( facetQueries[solrFieldName] ) !== 'undefined') {
 
-		} else if(typeof( facetQueries[solrFieldName] ) !== 'undefined') {
+			// Work-around
+			// There can only ever be one element within an array of values for Date fields
+			var minValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[0].slice(1));
+			var maxValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[1].slice(0, -1));
+			options['values'] = [minValue, maxValue];
+		    } else {
 
-		    var minValue = +new Date(facetQueries[solrFieldName].split(' TO ')[0].slice(1));
-		    var maxValue = +new Date(facetQueries[solrFieldName].split(' TO ')[1].slice(0, -1));
-		    options['values'] = [minValue, maxValue];
-		} else {
+			options['values'] = [ options['min'], options['max'] ];
+		    }
 
-		    options['values'] = [ options['min'], options['max'] ];
-		}
+		    //$dateTerm.text( new Date(options['values'][1]).toLocaleDateString());
+		    //$dateInit.text( new Date(options['values'][0]).toLocateDateString());
+		    $dateTerm.text( new Date(options['values'][1]).toGMTString());
+		    $dateInit.text( new Date(options['values'][0]).toGMTString());
 
-		//$dateTerm.text( new Date(options['values'][1]).toLocaleDateString());
-		//$dateInit.text( new Date(options['values'][0]).toLocateDateString());
-		$dateTerm.text( new Date(options['values'][1]).toGMTString());
-		$dateInit.text( new Date(options['values'][0]).toGMTString());
-
-		$dateSlider.slider(options);
-		$facetList.children('li').hide();
-	    });
+		    $dateSlider.slider(options);
+		    $facetList.children('li').hide();
+		});
 
 	};
 	this.facetDateHandler();
@@ -613,6 +668,16 @@ SolrQuery.prototype = {
 	    var i = 0;
 
 	    //queryUrl.split(/(\?|&)f\[\d\]\=/).splice(1).filter(function(e, i) { return e != '?' && e != '&'; })
+
+	    /*
+	      facetQueries[dateField] = facetQueries[dateField] || [];
+	      facetQueries[dateField] = facetQueries[dateField].concat( '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']');
+	      
+	      $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
+
+	      facetParams = {};
+	     */
+
 	    $.each(queryUrl.split(/(\?|&)f\[\d\]\=/).splice(1).filter(function(e, i) { return e != '?' && e != '&' }), function(j, e) {
 
 		    var queryExpr = decodeURI(e);
@@ -630,7 +695,9 @@ SolrQuery.prototype = {
 			var fieldValues = '[' + fieldSubStr[1].replace('%3A', ':', 'g');
 		    }
 
-		    facetQueries[fieldName] = fieldValues;
+		    //facetQueries[fieldName] = fieldValues;
+		    facetQueries[fieldName] = facetQueries[fieldName] || [];
+		    facetQueries[fieldName] = facetQueries[fieldName].concat(fieldValues);
 
 		    //var facetKey = 'f[' + i + ']';
 		    //facetParams[facetKey] = fieldName + ':' + fieldValues;
@@ -656,12 +723,17 @@ SolrQuery.prototype = {
 
 	    for(key in facetQueries) {
 
-		var facetKey = 'f[' + i + ']';
-		facetParams[ facetKey ] = key + ":" + facetQueries[key];
+		for(k in facetQueries[key]) {
+
+		    var facetKey = 'f[' + i + ']';
+		    //facetParams[ facetKey ] = key + ":" + facetQueries[key];
+		    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+		    i++;
+		}
 
 		//queryUrl += key + ":" + facetQueries[key];
 
-		i++;
+		//i++;
 	    }
 
 	    //queryUrl += $(document).data('islandoraDssDateRangeSlider')['query'];
