@@ -40,6 +40,13 @@ var SolrQuery = function($, options) {
 
 SolrQuery.FIELD_MAP = {
 
+    'Subject.OCM' : 'eastasia.Subject.OCM',
+    'Contributors.Digital' : 'eastasia.Contributors.Digital',
+    'Coverage.Location.Country' : 'eastasia.Coverage.Location.Country',
+    'Format.Medium' : 'eastasia.Format.Medium',
+    'Coverage.Location' : 'eastasia.Coverage.Location',
+    'Description.Ethnicity' : 'eastasia.Description.Ethnicity',
+
     'Date.Artifact.Lower' : 'eastasia.Date.Artifact.Lower',
     'Date.Artifact.Upper' : 'eastasia.Date.Artifact.Upper',
     'Date.Image.Lower' : 'eastasia.Date.Image.Lower',
@@ -384,20 +391,79 @@ SolrQuery.prototype = {
 	 * Please note that this widget merely populates the facet parameters for GET requests transmitted to the Solr endpoint
 	 *
 	 */
-
 	this.facetFormHandler = function() {
 	    
-	    $('#islandora-dss-solr-facet-pages-facets-form').submit(function(event) {
+	    // Work-around
+	    $('#islandora-dss-solr-facet-pages-facets-form').click(function(e) {
+
+		    e.stopImmediatePropagation();
+		});
+
+	    //$('#islandora-dss-solr-facet-pages-facets-form').submit(function(event) {
+	    $('#islandora-dss-solr-facet-pages-facets-form .form-submit').click(function(event) {
 
 		    event.preventDefault();
 
 		    facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
-		    $(this).serializeArray().each(function(i, e) {
 
-			    facetQueries[fieldName] = e.value;
+		    /*
+		    $('#islandora-dss-solr-facet-pages-facets-form').serializeArray().filter(function(e, i) {
+
+			    return e.name != 'form_build_id' && e.name != 'form_id';
+			}).each(function(i, e) {
+
+				facetQueries[fieldName] = e.value;
+			    });
+		    */
+
+		    var formValues = $('#islandora-dss-solr-facet-pages-facets-form').serializeArray();
+		    $.each(formValues.filter(function(e, i) {
+
+				return e.name != 'form_build_id' && e.name != 'form_id';
+			    }), function(i, e) {
+
+			    var solrField = $(document).data('islandoraDssBrowsingField');
+
+			    //facetQueries[solrField] = e.value;
+			    facetQueries[solrField] = facetQueries[solrField] || [];
+			    facetQueries[solrField] = facetQueries[solrField].concat(e.value);
+			});
+
+		    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
+		    $.fancybox.close();
+
+		    var query = $(document).data('islandoraDssDateRangeSlider')['query'];
+		    facetParams = {};
+
+		    var i = 0;
+		    for(key in facetQueries) {
+
+			for(k in facetQueries[key]) {
+
+			    var facetKey = 'f[' + i + ']';
+			    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+			    i++;
+			}
+		    }
+
+		    $.get(query, facetParams, function(data) {
+
+			    $facetTokens = $('.islandora-solr-facet-token-list li').detach();
+			    $(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
+			    $('.islandora-solr-facet-token-list').append($facetTokens);
+
+			    $(data).find('.main-container').children().appendTo($('.main-container').empty());
+
+			    that.facetDateHandler();
+
+			    $('.islandora-solr-facet-list li a').filter(function(i, e) {
+
+				    return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
 			});
 		});
 	};
+
+	var that = this;
 
 	/**
 	 * For the modal dialog window
@@ -405,22 +471,38 @@ SolrQuery.prototype = {
 	 */
 	this.facetModalHandler = function() {
 
-	    $('.islandora-solr-facet-list .last').each(function(i, e) {
+	    $('.islandora-solr-facet-list .last a').each(function(i, e) {
 
 		    $(e).click(function(event) {
 
 			    event.preventDefault();
 
-			    $.get('/islandora/facets', { solrField: $(e).parent().prev().text() }, function(data) {
+			    var solrField = SolrQuery.fieldMap($(e).parent().parent().prev().text());
+			    $(document).data('islandoraDssBrowsingField', solrField);
+
+			    $('body').append('<div class="fancy-box"></div>').fancybox({
+
+				    href: '/islandora/facets/' + solrField,
+					//modal: true,
+					type: 'ajax',
+					afterShow: that.facetFormHandler,
+					hideOnContentClick: false,
+					});
+
+			    /*
+			    $.get('/islandora/facets', { solrField: SolrQuery.fieldMap($(e).parent().parent().prev().text()) }, function(data) {
 
 				    // Integrate the handler for the Solr Facet Form here
 				    $(data);
 				    
 				    Drupal.behaviors.initLightbox( $(data) );
-				});
+				    });
+			    */
 			});
 		});
 	};
+
+	this.facetModalHandler();
 
 	/**
 	 * For the Date slider widget
@@ -582,7 +664,11 @@ SolrQuery.prototype = {
 				    $(data).find('.main-container').children().appendTo($('.main-container').empty());
 
 				    that.facetDateHandler();
-				    $('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
+
+				    //$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
+				    $('.islandora-solr-facet-list li a').filter(function(i, e) {
+
+					    return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
 				});
 
 			    $(document).data('islandoraDssDateRangeSlider', $.extend($(document).data('islandoraDssDateRangeSlider'), {query: query, maxFacet: maxFacet} ));
@@ -642,8 +728,6 @@ SolrQuery.prototype = {
 
 	};
 	this.facetDateHandler();
-
-	var that = this;
 
 	this.facetLinkHandler = function(e, element) {
 
@@ -826,11 +910,19 @@ SolrQuery.prototype = {
 		    }
 
 		    $(data).find('.main-container').children().appendTo($('.main-container').empty());
-		    $('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
+
+
+		    //$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
+		    $('.islandora-solr-facet-list li a').filter(function(i, e) {
+
+			    return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
 		});
 	};
 
-	$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
+	//$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
+	$('.islandora-solr-facet-list li a').filter(function(i, e) {
+
+		return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
     };
 
     // @todo: Refactor

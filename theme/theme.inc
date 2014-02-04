@@ -58,4 +58,21 @@ function islandora_dss_solr_facet_pages_preprocess_html(&$variables) {
   */
 
   drupal_add_library('system', 'ui.slider');
+
+  // lightbox2 does not support AJAX modals
+  /*
+  drupal_load('module', 'lightbox2');
+  lightbox2_add_files();
+  */
+
+  //fancyBox2 does
+
+  /*
+<!-- Add fancyBox -->
+<link rel="stylesheet" href="/fancybox/source/jquery.fancybox.css?v=2.1.5" type="text/css" media="screen" />
+<script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  */
+
+  drupal_add_css(libraries_get_path('fancyBox') . '/source/jquery.fancybox.css');
+  drupal_add_js(base_path() . libraries_get_path('fancyBox') . '/source/jquery.fancybox.pack.js');
 }
