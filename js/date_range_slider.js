@@ -174,6 +174,21 @@ SolrQuery.prototype = {
 	    });
     },
 
+    url: function url(params, url) {
+
+	url = '/islandora/search/' || url;
+
+	for(var key in params) {
+	    
+	    for(var i in params[key]) {
+
+		url += params[key][i];
+	    }
+	}
+
+	return url;
+    },
+
     query: function query(url) {
 
 	$ = this.$;
@@ -419,7 +434,7 @@ SolrQuery.prototype = {
 		    var formValues = $('#islandora-dss-solr-facet-pages-facets-form').serializeArray();
 		    $.each(formValues.filter(function(e, i) {
 
-				return e.name != 'form_build_id' && e.name != 'form_id';
+				return e.name != 'form_build_id' && e.name != 'form_id' && e.name != 'form_token';
 			    }), function(i, e) {
 
 			    var solrField = $(document).data('islandoraDssBrowsingField');
@@ -443,6 +458,34 @@ SolrQuery.prototype = {
 			    var facetKey = 'f[' + i + ']';
 			    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
 			    i++;
+
+			    //var parentUrl = facetedSearchAnchor.attr('href');
+			    //parentUrl = getFacetTokenUrl(facetedSearchAnchor);
+
+			    var parentUrl = $(document).data('islandoraDssDateRangeSlider')['query'];
+			    var linkText = '';
+
+			    /**
+			     * Work-around
+			     *
+			     */
+
+			    var facetedSearchAnchor = $('<a href="' + parentUrl + 'f[' + i + ']' +   + '" class="islandora-solr-facet-token">' + facetQueries[key][k] + '</a>');
+
+			    $('.islandora-solr-facet-token-list').append( $('<li></li>').append( facetedSearchAnchor.click(function(e) {
+
+					    that.facetLinkHandler(e, $(this));
+					})
+				    ));
+
+			    var $facetTokens = $('.islandora-solr-facet-token-list li');
+
+			    $facetTokens.children().each(function(i, facetToken) {
+
+				    $facetToken = $(facetToken);
+				    $facetToken.attr('href', updateFacetTokenUrl( $facetToken, facetedSearchAnchor));
+				});
+
 			}
 		    }
 
@@ -457,8 +500,10 @@ SolrQuery.prototype = {
 			    that.facetDateHandler();
 
 			    $('.islandora-solr-facet-list li a').filter(function(i, e) {
-
+				    
 				    return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
+
+
 			});
 		});
 	};
@@ -614,7 +659,6 @@ SolrQuery.prototype = {
 			    // https://digital.dev.lafayette.edu/islandora/search/%2A%3A%2A?f[0]=geology_slides_esi.date.original%3A%221983-01-01T00%3A00%3A00Z%22&f[1]=geology_slides_esi.subject%3A%22Roth%2C%20Mary%20Joel%20S.%22
 			    var query = $(document).data('islandoraDssDateRangeSlider')['query'];
 			    var maxFacet = $(document).data('islandoraDssDateRangeSlider')['maxFacet'] + 1;
-
 			    var menuArgs = /islandora\/search\/(.+)/.exec(query)[1];
 
 			    // query += '&f[' + maxFacet + ']=' + dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
@@ -631,7 +675,8 @@ SolrQuery.prototype = {
 
 			    //facetQueries[dateField] = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
 			    facetQueries[dateField] = facetQueries[dateField] || [];
-			    facetQueries[dateField] = facetQueries[dateField].concat( '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']');
+			    //facetQueries[dateField] = facetQueries[dateField].concat('[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']');
+			    facetQueries[dateField][0] = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
 
 			    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 

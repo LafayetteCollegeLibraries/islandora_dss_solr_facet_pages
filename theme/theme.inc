@@ -73,6 +73,8 @@ function islandora_dss_solr_facet_pages_preprocess_html(&$variables) {
 <script type="text/javascript" src="/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
   */
 
+  drupal_add_css(drupal_get_path('module', 'islandora_dss_solr_facet_pages') . '/css/islandora_dss_solr_facet_pages.css');
+
   drupal_add_css(libraries_get_path('fancyBox') . '/source/jquery.fancybox.css');
   drupal_add_js(base_path() . libraries_get_path('fancyBox') . '/source/jquery.fancybox.pack.js');
 }
