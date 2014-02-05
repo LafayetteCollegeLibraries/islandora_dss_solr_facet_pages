@@ -415,12 +415,13 @@ SolrQuery.prototype = {
 	/**
 	 * For updating page contents
 	 * @todo Refactor into a Class
+	 *
 	 */
 	this.updatePage = function(data, tokenCallback, activeToken, tokens) {
 
 	    if($(data).find('#page-header p.lead a.active').text() != ('0' + '\xA0' + 'Items Found')) {
 
-		$facetTokens = tokens.detach();
+		var $facetTokens = tokens || $('.islandora-solr-facet-token-list li');
 		$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
 		$('.islandora-solr-facet-token-list').append($facetTokens);
 
@@ -455,10 +456,12 @@ SolrQuery.prototype = {
 	this.facetFormHandler = function() {
 	    
 	    // Work-around
+	    /*
 	    $('#islandora-dss-solr-facet-pages-facets-form').click(function(e) {
 
 		    e.stopImmediatePropagation();
 		});
+	    */
 
 	    //$('#islandora-dss-solr-facet-pages-facets-form').submit(function(event) {
 	    $('#islandora-dss-solr-facet-pages-facets-form .form-submit').click(function(event) {
@@ -528,6 +531,7 @@ SolrQuery.prototype = {
 			}
 		    }
 
+		    $('.fancy-box-container').dialog('close');
 		    $.get(query, facetParams, that.updatePage);
 		});
 	};
@@ -556,11 +560,12 @@ SolrQuery.prototype = {
 						     beforeClose: function(event, ui) {
 
 						this.$parent = $(this);
+						
+						var fieldObjects = $(this).find('#islandora-dss-solr-facet-pages-facets-form').serializeArray().filter(function (fieldObj) {
 
-						if($(ui).find('#islandora-dss-solr-facet-pages-facets-form').serializeArray().filter(function (fieldObj) {
-
-							    return fieldObj.name != 'form_build_id' && fieldObj.name != 'form_id';
-							}).length == 0) {
+							return fieldObj.name != 'form_build_id' && fieldObj.name != 'form_id';
+						    });
+						if(fieldObjects.length == 0) {
 
 						    var that = this;
 						    $('<div class="islandora-facet-modal-alert">You have not selected any facets.</div>').appendTo($('body')).dialog({
@@ -583,7 +588,7 @@ SolrQuery.prototype = {
 							});
 						}
 
-						return false;
+						return fieldObjects.length > 0;
 					    }
 					});
 
