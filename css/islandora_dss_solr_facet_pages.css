@@ -1,0 +1,11 @@
+/**
+ * @file Styling for the search interface and related modals
+ * @author griffinj@lafayette.edu
+ *
+ */
+
+#islandora-dss-solr-facet-pages-facets-form #edit-fields {
+
+    overflow-y: scroll;
+    max-height: 224px;
+}
