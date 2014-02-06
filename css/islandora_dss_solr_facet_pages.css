@@ -9,3 +9,21 @@
     overflow-y: scroll;
     max-height: 224px;
 }
+
+/*
+ * Taken from http://sliptree.github.io/bootstrap-tokenfield/
+ */
+
+.islandora-solr-facet-token {
+
+    -moz-box-sizing: border-box;
+    background-color: #EDEDED;
+    border: 1px solid #D9D9D9;
+    border-radius: 3px 3px 3px 3px;
+    cursor: default;
+    display: inline-block;
+    height: 22px;
+    margin: -1px 5px 5px 0;
+    vertical-align: top;
+}
+

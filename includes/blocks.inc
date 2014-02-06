@@ -289,8 +289,50 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 					  'attributes' => array('class' => 'islandora-solr-facet-token-list',),
 					  )) . implode($items);
       */
-	
-      $results = '<ul class="islandora-solr-facet-token-list"></ul>'. implode($items);
+
+      dpm($filters);
+
+      $token_items = array();
+      $date_slider_buttons = array();
+
+      foreach($filters as $filter) {
+
+	if(preg_match('/(.+\.?[dD]ate\.?.+?)\:/', $filter, $date_slider_match)) {
+
+	  $date_reset_id = preg_replace('/_|\./', '-', $date_slider_match[1]);
+
+	  $date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
+							      '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" >Reset ' . $date_slider_match[1] . '</button>');
+	} else {
+
+	  $other_tokens = array();
+	  $facet_index = 0;
+
+	// Filter
+	foreach($filters as $other_filter) {
+
+	  if($other_filter != $filter) {
+
+	    $other_tokens["f[$facet_index]"] = $other_filter;
+	    $facet_index++;
+	  }
+	}
+
+	preg_match('/.+?\:(.+)/', $filter, $token_value_match);
+	$token_items[] = l(t($token_value_match[1]) . '<span class="close">×</span>', current_path(), array('attributes' => array('class' => array('islandora-solr-facet-token')),
+													    'html' => TRUE,
+													    'query' => $other_tokens));
+	}
+      }
+      $token_list = theme('item_list', array('items' => $token_items,
+					     'type' => 'ul',
+					     'attributes' => array('class' => 'islandora-solr-facet-token-list',),
+					     ));
+      
+      dpm($token_items);
+
+      //$results = '<ul class="islandora-solr-facet-token-list"></ul>'. implode($items);
+      $results = $token_list . render($date_slider_buttons) . implode($items);
 
       return $results;
 
