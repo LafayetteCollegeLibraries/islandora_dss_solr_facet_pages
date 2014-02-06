@@ -76,8 +76,15 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
     break;
   }
 
+  $options = array();
+  foreach($result_fields as $result_field => $count) {
+
+    $options[$result_field] = "<span>$result_field</span>" . "&nbsp;<span class='bucket-size'>($count)</span>";
+  }
+
   $form['islandora_solr_facets'] = array('fields' => array('#type' => 'checkboxes',
-							   '#options' => drupal_map_assoc(array_keys($result_fields)),
+							   //'#options' => drupal_map_assoc(array_keys($result_fields)),
+							   '#options' => $options,
 							   ),
 					 'submit' => array('#type' => 'submit',
 							   '#value' => t('Refine'),

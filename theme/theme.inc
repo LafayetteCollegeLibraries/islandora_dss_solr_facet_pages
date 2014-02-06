@@ -78,4 +78,7 @@ function islandora_dss_solr_facet_pages_preprocess_html(&$variables) {
 
   drupal_add_css(libraries_get_path('fancyBox') . '/source/jquery.fancybox.css');
   drupal_add_js(base_path() . libraries_get_path('fancyBox') . '/source/jquery.fancybox.pack.js');
+
+  // For formatting the dates
+  drupal_add_js(base_path() . libraries_get_path('moment') . '/moment-with-langs.min.js');
 }

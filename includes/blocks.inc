@@ -210,6 +210,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$child_items_class[] = 'islandora-solr-facet-date';
       }
 
+      $child_items_id = preg_replace('/_|\./', '-', $solr_field);
+
       if(!empty($result_fields)) {
 
 	// Sort by the most populated facets
@@ -238,6 +240,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	    $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
 
 	    $class = array('islandora-solr-facet');
+	    
 
 	    // For date values
 	    //if(in_array($value['label'], $date_fields)) {
@@ -247,8 +250,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	      //$child_items[] = l(truncate_utf8(date('F, Y', strtotime($result)), 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
 	      //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
 	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), $islandora_solr_path, array(
-												       //'attributes' => array('class' => $class),
-												       'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
+												     //'attributes' => array('id' => ),
+												     'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	    } else {
 	      
 	      //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
@@ -272,6 +275,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$items[] = theme('item_list', array('items' => $child_items,
 					    'type' => 'ul',
 					    'attributes' => array('class' => $child_items_class,
+								  'id' => $child_items_id
 								  )));
 
       }
@@ -299,10 +303,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	if(preg_match('/(.+\.?[dD]ate\.?.+?)\:/', $filter, $date_slider_match)) {
 
-	  $date_reset_id = preg_replace('/_|\./', '-', $date_slider_match[1]);
+	  //$date_reset_id = preg_replace('/_|\./', '-', $date_slider_match[1]);
+	  $date_reset_id = 'reset-' . $child_items_id;
 
 	  $date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
-							      '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" >Reset ' . $date_slider_match[1] . '</button>');
+							      '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" data-target="#' . $child_items_id . ' + .islandora-solr-facet-date-slider" >Reset ' . $solr_field . '</button>');
 	} else {
 
 	  $other_tokens = array();
@@ -326,7 +331,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       }
       $token_list = theme('item_list', array('items' => $token_items,
 					     'type' => 'ul',
-					     'attributes' => array('class' => 'islandora-solr-facet-token-list',),
+					     'attributes' => array('class' => 'islandora-solr-facet-token-list islandora-solr-facet-list',),
 					     ));
       
       dpm($token_items);
