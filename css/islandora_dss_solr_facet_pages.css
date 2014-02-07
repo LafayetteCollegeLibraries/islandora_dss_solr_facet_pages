@@ -27,3 +27,10 @@
     vertical-align: top;
 }
 
+.main-container.loading {
+
+    background-image: url('../files/loader_80_80.gif');
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    height: 160px;
+}

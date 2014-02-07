@@ -495,7 +495,7 @@ SolrQuery.prototype = {
 	    if($(data).find('#page-header p.lead a.active').text() != ('0' + '\xA0' + 'Items Found')) {
 
 		$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
-		$(data).find('.main-container').children().appendTo($('.main-container').empty());
+		$(data).find('.main-container').children().appendTo($('.main-container').empty().removeClass('loading') );
 
 		// Abstract and refactor
 		Drupal.theme('bootstrapDssObjectList');
@@ -1179,6 +1179,8 @@ SolrQuery.prototype = {
 	    */
 
 	    $.get(url, facetParams, that.updatePage);
+
+	    $('.main-container').empty().addClass('loading');
 	};
 
 	//$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
