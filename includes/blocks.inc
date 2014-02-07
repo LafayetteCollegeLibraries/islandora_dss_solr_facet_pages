@@ -331,7 +331,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       }
       $token_list = theme('item_list', array('items' => $token_items,
 					     'type' => 'ul',
-					     'attributes' => array('class' => 'islandora-solr-facet-token-list islandora-solr-facet-list',),
+					     'attributes' => array('class' => 'islandora-solr-facet-token-list',),
 					     ));
       
       dpm($token_items);

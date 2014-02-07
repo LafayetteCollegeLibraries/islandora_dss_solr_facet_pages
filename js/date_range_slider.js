@@ -499,12 +499,13 @@ SolrQuery.prototype = {
 
 		// Abstract and refactor
 		Drupal.theme('bootstrapDssObjectList');
-		var infiniteList = new IslandoraDssSolrInfinite($, Drupal.settings.dssSolrInfinite);
+		//var infiniteList = new IslandoraDssSolrInfinite($, Drupal.settings.dssSolrInfinite);
+		Drupal.behaviors.islandoraDssSolrInfinite();
 		that.facetDateHandler();
 		that.facetModalHandler();
 		that.dateSliderResetHandler()
 
-		$('.islandora-solr-facet-list li a').filter(function(i, e) {
+		$('.islandora-solr-facet-list li a, .islandora-solr-facet-token-list li a').filter(function(i, e) {
 
 			return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
 	    } else {
@@ -1181,7 +1182,7 @@ SolrQuery.prototype = {
 	};
 
 	//$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
-	$('.islandora-solr-facet-list li a').filter(function(i, e) {
+	$('.islandora-solr-facet-list li a, .islandora-solr-facet-token-list li a').filter(function(i, e) {
 
 		return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
 	
