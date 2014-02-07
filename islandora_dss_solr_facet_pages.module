@@ -10,6 +10,11 @@ require_once __DIR__ . '/includes/islandora_solr_facet_pages.inc';
 require_once __DIR__ . '/includes/blocks.inc';
 require_once __DIR__ . '/theme/theme.inc';
 
+function islandora_dss_solr_facet_pages_preprocess_islandora_solr_facet_pages_results(&$vars) {
+
+  dpm('trace');
+}
+
 function islandora_dss_solr_facet_pages_block_view(&$data, $block) {
 
   switch($block->delta) {
@@ -141,5 +146,10 @@ function islandora_dss_solr_facet_pages_theme_registry_alter(&$theme_registry) {
   $theme_registry['islandora_solr_facet_pages_letterer']['path'] = drupal_get_path('module', 'islandora_dss_solr_facet_pages') . '/includes';
   $theme_registry['islandora_solr_facet_pages_letterer']['file'] = 'islandora_solr_facet_pages.inc';
 
+  dpm( $theme_registry['islandora_solr_facet_pages_results']);
   $theme_registry['islandora_solr_facet_pages_results']['path'] = drupal_get_path('module', 'islandora_dss_solr_facet_pages') . '/theme';
+  $theme_registry['islandora_solr_facet_pages_results']['file'] = 'theme.inc';
+  $theme_registry['islandora_solr_facet_pages_results']['includes'][] = drupal_get_path('module', 'islandora_dss_solr_facet_pages') . '/theme/theme.inc';
+  dpm( $theme_registry['islandora_solr_facet_pages_results']);
+
 }

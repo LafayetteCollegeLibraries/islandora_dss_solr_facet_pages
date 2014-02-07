@@ -7,3 +7,4 @@ version = 7.x-dev
 core = 7.x
 
 scripts[] = 'js/date_range_slider.js'
+scripts[] = 'js/objects_list_sort.js'

@@ -10,9 +10,11 @@
  * Implements hook_preprocess_HOOK().
  *
  */
-function islandora_dss_solr_facet_pages_process_islandora_solr_facet_pages_results(&$vars) {
+function _islandora_dss_solr_facet_pages_preprocess_islandora_solr_facet_pages_results(&$vars) {
 
   $vars['complex_results'] = array();
+
+  dpm($vars);
 
   foreach($vars['results'] as $result => $count) {
 
