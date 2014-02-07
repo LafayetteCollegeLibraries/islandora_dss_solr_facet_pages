@@ -409,7 +409,7 @@ SolrQuery.prototype = {
 	//$('#block-islandora-solr-facet-pages-islandora-solr-facet-pages h2.block-title').after('<ul class="islandora-solr-facet-token-list"></ul>');
 
 	var currentQuery = document.URL.split(/\?f\[0\]/)[0];
-	currentQuery = /(\/islandora\/search\/.+)/.exec(document.URL)[1];
+	currentQuery = /(islandora\/search\/.+)/.exec(document.URL)[1];
 
 	// For sorting/filtering by facet value
 	$(document).data('islandoraDssDateRangeSlider', {

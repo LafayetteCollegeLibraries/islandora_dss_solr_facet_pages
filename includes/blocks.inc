@@ -134,15 +134,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       $solr_field = $value['solr_field'];
 
-      // Add the field name itself
-      // Terrible, refactor
-      $items[] = "<div class='islandora-solr-facet'>{$value['label']}</div>";
-
-      /*
-      $items[] = render(array('div' => '',
-			      'class' => 'islandora-solr-facet',
-			      'content' => $value['label']));
-      */
       
       // Use Solr faceting to get list of names.
       $parsed_url = parse_url(variable_get('islandora_solr_url', 'http://localhost:8080/solr'));
@@ -214,6 +205,10 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       if(!empty($result_fields)) {
 
+	// Add the field name itself
+	// Terrible, refactor
+	$items[] = "<div class='islandora-solr-facet'>{$value['label']}</div>";
+
 	// Sort by the most populated facets
 	arsort($result_fields);
 
@@ -225,8 +220,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	if(isset($islandora_solr_query)) {
 
 	  $islandora_solr_path .= $islandora_solr_query;
-
-
 	} else {
 
 	  $islandora_solr_path .= '*:*';
@@ -263,12 +256,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
 
 	$child_items[] = l('Show more...', "browse/{$value['path']}");
-      } else {
-
-	$child_items[] = l('View all values...', "browse/{$value['path']}");
       }
-
-      //dpm($child_items);
 
       if(!empty($child_items)) {
 
@@ -294,10 +282,13 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 					  )) . implode($items);
       */
 
-      dpm($filters);
+      //dpm($filters);
 
       $token_items = array();
       $date_slider_buttons = array();
+
+      $TOP_COLLECTIONS = array('East Asia Image Collection',
+			       '');
 
       foreach($filters as $filter) {
 
@@ -334,7 +325,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 					     'attributes' => array('class' => 'islandora-solr-facet-token-list',),
 					     ));
       
-      dpm($token_items);
+      //dpm($token_items);
 
       //$results = '<ul class="islandora-solr-facet-token-list"></ul>'. implode($items);
       $results = $token_list . render($date_slider_buttons) . implode($items);
@@ -363,7 +354,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
     if(!empty($items)) {
 
-      /*
       return theme('item_list', array(
 				      'items' => $items,
 				      'type' => 'ul',
@@ -371,15 +361,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							    'class' => 'islandora-solr-facet-filter-list',
 							    ),
 				      ));
-      */
-
-      dpm(theme('item_list', array('items' => array(),
-				      'type' => 'ul',
-				      'attributes' => array('class' => 'islandora-solr-facet-token-list',),
-				   )));
-      dpm('trace');
-
-
     } else {
       
       return FALSE;
