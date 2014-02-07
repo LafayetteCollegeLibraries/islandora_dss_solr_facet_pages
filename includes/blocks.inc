@@ -282,27 +282,30 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 					  )) . implode($items);
       */
 
-      //dpm($filters);
+    } else {
+      
+      //$items = '';
+    }
 
-      $token_items = array();
-      $date_slider_buttons = array();
+    $token_items = array();
+    $date_slider_buttons = array();
 
-      $TOP_COLLECTIONS = array('East Asia Image Collection',
-			       '');
+    $TOP_COLLECTIONS = array('East Asia Image Collection',
+			     '');
 
-      foreach($filters as $filter) {
+    foreach($filters as $filter) {
 
-	if(preg_match('/(.+\.?[dD]ate\.?.+?)\:/', $filter, $date_slider_match)) {
+      if(preg_match('/(.+\.?[dD]ate\.?.+?)\:/', $filter, $date_slider_match)) {
 
-	  //$date_reset_id = preg_replace('/_|\./', '-', $date_slider_match[1]);
-	  $date_reset_id = 'reset-' . $child_items_id;
+	//$date_reset_id = preg_replace('/_|\./', '-', $date_slider_match[1]);
+	$date_reset_id = 'reset-' . $child_items_id;
 
-	  $date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
-							      '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" data-target="#' . $child_items_id . ' + .islandora-solr-facet-date-slider" >Reset ' . $solr_field . '</button>');
-	} else {
+	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
+							    '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" data-target="#' . $child_items_id . ' + .islandora-solr-facet-date-slider" >Reset ' . $solr_field . '</button>');
+      } else {
 
-	  $other_tokens = array();
-	  $facet_index = 0;
+	$other_tokens = array();
+	$facet_index = 0;
 
 	// Filter
 	foreach($filters as $other_filter) {
@@ -318,24 +321,17 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$token_items[] = l(t($token_value_match[1]) . '<span class="close">×</span>', current_path(), array('attributes' => array('class' => array('islandora-solr-facet-token')),
 													    'html' => TRUE,
 													    'query' => $other_tokens));
-	}
       }
-      $token_list = theme('item_list', array('items' => $token_items,
-					     'type' => 'ul',
-					     'attributes' => array('class' => 'islandora-solr-facet-token-list',),
-					     ));
-      
-      //dpm($token_items);
-
-      //$results = '<ul class="islandora-solr-facet-token-list"></ul>'. implode($items);
-      $results = $token_list . render($date_slider_buttons) . implode($items);
-
-      return $results;
-
-    } else {
-      
-      return '';
     }
+    $token_list = theme('item_list', array('items' => $token_items,
+					   'type' => 'ul',
+					   'attributes' => array('class' => 'islandora-solr-facet-token-list',),
+					   ));
+      
+    //$results = '<ul class="islandora-solr-facet-token-list"></ul>'. implode($items);
+    $results = $token_list . render($date_slider_buttons) . implode($items);
+
+    return $results;
 
   } else {
 
@@ -379,8 +375,6 @@ function islandora_dss_solr_facet_pages_block_view_alter(&$data, $block) {
     $path = current_path();
     //if(preg_match('/browse\//', $path) || preg_match('/islandora\/search/', $path)) {
     if(preg_match('/islandora\/search/', $path)) {
-
-      dpm('trace2');
 
       #$path = current_path();
       $data['title'] = 'Refine your search';
