@@ -72,16 +72,20 @@ LafayetteDssObjectList.prototype = {
 
 	// AJAX-integrated
 	var url = $(document).data('islandoraDssDateRangeSlider')['query'] || '/islandora/search/*:*';
-	//var url = $(document).data('islandoraDssSolrSearchUrl') || '/islandora/search/*:*';
+	/**
+	 * @todo Resolve
+	 *
+	 */
+	url = '/' + url;
 	var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
-	params = $.extend(params, { sort: this.options.field + ' ' + this.options.order });
+	var sortParam = this.options.field + ' ' + this.options.order;
+	params = $.extend(params, { sort: sortParam });
 
 	$.get(url, params, function(data) {
 
-		$(data).find('.main-container').children().appendTo($('.main-container').empty());
-		Drupal.theme('bootstrapDssObjectList');
-		var infiniteList = new IslandoraDssSolrInfinite($, Drupal.settings.dssSolrInfinite);
+		$('.islandora-solr-search-results').removeClass('loading').append($(data).find('.islandora-solr-search-results').children());
 	    });
+	$('.islandora-solr-search-results').empty().addClass('loading');
     }
 };
 
@@ -107,9 +111,9 @@ LafayetteDssObjectList.prototype = {
 	//$('.islandora-discovery-control.title-sort-control select').change(function() {
 	$('.field-sort').click(function(e) {
 
-		$('.field-sort.active').removeClass('active');
 		e.preventDefault();
-		$(this).toggleClass('active');
+		$('.field-sort.active').removeClass('active');
+		$(this).addClass('active');
 
 		//objectList.sort($(this).val(), $('#order-sort-select').val());
 		//objectList.sort($(this).val(), preg_match('/field\-sort\-(.+)/', $('.field-sort.active').attr('id'))[1]);
@@ -117,6 +121,13 @@ LafayetteDssObjectList.prototype = {
 		//objectList.sort($(this).val(), /field\-sort\-(.+)/.exec( $(this).attr('id'))[1] );
 		objectList.options.field = $('#field-sort-select').val();
 		objectList.options.order = /field\-sort\-(.+)/.exec( $(this).attr('id'))[1];
+		objectList.sort();
+	    });
+
+	$('#field-sort-select option').click(function(e) {
+
+		objectList.options.field = $(this).val();
+		objectList.options.order = /field\-sort\-(.+)/.exec( $('.field-sort.active').attr('id'))[1];
 		objectList.sort();
 	    });
     };
