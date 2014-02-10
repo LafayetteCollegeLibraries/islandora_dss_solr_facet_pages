@@ -293,11 +293,30 @@ function _islandora_dss_solr_facet_pages_block_callback() {
     $TOP_COLLECTIONS = array('East Asia Image Collection',
 			     '');
 
+    /*
+
+      $child_items = array();
+      $child_items_class = array('islandora-solr-facet-list');
+      if(preg_match('/\.?[dD]ate\.?/', $solr_field)) {
+
+	$child_items_class[] = 'islandora-solr-facet-date';
+      }
+
+      $child_items_id = preg_replace('/_|\./', '-', $solr_field);
+
+    */
+    dpm($filters);
+
     foreach($filters as $filter) {
 
       if(preg_match('/(.+\.?[dD]ate\.?.+?)\:/', $filter, $date_slider_match)) {
 
 	//$date_reset_id = preg_replace('/_|\./', '-', $date_slider_match[1]);
+
+	$filter_split = explode(':', $filter);
+	$solr_field = $filter_split[0];
+
+	$child_items_id = preg_replace('/_|\./', '-', $solr_field);
 	$date_reset_id = 'reset-' . $child_items_id;
 
 	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',

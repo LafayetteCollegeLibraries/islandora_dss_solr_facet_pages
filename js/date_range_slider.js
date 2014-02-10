@@ -739,6 +739,8 @@ SolrQuery.prototype = {
 		//that.dateSliderStop();
 
 		var url = $(document).data('islandoraDssDateRangeSlider')['query'];
+		url = '/' + url;
+
 		var facetParams = {};
 
 		var dateField = SolrQuery.fieldMap( $dateSlider.prev().prev().text() );
@@ -878,6 +880,8 @@ SolrQuery.prototype = {
 
 			    // https://digital.dev.lafayette.edu/islandora/search/%2A%3A%2A?f[0]=geology_slides_esi.date.original%3A%221983-01-01T00%3A00%3A00Z%22&f[1]=geology_slides_esi.subject%3A%22Roth%2C%20Mary%20Joel%20S.%22
 			    var url = $(document).data('islandoraDssDateRangeSlider')['query'];
+			    url = '/' + url;
+
 			    var maxFacet = $(document).data('islandoraDssDateRangeSlider')['maxFacet'] + 1;
 			    var menuArgs = /islandora\/search\/(.+)/.exec(url)[1];
 
