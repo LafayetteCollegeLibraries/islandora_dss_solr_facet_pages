@@ -249,8 +249,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	      
 	      //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
 	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), $islandora_solr_path, array(
-												       //'attributes' => array('class' => $class),
-												       'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
+												     //'attributes' => array('class' => $class),
+												     'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	    }
 	  }
 	}

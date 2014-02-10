@@ -72,6 +72,7 @@ LafayetteDssObjectList.prototype = {
 
 	// AJAX-integrated
 	var url = $(document).data('islandoraDssDateRangeSlider')['query'] || '/islandora/search/*:*';
+
 	/**
 	 * @todo Resolve
 	 *
@@ -80,6 +81,7 @@ LafayetteDssObjectList.prototype = {
 	var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
 	var sortParam = this.options.field + ' ' + this.options.order;
 	params = $.extend(params, { sort: sortParam });
+	$(document).data('islandoraDssDateRangeFacetParams', params);
 
 	$.get(url, params, function(data) {
 
