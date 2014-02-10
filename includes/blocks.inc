@@ -342,7 +342,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							    );
 	*/
 
-	$token_items[] = l(t('Reset&nbsp;' . $result_fields[$solr_field]) . '<span class="close">×</span>', '#', array('attributes' => array(
+	$token_items[] = l(t($result_fields[$solr_field]) . '<span class="close">×</span>', '#', array('attributes' => array(
 																	     'class' => array('islandora-solr-date-reset islandora-solr-facet-token'),
 																	     'data-target' => '#' . $child_items_id . ' + .islandora-solr-facet-date-slider'
 																	     ),
