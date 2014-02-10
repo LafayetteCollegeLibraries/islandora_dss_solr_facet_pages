@@ -319,8 +319,37 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$child_items_id = preg_replace('/_|\./', '-', $solr_field);
 	$date_reset_id = 'reset-' . $child_items_id;
 
+	$result_fields = dpm( islandora_solr_get_fields('result_fields'));
+
+	/*
 	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
-							    '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" data-target="#' . $child_items_id . ' + .islandora-solr-facet-date-slider" >Reset ' . $solr_field . '</button>');
+							    '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" data-target="#' . $child_items_id . ' + .islandora-solr-facet-date-slider" >Reset ' . $result_fields[$solr_field] . '</button>');
+	*/
+
+	/*
+	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
+							    '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" data-target="#' . $child_items_id . ' + .islandora-solr-facet-date-slider" >Reset ' . $result_fields[$solr_field] . '</button>');
+	*/
+
+	/*
+	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
+							    '#markup' => l(t('Reset&nbsp;' . $result_fields[$solr_field]) . '<span class="close">×</span>', '#', array('attributes' => array('class' => array('islandora-solr-date-reset islandora-solr-facet-token'),
+																					     'data-target' => '#' . $child_items_id . ' + .islandora-solr-facet-date-slider'
+																					     ),
+																		       'fragment' => ' ',
+																		       'external' => TRUE,
+																		       'html' => TRUE))
+							    );
+	*/
+
+	$token_items[] = l(t('Reset&nbsp;' . $result_fields[$solr_field]) . '<span class="close">×</span>', '#', array('attributes' => array(
+																	     'class' => array('islandora-solr-date-reset islandora-solr-facet-token'),
+																	     'data-target' => '#' . $child_items_id . ' + .islandora-solr-facet-date-slider'
+																	     ),
+														       'fragment' => ' ',
+														       'external' => TRUE,
+														       'html' => TRUE));
+
       } else {
 
 	$other_tokens = array();
