@@ -1061,6 +1061,13 @@ SolrQuery.prototype = {
 			    $('.snap-trigger').toggleClass('shown').children('img').toggleClass('shown');
 			    //$(document).data('islandoraDssDateRangeSlider', $.extend($(document).data('islandoraDssDateRangeSlider'), {query: query, maxFacet: maxFacet} ));
 			},
+
+			create: function(event) {
+
+			    $handles = $(this).children('.ui-slider-handle');
+			    $($handles[0]).addClass('ui-slider-left');
+			    $($handles[1]).addClass('ui-slider-right');
+			},
 		    };
 
 		    /**
