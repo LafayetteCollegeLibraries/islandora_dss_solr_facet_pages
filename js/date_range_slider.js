@@ -62,7 +62,7 @@ SolrQuery.FIELD_MAP = {
 
     'Date' : 'geology_slides_esi.date.original',
 
-    'cdm.RelationIsPartOf' : 'Relation.IsPartOf',
+    'cdm.Relation.IsPartOf' : 'Relation.IsPartOf',
 
     'eastasia.Date.Artifact.Lower' : 'Date.Artifact.Lower',
     'eastasia.Date.Artifact.Upper' : 'Date.Artifact.Upper',
@@ -723,7 +723,7 @@ SolrQuery.prototype = {
 			    */
 
 			    var facetParams = $(document).data('islandoraDssDateRangeFacetParams');
-			    var fancyBoxContainer = $('<div class="fancy-box-container loading"></div>').appendTo($('body')).dialog({ title: solrField,
+			    var fancyBoxContainer = $('<div class="fancy-box-container loading"></div>').appendTo($('body')).dialog({ title: SolrQuery.fieldMap(solrField),
 																      modal: true,
 																      minHeight: 280,
 																      minWidth: 392,
