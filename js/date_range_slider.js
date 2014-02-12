@@ -776,22 +776,31 @@ SolrQuery.prototype = {
 							resizable: false,
 							height: 140,
 							buttons: {
+
 							Apply: function() {
 							    
 							    $( this ).dialog( "close" );
 							    $('#islandora-dss-solr-facet-pages-facets-form .form-submit').click();
+							    $( that ).dialog( "close" );
 							},
 							Discard: function() {
 							    
 							    $( this ).dialog( "close" );
 							    $('.fancy-box-container').dialog('destroy');
+							    $( that ).dialog( "close" );
 							}
+						    },
+
+						    open: function(event) {
+
+							//$(this).find('.ui-dialog .ui-dialog-titlebar .ui-dialog-titlebar-close').remove();
+							$(this).prev('.ui-dialog-titlebar').children('.ui-dialog-titlebar-close.ui-corner-all').remove();
 						    }
 						});
 
 					    //return fieldObjects.length > 0;
 					    //return fieldObjects.length == 0;
-					    return true;
+					    return false;
 					} else {
 
 					    return true;
