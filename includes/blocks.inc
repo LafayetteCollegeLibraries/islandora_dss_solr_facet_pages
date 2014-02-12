@@ -305,7 +305,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       $child_items_id = preg_replace('/_|\./', '-', $solr_field);
 
     */
-    dpm($filters);
 
     foreach($filters as $filter) {
 
@@ -319,7 +318,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$child_items_id = preg_replace('/_|\./', '-', $solr_field);
 	$date_reset_id = 'reset-' . $child_items_id;
 
-	$result_fields = dpm( islandora_solr_get_fields('result_fields'));
+	$result_fields = islandora_solr_get_fields('result_fields');
 
 	/*
 	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',

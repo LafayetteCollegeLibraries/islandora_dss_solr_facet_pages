@@ -28,7 +28,7 @@ function islandora_dss_solr_facet_pages_block_view(&$data, $block) {
   default:
     break;
   }
-  }
+}
 
 /**
  * Implements hook_block_view_MODULE_DELTA_alter()
@@ -45,7 +45,11 @@ function islandora_dss_solr_facet_pages_block_view_islandora_solr_facet_pages_is
  * Intended to be rendered using a JavaScript widget, hence, there are no implementations of submission or validation callbacks
  *
  */
-function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_field) {
+function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_field, $solr_query='*:*', $facets=array()) {
+
+
+
+  $solr_query = implode(' AND ', array_merge(array($solr_query), $facets));
 
   $prefix = t('ALL');
   drupal_load('module', 'islandora_solr');
@@ -55,10 +59,10 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
   $solr = new Apache_Solr_Service($parsed_url['host'], $parsed_url['port'], $parsed_url['path']);
 
   // Collect results.
-  $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix);
+  $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $solr_query);
   // Collect results with lowercase.
   $prefix_lower = strtolower($prefix);
-  $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower);
+  $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower, $solr_query);
   // Merge uppercase with lowercase.
   $result_fields = array_merge($result_fields, $result_fields_lower);
 
@@ -84,7 +88,10 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
   $options = array();
   foreach($result_fields as $result_field => $count) {
 
-    $options[$result_field] = "<span>$result_field</span>" . "&nbsp;<span class='bucket-size'>($count)</span>";
+    if(!in_array("$solr_field:\"$result_field\"", $facets)) {
+
+      $options[$result_field] = "<span>$result_field</span>" . "&nbsp;<span class='bucket-size'>($count)</span>";
+    }
   }
 
   $form['islandora_solr_facets'] = array('fields' => array('#type' => 'checkboxes',
@@ -109,12 +116,28 @@ function _islandora_dss_solr_facet_pages_facets($paths, $solr_field) {
   //if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
   if(true) {
 
-    if(!isset($solr_field) && array_key_exists('solrField', $_GET)) {
+    //$query = $_GET['q'];
 
-      $solr_field = $_GET['solrField'];
+    $query = '*:*';
+    $facets = array();
+    if(array_key_exists('query', $_GET)) {
+
+      $query = $_GET['query'];
+    } elseif(array_key_exists('query', $_POST)) {
+
+      $query = $_POST['query'];
     }
 
-    print drupal_render(drupal_get_form('islandora_dss_solr_facet_pages_facets_form', $solr_field));
+    if(array_key_exists('f', $_GET)) {
+
+      $facets = $_GET['f'];
+    } elseif(array_key_exists('f', $_POST)) {
+
+      $facets = $_POST['f'];
+    }
+
+    //print drupal_render(drupal_get_form('islandora_dss_solr_facet_pages_facets_form', $solr_field, $solr_query));
+    print drupal_render(drupal_get_form('islandora_dss_solr_facet_pages_facets_form', $solr_field, $query, $facets));
     exit;
   } else {
 
@@ -129,7 +152,7 @@ function _islandora_dss_solr_facet_pages_facets($paths, $solr_field) {
 function islandora_dss_solr_facet_pages_menu() {
 
   $items['islandora/facets'] = array('page callback' => '_islandora_dss_solr_facet_pages_facets',
-				     'page arguments' => array(2),
+				     'page arguments' => array(3),
 				     'access arguments' => array('search islandora solr'),
 				     'type' => MENU_CALLBACK,
 				     );
@@ -150,6 +173,6 @@ function islandora_dss_solr_facet_pages_theme_registry_alter(&$theme_registry) {
   $theme_registry['islandora_solr_facet_pages_results']['path'] = drupal_get_path('module', 'islandora_dss_solr_facet_pages') . '/theme';
   $theme_registry['islandora_solr_facet_pages_results']['file'] = 'theme.inc';
   $theme_registry['islandora_solr_facet_pages_results']['includes'][] = drupal_get_path('module', 'islandora_dss_solr_facet_pages') . '/theme/theme.inc';
-  dpm( $theme_registry['islandora_solr_facet_pages_results']);
+  //dpm( $theme_registry['islandora_solr_facet_pages_results']);
 
 }
