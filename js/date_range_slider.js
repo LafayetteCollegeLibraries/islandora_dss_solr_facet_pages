@@ -1071,6 +1071,9 @@ SolrQuery.prototype = {
 			    $handles = $(this).children('.ui-slider-handle');
 			    $($handles[0]).addClass('ui-slider-left');
 			    $($handles[1]).addClass('ui-slider-right');
+
+			    $($handles[1]).css('left', 'inherit');
+			    $($handles[1]).css('right', '0%');
 			},
 		    };
 
