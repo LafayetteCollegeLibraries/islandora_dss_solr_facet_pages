@@ -1072,8 +1072,15 @@ SolrQuery.prototype = {
 			    $($handles[0]).addClass('ui-slider-left');
 			    $($handles[1]).addClass('ui-slider-right');
 
+			    $($handles[0]).css('left', '-5%');
+			    //$($handles[0]).css('right', 'inherit');
+
+			    /*
 			    $($handles[1]).css('left', 'inherit');
 			    $($handles[1]).css('right', '0%');
+			    */
+			    $($handles[1]).css('left', '104%');
+			    //$($handles[1]).css('right', '0%');
 			},
 		    };
 
