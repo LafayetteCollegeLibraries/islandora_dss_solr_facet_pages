@@ -501,7 +501,11 @@ SolrQuery.prototype = {
 
 		$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
 		$(data).find('.main-container').children().appendTo($('.main-container').empty().removeClass('loading'));
-		$('.snap-trigger').toggleClass('shown').children('img').toggleClass('shown');
+
+		//$('.snap-trigger').toggleClass('shown').children('img').toggleClass('shown');
+		$('.snap-trigger').parent().toggleClass('loaded').children().toggleClass('shown').children('img').toggleClass('shown');
+		$('.snap-trigger').html( $('.snap-trigger').html().replace('Refine', 'Hide'));
+
 
 		// Abstract and refactor
 		Drupal.theme('bootstrapDssObjectList');
