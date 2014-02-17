@@ -414,7 +414,11 @@ SolrQuery.prototype = {
 
 	var currentQuery = document.URL.split(/\?f\[0\]/)[0];
 	//currentQuery = /(islandora\/search\/.+)/.exec(document.URL)[1];
-	currentQuery = /(islandora\/search\/.+)/.exec(currentQuery)[1];
+	var m = /(islandora\/search\/.+)/.exec(currentQuery);
+	if(m) {
+
+	    currentQuery = m[1];
+	}
 
 	// For sorting/filtering by facet value
 	$(document).data('islandoraDssDateRangeSlider', {
