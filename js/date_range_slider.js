@@ -513,7 +513,7 @@ SolrQuery.prototype = {
 		Drupal.behaviors.islandoraDssSolrInfinite();
 		that.facetDateHandler();
 		that.facetModalHandler();
-		that.dateSliderResetHandler()
+		that.dateSliderResetHandler();
 
 		$('.islandora-solr-facet-list li a, .islandora-solr-facet-token-list li a').filter(function(i, e) {
 
@@ -826,38 +826,38 @@ SolrQuery.prototype = {
 
 	this.dateSliderResetHandler = function() {
 
-	$('.islandora-solr-date-reset').click(function(e) {
+	    $('.islandora-solr-date-reset').click(function(e) {
 
-		var $dateSlider = $($(this).attr('data-target'));
-		$dateSlider.slider('values', [ $dateSlider.slider('option', 'min'), $dateSlider.slider('option', 'max') ]);
+		    var $dateSlider = $($(this).attr('data-target'));
+		    $dateSlider.slider('values', [ $dateSlider.slider('option', 'min'), $dateSlider.slider('option', 'max') ]);
 
-		//that.dateSliderStop();
+		    //that.dateSliderStop();
 
-		var url = $(document).data('islandoraDssDateRangeSlider')['query'];
-		url = '/' + url;
+		    var url = $(document).data('islandoraDssDateRangeSlider')['query'];
+		    url = '/' + url;
 
-		var facetParams = {};
+		    var facetParams = {};
 
-		var dateField = SolrQuery.fieldMap( $dateSlider.prev().prev().text() );
-		var facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
-		delete facetQueries[dateField];
-		$(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
+		    var dateField = SolrQuery.fieldMap( $dateSlider.prev().prev().text() );
+		    var facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
+		    delete facetQueries[dateField];
+		    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
-		var facetIndex = 0;
-		for(key in facetQueries) {
+		    var facetIndex = 0;
+		    for(key in facetQueries) {
 
-		    for(k in facetQueries[key]) {
+			for(k in facetQueries[key]) {
 
-			var facetKey = 'f[' + facetIndex + ']';
-			facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-			facetIndex++;
+			    var facetKey = 'f[' + facetIndex + ']';
+			    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+			    facetIndex++;
+			}
 		    }
-		}
-		$(document).data('islandoraDssDateRangeFacetParams', facetParams);
+		    $(document).data('islandoraDssDateRangeFacetParams', facetParams);
 
-		$.get(url, facetParams, that.updatePage);
-		$('.main-container').empty().addClass('loading');
-	    });
+		    $.get(url, facetParams, that.updatePage);
+		    $('.main-container').empty().addClass('loading');
+		});
 	};
 
 	this.dateSliderResetHandler();
@@ -1001,6 +1001,9 @@ SolrQuery.prototype = {
 			    var maxDate = minMax[dateField]['max'];
 
 			    facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
+
+			    // Bug: Resolve this
+			    delete facetQueries[undefined];
 
 			    if(ui.values[0] <= minDate && ui.values[1] >= maxDate) {
 
