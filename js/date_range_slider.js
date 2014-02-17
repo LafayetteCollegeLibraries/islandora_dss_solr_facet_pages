@@ -510,7 +510,6 @@ SolrQuery.prototype = {
 		$('.snap-trigger').parent().toggleClass('loaded').children().toggleClass('shown').children('img').toggleClass('shown');
 		$('.snap-trigger').html( $('.snap-trigger').html().replace('Refine', 'Hide'));
 
-
 		// Abstract and refactor
 		Drupal.theme('bootstrapDssObjectList');
 		//var infiniteList = new IslandoraDssSolrInfinite($, Drupal.settings.dssSolrInfinite);
@@ -518,7 +517,7 @@ SolrQuery.prototype = {
 		that.facetDateHandler();
 		that.facetModalHandler();
 		that.dateSliderResetHandler();
-
+		
 		$('.islandora-solr-facet-list li a, .islandora-solr-facet-token-list li a').filter(function(i, e) {
 
 			return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
@@ -1017,6 +1016,16 @@ SolrQuery.prototype = {
 				//facetQueries[dateField] = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
 				facetQueries[dateField] = facetQueries[dateField] || [];
 				//facetQueries[dateField] = facetQueries[dateField].concat('[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']');
+
+				/**
+				 * Work-around
+				 * @todo Address this issue
+				 *
+				 */
+				if(typeof(facetQueries[dateField][0]) === 'number') {
+
+				    facetQueries[dateField] = facetQueries[dateField].slice(1);
+				}
 				facetQueries[dateField][0] = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
 			    }
 
@@ -1112,22 +1121,24 @@ SolrQuery.prototype = {
 		    }
 		    */
 
-		    //console.log( facetQueries );
-
-		    // Populate from the facet queries first...
-		    if(typeof(_facets[solrFieldName]) !== 'undefined') {
-
-			options['values'] = _facets[solrFieldName];
-		    } else if(typeof(_query[solrFieldName]) !== 'undefined') {
-
-			options['values'] = _query[solrFieldName];
-		    } else if(typeof( facetQueries[solrFieldName] ) !== 'undefined') {
+		    /**
+		     * Work-around
+		     * @todo Refactor this
+		     *
+		     */
+		    if(typeof( facetQueries[solrFieldName] ) !== 'undefined' && typeof( facetQueries[solrFieldName][0] ) === 'string' ) {
 
 			// Work-around
 			// There can only ever be one element within an array of values for Date fields
 			var minValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[0].slice(1));
 			var maxValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[1].slice(0, -1));
 			options['values'] = [minValue, maxValue];
+		    } else if(typeof(_facets[solrFieldName]) !== 'undefined') { // Populate from the facet queries first...
+
+			options['values'] = _facets[solrFieldName];
+		    } else if(typeof(_query[solrFieldName]) !== 'undefined') {
+
+			options['values'] = _query[solrFieldName];
 		    } else {
 
 			options['values'] = [ options['min'], options['max'] ];
