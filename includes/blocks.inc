@@ -9,6 +9,13 @@
 
 function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) {
 
+  $query_field_namespace_map = array(
+				     'Imperial Postcard Collection' => 'eastasia',
+				     'Marquis de Lafayette Prints Collection' => 'mdl_prints',
+				     'Geology Department Slide Collection' => 'geology_slides_esi',
+				     'Lafayette World War II Casualties' => 'war_casualties',
+				     );
+
   $filter = '';
   if(!empty($filters)) {
 
@@ -18,9 +25,31 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
   $fields = array();
   $_fields = variable_get('islandora_solr_facet_pages_fields_data', array());
 
-  if(preg_match('/(.+?)\./', $query_field, $m) or preg_match('/(.+?)\./', $filter, $m) ) {
+  //dpm($field['solr_field']);
+  //dpm($excluded_fields);
+  dpm($query_field);
+  dpm($filter);
+
+  if(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $filter, $m)) {
 
     $query_field_namespace = $m[1];
+    if(preg_match('/"(.+?)"/', $query_field_namespace, $m)) {
+
+      $query_field_namespace = $m[1];
+    }
+
+    $query_field_namespace = $query_field_namespace_map[$query_field_namespace];
+
+    dpm($query_field_namespace);
+  } elseif(preg_match('/(.+?)\./', $query_field, $m) or preg_match('/(.+?)\./', $filter, $m)) {
+
+    $query_field_namespace = $m[1];
+  }
+
+  if(isset($query_field_namespace) ) {
+
+    $included_fields = array();
+    $excluded_fields = array();
 
     switch($query_field_namespace) {
 
@@ -31,20 +60,26 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     case 'eastasia':
     case 'ldr':
     case 'mdl_prints':
+
+      $included_fields = array_merge($included_fields, array('mdl_prints.creator'));
+      $excluded_fields = array_merge($excluded_fields, array('geology_slides_esi.subject'));
+
     case 'geology_slides_esi':
     case 'mckelvy':
     case 'war_casualties':
 
       foreach($_fields as $field) {
 
-	if(preg_match("/$query_field_namespace\./", $field['solr_field'], $m)) {
+	if(in_array($field['solr_field'], $included_fields) or preg_match("/$query_field_namespace\./", $field['solr_field'], $m) and !in_array($field['solr_field'], $excluded_fields)) {
 
 	  $fields[] = $field;
 	}
       }
     
     break;
+
     default:
+
       break;
     }
   }
@@ -365,7 +400,14 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
 
 	preg_match('/.+?\:(.+)/', $filter, $token_value_match);
-	$token_items[] = l(t($token_value_match[1]) . '<span class="close">×</span>', current_path(), array('attributes' => array('class' => array('islandora-solr-facet-token')),
+	$token_value = $token_value_match[1];
+
+	if(preg_match('/"(.+?)"/', $token_value, $token_value_match)) {
+
+	  $token_value = $token_value_match[1];
+	}
+	
+	$token_items[] = l(t($token_value) . '<span class="close">×</span>', current_path(), array('attributes' => array('class' => array('islandora-solr-facet-token')),
 													    'html' => TRUE,
 													    'query' => $other_tokens));
       }
