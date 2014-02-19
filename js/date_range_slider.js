@@ -533,7 +533,7 @@ SolrQuery.prototype = {
 		that.dateSliderResetHandler();
 
 		$('.islandora-solr-facet-list li a, .islandora-solr-facet-token-list li a').filter(function(i, e) {
-
+			
 			return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
 	    }
 	};
@@ -1218,6 +1218,7 @@ SolrQuery.prototype = {
 
 	this.facetLinkHandler = function(e, element) {
 
+	    e.stopImmediatePropagation();
 	    e.preventDefault();
 
 	    var facetedSearchAnchor = element || $(this);
