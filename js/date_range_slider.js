@@ -522,18 +522,14 @@ SolrQuery.prototype = {
 
 			return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
 	    } else {
-		
-		/*
+
 		$('.islandora-solr-facet-token-list').remove();
 		$('#block-islandora-solr-facet-pages-islandora-solr-facet-pages .block-title').after($(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages .islandora-solr-facet-token-list'));
-		*/
 
 		//$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
-
-		$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
 		$(data).find('.main-container').children().appendTo($('.main-container').empty().removeClass('loading'));
-		that.facetDateHandler();
-		that.facetModalHandler();
+		//that.facetDateHandler();
+		//that.facetModalHandler();
 		that.dateSliderResetHandler();
 
 		$('.islandora-solr-facet-list li a, .islandora-solr-facet-token-list li a').filter(function(i, e) {
@@ -1291,6 +1287,18 @@ SolrQuery.prototype = {
 		});
 	    */
 
+	    var fieldName = SolrQuery.fieldMap(facetedSearchAnchor.parent().parent().prev().text());
+
+	    if(!facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
+
+		if(typeof(facetQueries[fieldName]) === 'undefined') {
+
+		    facetQueries[fieldName] = ['"' + facetedSearchAnchor.text() + '"'];
+		} else {
+
+		    facetQueries[fieldName] = facetQueries[fieldName].concat(['"' + facetedSearchAnchor.text() + '"']);
+		}
+	    }
 	    // Update the active facet queries
 	    // Refactor for efficiency
 	    for(var fieldName in facetQueries) {
@@ -1305,19 +1313,6 @@ SolrQuery.prototype = {
 
 			delete facetQueries[fieldName];
 		    }
-		}
-	    }
-
-	    var fieldName = SolrQuery.fieldMap(facetedSearchAnchor.parent().parent().prev().text());
-
-	    if(!facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
-
-		if(typeof(facetQueries[fieldName]) === 'undefined') {
-
-		    facetQueries[fieldName] = ['"' + facetedSearchAnchor.text() + '"'];
-		} else {
-
-		    facetQueries[fieldName] = facetQueries[fieldName].concat(['"' + facetedSearchAnchor.text() + '"']);
 		}
 	    }
 
