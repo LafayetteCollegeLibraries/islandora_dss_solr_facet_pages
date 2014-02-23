@@ -137,8 +137,17 @@ SolrQuery.getFacets = function getFacets(url, $) {
 		var paramName = /(.+?)(\:|%3A)/.exec(e)[1];
 
 		// new Date(/\[(.+?)\sT/.exec(decodeURI('geology_slides_esi.date.original%3A[1967-12-01T00%3A00%3A00Z TO 1968-06-01T00%3A00%3A00Z]'))[1].replace('%3A',':','g'))
-		var paramMin = +new Date(/\[(.+?)\sT/.exec(e)[1].replace('%3A',':','g'));
-		var paramMax = +new Date(/TO\s(.+?)\]/.exec(e)[1].replace('%3A',':','g'));
+		var paramValueStr = e.split(/(\s|\+)TO(\s|\+)/);
+		var paramMinStr = paramValueStr[0];
+		paramMinStr = /\[(.+)/.exec(paramMinStr)[1].replace('%3A',':','g');
+
+		var paramMaxStr = paramValueStr.pop();
+		paramMaxStr = /(.+?)\]/.exec(paramMaxStr)[1].replace('%3A', ':', 'g');
+
+		//var paramMin = +new Date(/\[(.+?)\sT/.exec(e)[1].replace('%3A',':','g'));
+		//var paramMax = +new Date(/TO\s(.+?)\]/.exec(e)[1].replace('%3A',':','g'));
+		var paramMin = +new Date(paramMinStr);
+		var paramMax = +new Date(paramMaxStr);
 
 		obj[paramName] = [paramMin, paramMax];
 	    } else {
