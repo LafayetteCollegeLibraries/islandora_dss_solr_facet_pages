@@ -829,7 +829,7 @@ SolrQuery.prototype = {
 		    //e.stopImmediatePropagation();
 
 		    var $dateSlider = $($(this).attr('data-target'));
-		    $dateSlider.slider('values', [ $dateSlider.slider('option', 'min'), $dateSlider.slider('option', 'max') ]);
+		    $dateSlider.slider('values', [ $dateSlider.slider('option', 'min'), $dateSlider.slider('option', 'max') ]).children('.ui-slider-handle').removeClass('date-slider-handle-refined');
 
 		    //that.dateSliderStop();
 
@@ -1123,6 +1123,8 @@ SolrQuery.prototype = {
 		     * @todo Refactor this
 		     *
 		     */
+		    var defaultValues = false;
+
 		    if(typeof( facetQueries[solrFieldName] ) !== 'undefined' && typeof( facetQueries[solrFieldName][0] ) === 'string' ) {
 
 			// Work-around
@@ -1138,6 +1140,7 @@ SolrQuery.prototype = {
 			options['values'] = _query[solrFieldName];
 		    } else {
 
+			defaultValues = true;
 			options['values'] = [ options['min'], options['max'] ];
 		    }
 
@@ -1149,10 +1152,17 @@ SolrQuery.prototype = {
 		    $dateTerm.text( moment(options['values'][1]).format("MMM. DD YYYY"));
 		    $dateInit.text( moment(options['values'][0]).format("MMM. DD YYYY"));
 
-		    $dateSlider.slider(options);
+		    if(!defaultValues) {
+
+			$dateSlider.slider(options).children('.ui-slider-handle').addClass('date-slider-handle-refined');
+		    } else {
+
+			$dateSlider.slider(options);
+		    }
+
 		    $facetList.children('li').hide();
 		});
-
+		
 	};
 	this.facetDateHandler();
 
@@ -1312,7 +1322,12 @@ SolrQuery.prototype = {
 
 		    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
 
-			delete facetQueries[fieldName];
+			// Pop from the array, do not delete
+			facetQueries[fieldName] = facetQueries[fieldName].slice(0, -1);
+			if(facetQueries[fieldName].length == 0) {
+
+			    delete facetQueries[fieldName];
+			}
 		    }
 		}
 	    }
@@ -1392,7 +1407,13 @@ SolrQuery.prototype = {
 		});
 	    */
 
-	    $.get(url, facetParams, that.updatePage);
+	    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
+
+		$.get(facetedSearchAnchor.attr('href'), {}, that.updatePage);
+	    } else {
+
+		$.get(url, facetParams, that.updatePage);
+	    }
 
 	    $('.main-container').empty().addClass('loading');
 	    $('.snap-trigger').toggleClass('shown').children('img').toggleClass('shown');

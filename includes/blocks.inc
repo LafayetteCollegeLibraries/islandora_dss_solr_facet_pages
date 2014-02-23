@@ -10,9 +10,27 @@
 function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) {
 
   $query_field_namespace_map = array(
+				     'East Asia Image Collection' => 'eastasia',
+				     'Japanese Imperial House Postcard Album' => 'eastasia',
+				     'T.W. Ingersoll Co. Stereoviews of the Siege of Port Arthur' => 'eastasia',
 				     'Imperial Postcard Collection' => 'eastasia',
+				     'Tsubokura Russo-Japanese War Postcard Album' => 'eastasia',
+				     'Sino-Japanese War Postcard Album 01' => 'eastasia',
+				     'Sino-Japanese War Postcard Album 02' => 'eastasia',
+				     'Lin Chia-Feng Family Postcard Collection' => 'eastasia',
+				     'Japanese History Study Cards' => 'eastasia',
+				     'Pacific War Postcard Collection' => 'eastasia',
+				     'Michael Lewis Taiwan Postcard Collection' => 'eastasia',
+				     'Gerald & Rella Warner Taiwan Postcard Collection' => 'eastasia',
+				     'Gerald & Rella Warner Dutch East Indies Negative Collection' => 'eastasia',
+				     'Gerald & Rella Warner Manchuria Negative Collection' => 'eastasia',
+				     'Gerald & Rella Warner Taiwan Negative Collection' => 'eastasia',
+				     'Gerald & Rella Warner Japan Slide Collection' => 'eastasia',
+				     'Gerald & Rella Warner Souvenirs of Beijing and Tokyo' => 'eastasia',
+
 				     'Marquis de Lafayette Prints Collection' => 'mdl_prints',
 				     'Geology Department Slide Collection' => 'geology_slides_esi',
+				     'McKelvy House Photograph Collection' => 'mckelvy',
 				     'Lafayette World War II Casualties' => 'war_casualties',
 				     );
 
@@ -38,7 +56,13 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
       $query_field_namespace = $m[1];
     }
 
-    $query_field_namespace = $query_field_namespace_map[$query_field_namespace];
+    if(array_key_exists($query_field_namespace, $query_field_namespace_map)) {
+
+      $query_field_namespace = $query_field_namespace_map[$query_field_namespace];
+    } else {
+
+      $query_field_namespace = 'dc';
+    }
 
     dpm($query_field_namespace);
   } elseif(preg_match('/(.+?)\./', $query_field, $m) or preg_match('/(.+?)\./', $filter, $m)) {
@@ -58,29 +82,144 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
       return $_fields;
 
     case 'eastasia':
+
+      /*
+      $included_fields = array_merge($included_fields, array('mdl_prints.format.medium', 'cdm.Relation.IsPartOf'));
+      $excluded_fields = array_merge($excluded_fields, array('dc.subject'));
+      */
+
+      /*
+      $SORT_MAP = array();
+
+      $sort = function($u, $v) {
+
+	return ($SORT_MAP[$u['solr_field']] < $SORT_MAP[$v['solr_field']]) ? -1 : 1;
+      };
+      */
+
+      // Performance problems; Hard-coding the array
+      /*
+1. subject.ocm
+2. coverage.location.country
+3. coverage.location
+4. format.medium
+5. relation.IsPartOf
+6. date.artifact.upper
+7. date.artifact.lower
+8. date.image.upper
+9. date.image.lower
+10. creator.maker
+11. creator.company
+12. description.ethnicity
+       */
+
+      $fields = array(
+		      array('solr_field' => 'eastasia.Subject.OCM',
+			    'label' => 'Subject.OCM',
+			    'path' => 'eastasia-subject'
+			    ),
+		      array('solr_field' => 'eastasia.Coverage.Location.Country',
+			    'label' => 'Coverage.Location.Country',
+			    'path' => 'eastasia-country'
+			    ),
+		      array('solr_field' => 'eastasia.Coverage.Location',
+			    'label' => 'Coverage.Location',
+			    'path' => 'eastasia-location'
+			    ),
+		      array('solr_field' => 'eastasia.Format.Medium',
+			    'label' => 'Format.Medium',
+			    'path' => 'eastasia-format'
+			    ),
+		      /*
+		      array('solr_field' => 'mdl_prints.format.medium',
+			    'label' => 'Format.Medium',
+			    'path' => 'mdl-prints-format'
+			    ),
+		      */
+		      array('solr_field' => 'cdm.Relation.IsPartOf',
+			    'label' => 'Relation.IsPartOf',
+			    'path' => 'collections'
+			    ),
+		      array('solr_field' => 'eastasia.Date.Artifact.Upper',
+			    'label' => 'Date.Artifact.Upper',
+			    'path' => 'eastasia-artifact-upper'
+			    ),
+		      array('solr_field' => 'eastasia.Date.Artifact.Lower',
+			    'label' => 'Date.Artifact.Lower',
+			    'path' => 'eastasia-artifact-lower'
+			    ),
+		      array('solr_field' => 'eastasia.Date.Image.Upper',
+			    'label' => 'Date.Image.Upper',
+			    'path' => 'eastasia-image-upper'
+			    ),
+		      array('solr_field' => 'eastasia.Date.Image.Lower',
+			    'label' => 'Date.Image.Lower',
+			    'path' => 'eastasia-image-lower'
+			    ),
+		      array('solr_field' => 'eastasia.Creator.Maker',
+			    'label' => 'Creator.Maker',
+			    'path' => 'eastasia-maker'
+			    ),
+		      array('solr_field' => 'eastasia.Creator.Company',
+			    'label' => 'Creator.Company',
+			    'path' => 'eastasia-company'
+			    ),
+		      array('solr_field' => 'eastasia.Description.Ethnicity',
+			    'label' => 'Description.Ethnicity',
+			    'path' => 'eastasia-ethnicity'
+			    ),
+		      );
+
+      break;
+
     case 'ldr':
     case 'mdl_prints':
 
-      $included_fields = array_merge($included_fields, array('mdl_prints.creator'));
+      //$included_fields = array_merge($included_fields, array('mdl_prints.creator'));
       $excluded_fields = array_merge($excluded_fields, array('geology_slides_esi.subject'));
+    break;
 
     case 'geology_slides_esi':
     case 'mckelvy':
+
+      $included_fields = array_merge($included_fields, array('dc.subject', 'mdl_prints.format.medium', 'mckelvy.date.original.display'));
+    break;
     case 'war_casualties':
+
+      dpm($excluded_fields);
+      break;
+    default:
+
+      break;
+    }
+
+    if(empty($fields)) {
 
       foreach($_fields as $field) {
 
-	if(in_array($field['solr_field'], $included_fields) or preg_match("/$query_field_namespace\./", $field['solr_field'], $m) and !in_array($field['solr_field'], $excluded_fields)) {
+	/*
+	if($field['label'] == 'Subject') {
+
+	  dpm($field);
+	  dpm( in_array($field['solr_field'], $included_fields) );
+	}
+	*/
+
+	if(in_array($field['solr_field'], $included_fields) or (preg_match("/$query_field_namespace\./", $field['solr_field'], $m) and !in_array($field['solr_field'], $excluded_fields))) {
 
 	  $fields[] = $field;
 	}
       }
-    
-    break;
 
-    default:
+      /*
+      // Very inefficient; Refactor
+      if(isset($sort)) {
+      
+      uasort($fields, $sort);
+      }
+      */
 
-      break;
+      //dpm($fields);
     }
   }
 
