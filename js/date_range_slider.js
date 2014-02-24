@@ -42,36 +42,78 @@ SolrQuery.FIELD_MAP = {
 
     'Relation.IsPartOf' : 'cdm.Relation.IsPartOf',
 
+    // EAIC
     'Subject.OCM' : 'eastasia.Subject.OCM',
-    'Contributors.Digital' : 'eastasia.Contributors.Digital',
     'Coverage.Location.Country' : 'eastasia.Coverage.Location.Country',
-    'Format.Medium' : 'eastasia.Format.Medium',
     'Coverage.Location' : 'eastasia.Coverage.Location',
+    'Format.Medium' : 'eastasia.Format.Medium',
+    'Creator.Maker' : 'eastasia.Creator.Maker',
+    'Creator.Company' : 'eastasia.Creator.Company',
     'Description.Ethnicity' : 'eastasia.Description.Ethnicity',
-    
-    'Subject' : 'geology_slides_esi.subject',
-    'Vantage Point' : 'geology_slides_esi.description.vantagepoint',
-
     'Date.Artifact.Lower' : 'eastasia.Date.Artifact.Lower',
     'Date.Artifact.Upper' : 'eastasia.Date.Artifact.Upper',
     'Date.Image.Lower' : 'eastasia.Date.Image.Lower',
     'Date.Image.Upper' : 'eastasia.Date.Image.Upper',
 
+    // MDL
+    'Subject.LCSH' : 'mdl_prints.subject.lcsh',
+    'Format.Medium' : 'mdl_prints.format.medium',
+    'Description.Series' : 'mdl_prints.description.series',
+    'Creator' : 'mdl_prints.creator',
+
+    // Geology
+    'Subject' : 'geology_slides_esi.subject',
+    'Coverage.Location' : 'geology_slides_esi.coverage.location',
+    'Vantage Point' : 'geology_slides_esi.description.vantagepoint',
+    'Date' : 'geology_slides_esi.date.original',
+
+    // LDR
     'dc.date.accessioned' : 'ldr.dc.date.accessioned',
     'dc.contributor.author' : 'ldr.dc.contributor.author',
 
-    'Date' : 'geology_slides_esi.date.original',
+    // War Casualties
+    'Description.Class' : 'war_casualties.description.class',
+    'Description.Honors' : 'war_casualties.description.honors',
+    'Description.Military.Branch' : 'war_casualties.description.military.branch',
+    'Description.Military.Rank' : 'war_casualties.description.military.rank',
+
+    // Refactor: labels
 
     'cdm.Relation.IsPartOf' : 'Relation.IsPartOf',
 
+    // EAIC
+    'eastasia.Subject.OCM' : 'Subject.OCM',
+    'eastasia.Coverage.Location.Country' : 'Coverage.Location.Country',
+    'eastasia.Coverage.Location' : 'Coverage.Location',
+    'eastasia.Format.Medium' : 'Format.Medium',
+    'eastasia.Creator.Maker' : 'Creator.Maker',
+    'eastasia.Creator.Company' : 'Creator.Company',
+    'eastasia.Description.Ethnicity' : 'Description.Ethnicity',
     'eastasia.Date.Artifact.Lower' : 'Date.Artifact.Lower',
     'eastasia.Date.Artifact.Upper' : 'Date.Artifact.Upper',
     'eastasia.Date.Image.Lower' : 'Date.Image.Lower',
     'eastasia.Date.Image.Upper' : 'Date.Image.Upper',
 
+    // MDL
+    'mdl_prints.subject.lcsh' : 'Subject.LCSH',
+    'mdl_prints.format.medium' : 'Format.Medium',
+    'mdl_prints.description.series' : 'Description.Series',
+    'mdl_prints.creator' : 'Creator',
+
+    // LDR
     'ldr.dc.date.accessioned' : 'dc.date.accessioned',
     'ldr.dc.contributor.author' : 'dc.contributor.author',
 
+    // War Casualties
+    'war_casualties.description.class' : 'Description.Class',
+    'war_casualties.description.honors' : 'Description.Honors',
+    'war_casualties.description.military.branch' : 'Description.Military.Branch',
+    'war_casualties.description.military.rank' : 'Description.Military.Rank',
+
+    // Geology
+    'geology_slides_esi.subject' : 'Subject',
+    'geology_slides_esi.coverage.location' : 'Coverage.Location',
+    'geology_slides_esi.description.vantagepoint' : 'Vantage Point',
     'geology_slides_esi.date.original' : 'Date'
 };
 
