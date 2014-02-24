@@ -171,8 +171,8 @@ SolrQuery.getFacets = function getFacets(url, $) {
     var _facetParams = $.map(urlSegments.slice(1), function(e, i) {
 		    
 	    var facetId = 'f[' + i + ']';
-
 	    var obj = {};
+
 	    // Detecting date range facets
 	    if(/(\:|%3A)\[[\d-]+T/.exec(e)) {
 
@@ -190,8 +190,12 @@ SolrQuery.getFacets = function getFacets(url, $) {
 		//var paramMax = +new Date(/TO\s(.+?)\]/.exec(e)[1].replace('%3A',':','g'));
 		var paramMin = +new Date(paramMinStr);
 		var paramMax = +new Date(paramMaxStr);
-
 		obj[paramName] = [paramMin, paramMax];
+
+		var paramMin = new Date(paramMinStr).toISOString();
+		var paramMax = new Date(paramMaxStr).toISOString();
+
+		obj[paramName] = ["[" + paramMin + " TO " + paramMax + "]"];
 	    } else {
 
 		var paramSegments = e.split(/\:|%3A/);
@@ -1381,6 +1385,7 @@ SolrQuery.prototype = {
 		    facetQueries[fieldName] = facetQueries[fieldName].concat(['"' + facetedSearchAnchor.text() + '"']);
 		}
 	    }
+
 	    // Update the active facet queries
 	    // Refactor for efficiency
 	    for(var fieldName in facetQueries) {
