@@ -896,7 +896,8 @@ SolrQuery.prototype = {
 
 	    $('.islandora-solr-date-reset').unbind('click').click(function(e) {
 
-		    //e.stopImmediatePropagation();
+		    e.stopImmediatePropagation();
+		    e.preventDefault();
 
 		    var $dateSlider = $($(this).attr('data-target'));
 		    $dateSlider.slider('values', [ $dateSlider.slider('option', 'min'), $dateSlider.slider('option', 'max') ]).children('.ui-slider-handle').removeClass('date-slider-handle-refined');
@@ -1392,8 +1393,12 @@ SolrQuery.prototype = {
 
 		    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
 
-			// Pop from the array, do not delete
-			facetQueries[fieldName] = facetQueries[fieldName].slice(0, -1);
+			// Filter from the array, do not delete
+			//facetQueries[fieldName] = facetQueries[fieldName].slice(0, -1);
+			facetQueries[fieldName] = facetQueries[fieldName].filter(function(fieldValue) {
+
+				return fieldValue != $(facetedSearchAnchor).contents().first().text() && fieldValue != '"' + $(facetedSearchAnchor).contents().first().text() + '"';
+			    });
 			if(facetQueries[fieldName].length == 0) {
 
 			    delete facetQueries[fieldName];
