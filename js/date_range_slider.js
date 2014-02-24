@@ -733,7 +733,26 @@ SolrQuery.prototype = {
 				});
 			    */
 
-			    var facetParams = $(document).data('islandoraDssDateRangeFacetParams');
+			    //var facetParams = $(document).data('islandoraDssDateRangeFacetParams');
+			    /**
+			     * Retrieve and parse the GET parameters
+			     *
+			     */
+			    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
+
+			    facetParams = {};
+
+			    var facetIndex = 0;
+			    for(key in facetQueries) {
+
+				for(k in facetQueries[key]) {
+
+				    var facetKey = 'f[' + facetIndex + ']';
+				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+				    facetIndex++;
+				}
+			    }
+
 			    var fancyBoxContainer = $('<div class="fancy-box-container loading"></div>').appendTo($('body')).dialog({ title: SolrQuery.fieldMap(solrField),
 																      modal: true,
 																      minHeight: 280,
