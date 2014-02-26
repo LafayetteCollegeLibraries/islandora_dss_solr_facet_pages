@@ -709,7 +709,11 @@ SolrQuery.prototype = {
 			$('.fancy-box-container').dialog('close');
 
 			$(document).data('islandoraDssDateRangeFacetParams', facetParams);
-			$.get(url, facetParams, that.updatePage);
+
+			var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
+			params = $.extend(params, facetParams);
+
+			$.get(url, params, that.updatePage);
 			$('.main-container').empty().addClass('loading');
 		    } else {
 
@@ -930,7 +934,10 @@ SolrQuery.prototype = {
 		    }
 		    $(document).data('islandoraDssDateRangeFacetParams', facetParams);
 
-		    $.get(url, facetParams, that.updatePage);
+		    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
+		    params = $.extend(params, facetParams);
+
+		    $.get(url, params, that.updatePage);
 		    $('.main-container').empty().addClass('loading');
 		});
 	};
@@ -1147,7 +1154,11 @@ SolrQuery.prototype = {
 			    */
 
 			    $(document).data('islandoraDssDateRangeFacetParams', facetParams);
-			    $.get(url, facetParams, that.updatePage);
+
+			    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
+			    params = $.extend(params, facetParams);
+
+			    $.get(url, params, that.updatePage);
 
 			    $('.main-container').empty().addClass('loading');
 			    $('.snap-trigger').toggleClass('shown').children('img').toggleClass('shown');
@@ -1487,12 +1498,15 @@ SolrQuery.prototype = {
 		});
 	    */
 
+	    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
+	    params = $.extend(params, facetParams);
 	    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
 
-		$.get(facetedSearchAnchor.attr('href'), {}, that.updatePage);
+		$.get(facetedSearchAnchor.attr('href'), params, that.updatePage);
 	    } else {
 
-		$.get(url, facetParams, that.updatePage);
+		params = $.extend(params, facetParams);
+		$.get(url, params, that.updatePage);
 	    }
 
 	    $('.main-container').empty().addClass('loading');
