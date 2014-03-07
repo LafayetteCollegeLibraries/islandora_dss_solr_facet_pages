@@ -9,6 +9,10 @@
 
 function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) {
 
+  dpm(array('trace'));
+  dpm($query_field);
+  
+
   $query_field_namespace_map = array(
 				     'East Asia Image Collection' => 'eastasia',
 				     'Japanese Imperial House Postcard Album' => 'eastasia',
@@ -49,6 +53,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
   dpm($filter);
 
   if(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $filter, $m)) {
+
+    dpm(array('trace'));
 
     $query_field_namespace = $m[1];
     if(preg_match('/"(.+?)"/', $query_field_namespace, $m)) {
@@ -515,7 +521,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							    );
 	*/
 
-	$token_items[] = l(t($result_fields[$solr_field]) . '<span class="close">×</span>', '#', array('attributes' => array(
+	$token_items[] = l('<span class="close">×</span>' . t($result_fields[$solr_field]), '#', array('attributes' => array(
 																	     'class' => array('islandora-solr-date-reset islandora-solr-facet-token'),
 																	     'data-target' => '#' . $child_items_id . ' + .islandora-solr-facet-date-slider'
 																	     ),
@@ -546,7 +552,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  $token_value = $token_value_match[1];
 	}
 	
-	$token_items[] = l(t($token_value) . '<span class="close">×</span>', current_path(), array('attributes' => array('class' => array('islandora-solr-facet-token')),
+	$token_items[] = l('<span class="close">×</span>' . t($token_value), current_path(), array('attributes' => array('class' => array('islandora-solr-facet-token')),
 													    'html' => TRUE,
 													    'query' => $other_tokens));
       }
