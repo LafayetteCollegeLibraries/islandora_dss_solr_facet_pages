@@ -229,6 +229,22 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     }
   }
 
+  /*
+  if(!empty($fields)) {
+
+    foreach($fields as $field) {
+
+      switch($field['solr_field']) {
+
+      case 'mdl_prints.format.medium':
+
+	break;
+      }
+      dpm($field);
+    }
+  }
+  */
+
   return $fields;
   }
 
@@ -243,11 +259,31 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
 function _islandora_dss_solr_facet_pages_block_callback() {
 
+  /**
+   * Work-around for resolving issues related to MARC terms
+   *
+   * This resolves DSS-167
+   * This resolves DSS-170
+   */
+  $ISLANDORA_MARC_METADB_MAP = array(
+				     'eastasia.Format.Medium' => array(
+									   "photonegative" => 'Photographic negative',
+									   "photoprint" => 'Photographic print',
+									   "slide" => 'Photographic slide',
+									   "picture postcard" => 'Picture postcard',
+									   ),
+				     'mdl_prints.format.medium' => array(
+									 "photoprint" => 'lithograph',
+									 )
+				     );
+
   // Retrieve the current path
   $path = current_path();
 
   // Explicitly set the prefix for all facets
   $prefix = t('ALL');
+
+  $relation_is_part_of = '';
 
   // If the user agent is currently browsing a facet, render the filtered results...
 
@@ -300,8 +336,29 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	    
 	  $filtered_facets[] = $matches[1]; 
 	}
+
+	/**
+	 * Work-around for resolving issues related to MARC terms
+	 *
+	 * resolves DSS-167
+	 * resolves DSS-170
+	 */
+	/*
+	$solr_field_segments = explode(':', $filtered_facet);
+	$solr_field_name = array_shift($solr_field_segments);
+	if($solr_field_name == 'cdm.Relation.IsPartOf' and $relation_is_part_of == '') {
+
+	  $relation_is_part_of = implode($solr_field_segments);
+	}
+	*/
       }
     }
+
+    /*
+    $solr_field_name = array_shift(explode(':', $solr_field));
+    dpm( array($solr_field_name) );
+    */
+    dpm( $query_params['f']);
 
     // Get available fields from variable.
     //$fields = variable_get('islandora_solr_facet_pages_fields_data', array());
@@ -314,7 +371,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       $solr_field = $value['solr_field'];
 
-      
       // Use Solr faceting to get list of names.
       $parsed_url = parse_url(variable_get('islandora_solr_url', 'http://localhost:8080/solr'));
 
@@ -413,7 +469,19 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	    $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
 
 	    $class = array('islandora-solr-facet');
-	    
+
+	    /**
+	     * Work-around for DSS-167
+	     * Work-around for DSS-170
+	     *
+	     */
+	    if(array_key_exists($solr_field, $ISLANDORA_MARC_METADB_MAP)) {
+
+	      if(array_key_exists($result, $ISLANDORA_MARC_METADB_MAP[$solr_field])) {
+		  
+		$result = $ISLANDORA_MARC_METADB_MAP[$solr_field][$result];
+	      }
+	    }
 
 	    // For date values
 	    //if(in_array($value['label'], $date_fields)) {

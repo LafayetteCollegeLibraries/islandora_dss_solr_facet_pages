@@ -198,6 +198,7 @@ SolrQuery.getFacets = function getFacets(url, $) {
 		obj[paramName] = ["[" + paramMin + " TO " + paramMax + "]"];
 	    } else {
 
+		/*
 		var paramSegments = e.split(/\:|%3A/);
 
 		/*
@@ -205,7 +206,8 @@ SolrQuery.getFacets = function getFacets(url, $) {
 		  //return { facetId : { fieldName : paramSegments[1] }};
 		  
 		  return { fieldName : paramSegments[1] };
-		*/
+		* /
+
 		var paramValue = paramSegments[1].replace(/#$/, '', 'g');
 		
 		if(typeof(obj[paramSegments[0]]) === 'undefined') {
@@ -215,8 +217,33 @@ SolrQuery.getFacets = function getFacets(url, $) {
 
 		    obj[paramSegments[0]].concat(paramValue);
 		}
+		*/
+
+		var paramName = /(.+?)(\:|%3A)/.exec(e)[1];
+		//var paramSegments = e.split(/\:|%3A/);
+		//var paramValue = paramSegments[1].replace(/#$/, '', 'g');
+		var paramValue = e.split(/\:|%3A/).slice(1).join(':');
+
+		/*
+		var paramValue = '';
+		for(var i in paramSegments) {
+
+		    if(typeof(paramSegments[i + 1]) !== 'undefined') {
+
+			paramValue = paramSegments[i + 1].replace(/#$/, '', 'g');
+		    }
+		}
+		*/
+
+		if(typeof(obj[paramName]) === 'undefined') {
+
+		    obj[paramName] = [paramValue];
+		} else {
+
+		    obj[paramName].concat(paramValue);
+		}
 	    }
-		
+
 	    return obj;
 	});
     
@@ -996,7 +1023,15 @@ SolrQuery.prototype = {
 			minMax[dateField]['min'] = +new Date($facetListItems.first().children('a').text());
 
 			// If there is only one facet value for the range, create a second by incrementing 10 years
+			/**
+			 * If there is only one facet value for the range, prepend and append 10 years
+			 *
+			 */
 			if($facetListItems.length == 1) {
+
+			    minDate = new Date(minMax[dateField]['min']);
+			    minDate.setUTCFullYear( minDate.getUTCFullYear() - 10 );
+			    minMax[dateField]['min'] = +minDate;
 
 			    var maxDate = new Date($facetListItems.first().children('a').text());
 			    maxDate.setUTCFullYear( maxDate.getUTCFullYear() + 10 );
