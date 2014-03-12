@@ -80,7 +80,17 @@ LafayetteDssObjectList.prototype = {
 	url = '/' + url;
 	var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
 	var sortParam = this.options.field + ' ' + this.options.order;
-	params = $.extend(params, { sort: sortParam });
+
+	/**
+	 * Integrating List/Grid view widgets
+	 * Refactor into a Global Object (accessed by multiple Modules)
+	 * This resolves DSS-178
+	 *
+	 */
+	var listGridParams = $(document).data('islandoraDssSolrResultsViewParams');
+	$(document).data('islandoraDssSolrResultsSortParams', { sort: sortParam });
+
+	params = $.extend(params, listGridParams, { sort: sortParam });
 	$(document).data('islandoraDssDateRangeFacetParams', params);
 
 	$.get(url, params, function(data) {
