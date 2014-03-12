@@ -262,7 +262,7 @@ SolrQuery.getFacets = function getFacets(url, $) {
 		    out[key] = e[key];
 		} else {
 
-		    out[key].concat(e[key]);
+		    out[key] = out[key].concat(e[key]);
 		}
 	    }
 	});
