@@ -167,6 +167,7 @@ SolrQuery.getFacets = function getFacets(url, $) {
     var query = urlSegments[0];
 
     var out = {};
+
 	    
     var _facetParams = $.map(urlSegments.slice(1), function(e, i) {
 		    
@@ -242,20 +243,53 @@ SolrQuery.getFacets = function getFacets(url, $) {
 
 		    obj[paramName].concat(paramValue);
 		}
+
 	    }
 
 	    return obj;
 	});
     
+    /*
     $.each(_facetParams, function(i, e) {
+
+	    console.log(e);
 	    
 	    for(key in e) {
 		
-		out[key] = e[key];
+		//out[key] = e[key];
+		/*
+		if(typeof(obj[paramName]) === 'undefined') {
+
+		    obj[paramName] = [paramValue];
+		} else {
+
+		    obj[paramName].concat(paramValue);
+		}
+		* /
+		if(typeof(out[key]) === 'undefined') {
+
+		    out[key] = e[key];
+		} else {
+
+		    //obj[paramName].concat(paramValue);
+		    out[key].concat(e[key]);
+		}
 	    }
 	});
+
     
-    return out;
+	return out;
+    */
+
+    return _facetParams.reduce(function(u, v) {
+	    
+	    for(key in u) {
+		
+		u[key] = u[key].concat(v[key]);
+	    }
+
+	    return u;
+	});
 };
 
 SolrQuery.getFacetTokenUrl = function getFacetTokenUrl(token, $) {
@@ -1439,7 +1473,9 @@ SolrQuery.prototype = {
 		if(facetQueries[fieldName].filter(function(fieldValue) {
 
 			    //return e == facetedSearchAnchor.text() || facetQueries[fieldName] == '"' + facetedSearchAnchor.text() + '"';
-			    return fieldValue == $(facetedSearchAnchor).contents().first().text() || fieldValue == '"' + $(facetedSearchAnchor).contents().first().text() + '"';
+
+			    //return fieldValue == $(facetedSearchAnchor).contents().first().text() || fieldValue == '"' + $(facetedSearchAnchor).contents().first().text() + '"';
+			    return fieldValue == $(facetedSearchAnchor).contents().last().text() || fieldValue == '"' + $(facetedSearchAnchor).contents().last().text() + '"';
 			}).length > 0) {
 
 		    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
@@ -1448,11 +1484,13 @@ SolrQuery.prototype = {
 			//facetQueries[fieldName] = facetQueries[fieldName].slice(0, -1);
 			facetQueries[fieldName] = facetQueries[fieldName].filter(function(fieldValue) {
 
-				return fieldValue != $(facetedSearchAnchor).contents().first().text() && fieldValue != '"' + $(facetedSearchAnchor).contents().first().text() + '"';
+				//return fieldValue != $(facetedSearchAnchor).contents().first().text() && fieldValue != '"' + $(facetedSearchAnchor).contents().first().text() + '"';
+				return fieldValue != $(facetedSearchAnchor).contents().last().text() && fieldValue != '"' + $(facetedSearchAnchor).contents().last().text() + '"';
 			    });
 			if(facetQueries[fieldName].length == 0) {
 
 			    delete facetQueries[fieldName];
+			    facetQueries[fieldName] = null;
 			}
 		    }
 		}
