@@ -225,6 +225,12 @@ SolrQuery.getFacets = function getFacets(url, $) {
 		//var paramValue = paramSegments[1].replace(/#$/, '', 'g');
 		var paramValue = e.split(/\:|%3A/).slice(1).join(':');
 
+		/**
+		 * This resolves URL fragments
+		 *
+		 */
+		paramValue = paramValue.replace(/#/, '');
+
 		/*
 		var paramValue = '';
 		for(var i in paramSegments) {
@@ -1490,7 +1496,6 @@ SolrQuery.prototype = {
 			if(facetQueries[fieldName].length == 0) {
 
 			    delete facetQueries[fieldName];
-			    facetQueries[fieldName] = null;
 			}
 		    }
 		}
