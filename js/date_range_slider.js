@@ -166,9 +166,6 @@ SolrQuery.getFacets = function getFacets(url, $) {
     var urlSegments = url.split(/\??&?f\[\d\]\=/);
     var query = urlSegments[0];
 
-    var out = {};
-
-	    
     var _facetParams = $.map(urlSegments.slice(1), function(e, i) {
 		    
 	    var facetId = 'f[' + i + ']';
@@ -254,48 +251,38 @@ SolrQuery.getFacets = function getFacets(url, $) {
 
 	    return obj;
 	});
-    
-    /*
+
+    var out = {};
     $.each(_facetParams, function(i, e) {
 
-	    console.log(e);
-	    
 	    for(key in e) {
 		
-		//out[key] = e[key];
-		/*
-		if(typeof(obj[paramName]) === 'undefined') {
-
-		    obj[paramName] = [paramValue];
-		} else {
-
-		    obj[paramName].concat(paramValue);
-		}
-		* /
 		if(typeof(out[key]) === 'undefined') {
 
 		    out[key] = e[key];
 		} else {
 
-		    //obj[paramName].concat(paramValue);
 		    out[key].concat(e[key]);
 		}
 	    }
 	});
 
-    
-	return out;
-    */
+    return out;
 
+    /*
     return _facetParams.reduce(function(u, v) {
 	    
 	    for(key in u) {
-		
-		u[key] = u[key].concat(v[key]);
+
+		if(typeof(v[key]) !== 'undefined') {
+
+		    u[key] = u[key].concat(v[key]);
+		}
 	    }
 
 	    return u;
 	});
+    */
 };
 
 SolrQuery.getFacetTokenUrl = function getFacetTokenUrl(token, $) {
