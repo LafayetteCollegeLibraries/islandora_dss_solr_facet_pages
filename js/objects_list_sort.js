@@ -79,6 +79,13 @@ LafayetteDssObjectList.prototype = {
 	 */
 	url = '/' + url;
 	var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
+	
+	/**
+	 * Resolving issues related to pagination
+	 *
+	 */
+	delete params['page'];
+
 	var sortParam = this.options.field + ' ' + this.options.order;
 
 	/**
@@ -95,7 +102,9 @@ LafayetteDssObjectList.prototype = {
 
 	$.get(url, params, function(data) {
 
-		$('.islandora-solr-search-results').removeClass('loading').append($(data).find('.islandora-solr-search-results').children());
+		$('.islandora-solr-search-results').removeClass('loading')
+		    .append($(data).find('.islandora-solr-search-results').children())
+		    .prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
 	    });
 	$('.islandora-solr-search-results').empty().addClass('loading');
     }

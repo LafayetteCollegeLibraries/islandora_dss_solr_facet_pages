@@ -336,29 +336,21 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	    
 	  $filtered_facets[] = $matches[1]; 
 	}
-
-	/**
-	 * Work-around for resolving issues related to MARC terms
-	 *
-	 * resolves DSS-167
-	 * resolves DSS-170
-	 */
-	/*
-	$solr_field_segments = explode(':', $filtered_facet);
-	$solr_field_name = array_shift($solr_field_segments);
-	if($solr_field_name == 'cdm.Relation.IsPartOf' and $relation_is_part_of == '') {
-
-	  $relation_is_part_of = implode($solr_field_segments);
-	}
-	*/
       }
+    }
+
+    /**
+     * For resolving issues related to pagination
+     *
+     */
+    if(array_key_exists('page', $query_params)) {
+
+      $page = $query_params['page'];
     }
 
     /*
     $solr_field_name = array_shift(explode(':', $solr_field));
-    dpm( array($solr_field_name) );
     */
-    dpm( $query_params['f']);
 
     // Get available fields from variable.
     //$fields = variable_get('islandora_solr_facet_pages_fields_data', array());
@@ -451,8 +443,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	// Top 5 facets
 	$result_fields = array_slice($result_fields, 0, 5);
 
+	/**
+	 * This will need to be refactored once (if) islandora_search is integrated with the Drupal Search API
+	 *
+	 */
 	$islandora_solr_path = 'islandora/search/';
-
 	if(isset($islandora_solr_query)) {
 
 	  $islandora_solr_path .= $islandora_solr_query;
@@ -467,6 +462,15 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	    //if(true) {
 
 	    $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
+	    $query = array('f' => $filter);
+	    if(isset($page)) {
+
+	      //$query['page'] = $page;
+	      /**
+	       * Faceting should not retain the current page being viewed
+	       *
+	       */
+	    }
 
 	    $class = array('islandora-solr-facet');
 
@@ -490,15 +494,15 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	      $class[] = 'islandora-solr-facet-date';
 	      //$child_items[] = l(truncate_utf8(date('F, Y', strtotime($result)), 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
 	      //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
-	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), $islandora_solr_path, array(
-												     //'attributes' => array('id' => ),
-												     'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
+	      $child_items[] = l($result, $islandora_solr_path, array(
+								      //'attributes' => array('id' => ),
+								      'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	    } else {
-	      
+
 	      //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
-	      $child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), $islandora_solr_path, array(
-												     //'attributes' => array('class' => $class),
-												     'query' => array('f' => $filter))) . "&nbsp;<span class='bucket-size'>($count)</span>";
+	      $child_items[] = l($result, $islandora_solr_path, array(
+								      //'attributes' => array('class' => $class),
+								      'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	    }
 	  }
 	}

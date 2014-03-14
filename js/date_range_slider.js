@@ -767,6 +767,14 @@ SolrQuery.prototype = {
 			var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
 			params = $.extend(params, facetParams);
 
+			/**
+			 * Resolves pagination issues
+			 * @todo Refactor
+			 *
+			 */
+			delete params['page'];
+			url = url.replace(/page=\d+&/, '');
+
 			$.get(url, params, that.updatePage);
 			$('.main-container').empty().addClass('loading');
 		    } else {
@@ -990,6 +998,14 @@ SolrQuery.prototype = {
 
 		    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
 		    params = $.extend(params, facetParams);
+
+		    /**
+		     * Resolves pagination issues
+		     * @todo Refactor
+		     *
+		     */
+		    delete params['page']; 
+		    url = url.replace(/page=\d+&/, '');
 
 		    $.get(url, params, that.updatePage);
 		    $('.main-container').empty().addClass('loading');
@@ -1220,6 +1236,14 @@ SolrQuery.prototype = {
 			    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
 			    params = $.extend(params, facetParams);
 
+			    /**
+			     * Resolves pagination issues
+			     * @todo Refactor
+			     *
+			     */
+			    delete params['page'];
+			    url = url.replace(/page=\d+&/, '');
+			    
 			    $.get(url, params, that.updatePage);
 
 			    $('.main-container').empty().addClass('loading');
@@ -1565,12 +1589,28 @@ SolrQuery.prototype = {
 
 	    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
 	    params = $.extend(params, facetParams);
+
 	    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
 
+		/**
+		 * Resolves pagination issues
+		 * @todo Refactor
+		 *
+		 */
+		delete params['page'];
+		url = url.replace(/page=\d+&/, '');
 		$.get(facetedSearchAnchor.attr('href'), params, that.updatePage);
 	    } else {
 
 		params = $.extend(params, facetParams);
+
+		/**
+		 * Resolves pagination issues
+		 * @todo Refactor
+		 *
+		 */
+		delete params['page'];
+		url = url.replace(/page=\d+&/, '');
 		$.get(url, params, that.updatePage);
 	    }
 
