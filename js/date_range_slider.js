@@ -42,6 +42,9 @@ SolrQuery.FIELD_MAP = {
 
     'Relation.IsPartOf' : 'cdm.Relation.IsPartOf',
 
+    // Historical, McKelvy, and Newspaper
+    'Date' : 'dc.date.sort',
+
     // EAIC
     'Subject.OCM' : 'eastasia.Subject.OCM',
     'Coverage.Location.Country' : 'eastasia.Coverage.Location.Country',
@@ -125,6 +128,8 @@ SolrQuery.FIELD_MAP = {
 SolrQuery.fieldMap = function(field) {
 	
     return SolrQuery.FIELD_MAP[field];
+
+    
 };
 
 SolrQuery.getQuery = function(url, $) {
@@ -191,7 +196,18 @@ SolrQuery.getFacets = function getFacets(url, $) {
 		obj[paramName] = [paramMin, paramMax];
 
 		var paramMin = new Date(paramMinStr).toISOString();
-		var paramMax = new Date(paramMaxStr).toISOString();
+
+		/**
+		 * Ensures that Solr/Lucene constant NOW is parsed as the current time
+		 * Resolves DSSSM-549
+		 */
+		if(paramMaxStr === 'NOW') {
+
+		    var paramMax = new Date().toISOString();
+		} else {
+
+		    var paramMax = new Date(paramMaxStr).toISOString();
+		}
 
 		obj[paramName] = ["[" + paramMin + " TO " + paramMax + "]"];
 	    } else {

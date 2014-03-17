@@ -181,8 +181,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     case 'ldr':
     case 'mdl_prints':
 
-      //$included_fields = array_merge($included_fields, array('mdl_prints.creator'));
       $excluded_fields = array_merge($excluded_fields, array('geology_slides_esi.subject'));
+      //$included_fields = array_merge($included_fields, array('mdl_prints.creator'));
     break;
 
     case 'geology_slides_esi':
@@ -192,7 +192,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     break;
     case 'war_casualties':
 
-      dpm($excluded_fields);
+      //dpm($excluded_fields);
       break;
     default:
 

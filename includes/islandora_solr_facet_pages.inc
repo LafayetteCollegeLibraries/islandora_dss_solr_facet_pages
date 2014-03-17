@@ -254,6 +254,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
   case 'eastasia.Date.Image.Upper':
   case 'eastasia.Date.Image.Lower':
   case 'geology_slides_esi.date.original':
+  case 'dc.date.sort':
 
     /*
       $prefix .= '-01-01';
@@ -344,6 +345,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
   case 'eastasia.Date.Image.Upper':
   case 'eastasia.Date.Image.Lower':
   case 'geology_slides_esi.date.original':
+  case 'dc.date.sort':
 
     if($prefix != 'ALL' && $prefix != 'all') {
       
@@ -441,6 +443,7 @@ function islandora_dss_solr_facet_pages_callback($path = NULL, $prefix = NULL) {
   case 'eastasia.Date.Image.Upper':
   case 'eastasia.Date.Image.Lower':
   case 'geology_slides_esi.date.original':
+  case 'dc.date.sort':
 
     $_result_fields = array();
 
