@@ -14,7 +14,7 @@ function _islandora_dss_solr_facet_pages_preprocess_islandora_solr_facet_pages_r
 
   $vars['complex_results'] = array();
 
-  dpm($vars);
+  //dpm($vars);
 
   foreach($vars['results'] as $result => $count) {
 
@@ -38,6 +38,28 @@ function _islandora_dss_solr_facet_pages_preprocess_islandora_solr_facet_pages_r
 					      'filter' => $filter,
 					      'class' => $class);
   }
+}
+
+function islandora_dss_solr_facet_pages_preprocess_islandora_solr(&$variables) {
+
+  // scripts[] = 'js/objects_list_sort.js'
+  $sorted_order = 'asc';
+  if(array_key_exists('sort', $_GET) and preg_match('/^(.+?) ?/', $_GET['sort'], $m)) {
+
+    $sorted_field = $m[1];
+
+    if(preg_match('/ (.+?)$/', $_GET['sort'], $m)) {
+
+      $sorted_order = $m[1];
+    }
+  } else {
+
+    $sorted_field = 'dc.title';
+  }
+
+  drupal_add_js(base_path() . drupal_get_path('module', 'islandora_dss_solr_facet_pages') . '/js/objects_list_sort.js');
+  drupal_add_js(array('islandoraDssSolrFacetPages' => array('order' => $sorted_order,
+							    'field' => $sorted_field)), 'setting');
 }
 
 function islandora_dss_solr_facet_pages_preprocess_html(&$variables) {

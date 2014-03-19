@@ -22,7 +22,7 @@
      *
      */
 var LafayetteDssObjectList = function($, element, options) {
-    
+
     this.$ = $;
     this.element = element;
     this.options = $.extend({
@@ -72,6 +72,9 @@ LafayetteDssObjectList.prototype = {
 
 	// AJAX-integrated
 	var url = $(document).data('islandoraDssDateRangeSlider')['query'] || '/islandora/search/*:*';
+
+	// Work-around for GET parameters
+	url = url.replace('&sort=dc.date.sort asc', '');
 
 	/**
 	 * @todo Resolve
@@ -127,6 +130,13 @@ LafayetteDssObjectList.prototype = {
 	*/
 
 	//var objectList = new LafayetteDssObjectList($, $('.islandora-solr-search-result-list'), { order: $('#order-sort-select').val() });
+	/*
+	var objectList = new LafayetteDssObjectList($, $('.islandora-solr-search-result-list'), {
+
+		order: Drupal.settings.islandoraDssSolrFacetPages.order,
+		field: Drupal.settings.islandoraDssSolrFacetPages.field
+	    });
+	*/
 	var objectList = new LafayetteDssObjectList($, $('.islandora-solr-search-result-list'));
 
 	//$('.islandora-discovery-control.title-sort-control select').change(function() {
