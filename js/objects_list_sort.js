@@ -103,13 +103,30 @@ LafayetteDssObjectList.prototype = {
 	params = $.extend(params, listGridParams, { sort: sortParam });
 	$(document).data('islandoraDssDateRangeFacetParams', params);
 
+	/**
+	 * For AJAX-integration, this assumes that the Solr results are NOT paginated
+	 * Given that this is unsupported until the AJAX-integrated theme is released, this has been disabled
+	 *
+	 */
+	/*
 	$.get(url, params, function(data) {
 
 		$('.islandora-solr-search-results').removeClass('loading')
 		    .append($(data).find('.islandora-solr-search-results').children())
 		    .prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
 	    });
+
 	$('.islandora-solr-search-results').empty().addClass('loading');
+	*/
+
+	/**
+	 * For integration with the TinySort jQuery plug-in
+	 *
+	 */
+	
+	$('.islandora-solr-search-result').tsort('dd.' + this.options.field.toLowerCase().replace(/\.sort/, '').replace('.', '-', 'g'), { order: this.options.order });
+	//$('.islandora-solr-search-results').empty().addClass('loading');
+	
     }
 };
 

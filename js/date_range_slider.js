@@ -120,16 +120,24 @@ SolrQuery.FIELD_MAP = {
     'geology_slides_esi.date.original' : 'Date'
 };
 
+SolrQuery.COLLECTION_FIELD_MAP = {
+
+    
+};
+
 /**
  * Static methods
  *
  */
 
 SolrQuery.fieldMap = function(field) {
-	
-    return SolrQuery.FIELD_MAP[field];
 
-    
+    if(field == 'Date' || field == 'Format.Medium') {
+
+    } else {
+	
+	return SolrQuery.FIELD_MAP[field];
+    }
 };
 
 SolrQuery.getQuery = function(url, $) {
