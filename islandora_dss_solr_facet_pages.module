@@ -12,7 +12,39 @@ require_once __DIR__ . '/theme/theme.inc';
 
 function islandora_dss_solr_facet_pages_preprocess_islandora_solr_facet_pages_results(&$vars) {
 
-  dpm('trace');
+  $vars['complex_results'] = array();
+
+  foreach($vars['results'] as $result => $count) {
+
+    $class = array('islandora-solr-facet');
+
+    switch($vars['solr_field']) {
+    case 'eastasia.Date.Artifact.Upper':
+    case 'eastasia.Date.Artifact.Lower':
+    case 'eastasia.Date.Image.Upper':
+    case 'eastasia.Date.Image.Lower':
+      
+      $filter = $vars['solr_field'] . ':"' . addslashes($result) . 'T00:00:00Z"';
+    $class[] = 'islandora-solr-facet-date';
+      break;
+
+    default:
+      $filter = $vars['solr_field'] . ':"' . addslashes($result) . '"';
+    }
+
+    /**
+     * For removing "----" and "_empty_" values created by the DC XSLT upon the updating of datastream content
+     *
+     */
+    if(in_array($result, array('----', '_empty_'))) {
+
+      continue;
+    }
+
+    $vars['complex_results'][$result] = array('count' => $count,
+					      'filter' => $filter,
+					      'class' => $class);
+  }
 }
 
 function islandora_dss_solr_facet_pages_block_view(&$data, $block) {

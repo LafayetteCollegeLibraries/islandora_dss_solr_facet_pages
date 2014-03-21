@@ -14,8 +14,6 @@ function _islandora_dss_solr_facet_pages_preprocess_islandora_solr_facet_pages_r
 
   $vars['complex_results'] = array();
 
-  //dpm($vars);
-
   foreach($vars['results'] as $result => $count) {
 
     $class = array('islandora-solr-facet');

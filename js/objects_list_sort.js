@@ -97,7 +97,7 @@ LafayetteDssObjectList.prototype = {
 	 * This resolves DSS-178
 	 *
 	 */
-	var listGridParams = $(document).data('islandoraDssSolrResultsViewParams');
+	var listGridParams = $(document).data('islandoraDssSolrResultsViewParams') || {};
 	$(document).data('islandoraDssSolrResultsSortParams', { sort: sortParam });
 
 	params = $.extend(params, listGridParams, { sort: sortParam });
@@ -123,8 +123,13 @@ LafayetteDssObjectList.prototype = {
 	 * For integration with the TinySort jQuery plug-in
 	 *
 	 */
-	
-	$('.islandora-solr-search-result').tsort('dd.' + this.options.field.toLowerCase().replace(/\.sort/, '').replace('.', '-', 'g'), { order: this.options.order });
+	if(listGridParams['display'] == 'grid') {
+
+	    $('.islandora-basic-collection-object').tsort('dd.' + this.options.field.toLowerCase().replace(/\.sort/, '').replace('.', '-', 'g'), { order: this.options.order });
+	} else {
+
+	    $('.islandora-solr-search-result').tsort('dd.' + this.options.field.toLowerCase().replace(/\.sort/, '').replace('.', '-', 'g'), { order: this.options.order });
+	}
 	//$('.islandora-solr-search-results').empty().addClass('loading');
 	
     }
