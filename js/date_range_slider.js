@@ -1095,33 +1095,42 @@ SolrQuery.prototype = {
 		    // Store the initial min and max
 		    var minMax = $(document).data('islandoraDssDateRangeInitValues');
 
-		    if(typeof(minMax[dateField]) == 'undefined') {
+		    /**
+		     * Ensure that the date range values are updated for every AJAX response parsed
+		     * Resolves DSS-180
+		     *
+		     */
 
-			minMax[dateField] = {};
-			minMax[dateField]['min'] = +new Date($facetListItems.first().children('a').text());
+		    minMax[dateField] = {};
+		    minMax[dateField]['min'] = +new Date($facetListItems.first().children('a').text());
+		    
+		    // If there is only one facet value for the range, create a second by incrementing 10 years
+		    /**
+		     * If there is only one facet value for the range, prepend and append 10 years
+		     *
+		     */
+		    if($facetListItems.length == 1) {
 
-			// If there is only one facet value for the range, create a second by incrementing 10 years
-			/**
-			 * If there is only one facet value for the range, prepend and append 10 years
-			 *
-			 */
-			if($facetListItems.length == 1) {
+			minDate = new Date(minMax[dateField]['min']);
+			minDate.setUTCFullYear( minDate.getUTCFullYear() - 10 );
+			minMax[dateField]['min'] = +minDate;
+			
+			var maxDate = new Date($facetListItems.first().children('a').text());
+			maxDate.setUTCFullYear( maxDate.getUTCFullYear() + 10 );
+			
+			minMax[dateField]['max'] = +maxDate;
+		    } else {
 
-			    minDate = new Date(minMax[dateField]['min']);
-			    minDate.setUTCFullYear( minDate.getUTCFullYear() - 10 );
-			    minMax[dateField]['min'] = +minDate;
-
-			    var maxDate = new Date($facetListItems.first().children('a').text());
-			    maxDate.setUTCFullYear( maxDate.getUTCFullYear() + 10 );
-
-			    minMax[dateField]['max'] = +maxDate;
-			} else {
-
-			    minMax[dateField]['max'] = +new Date( $facetListItems.last().children('a').text());
-			}
-
-			$(document).data('islandoraDssDateRangeInitValues', minMax);
+			minMax[dateField]['max'] = +new Date( $facetListItems.last().children('a').text());
 		    }
+		    
+		    /**
+		     * Ensure that the date range values are updated for every AJAX response parsed
+		     * Resolves DSS-180
+		     *
+		     */
+
+		    $(document).data('islandoraDssDateRangeInitValues', minMax);
 
 		    //var minDate = +new Date( $facetListItems.first().children('a').text());
 		    //var maxDate = +new Date( $facetListItems.first().children('a').text());
