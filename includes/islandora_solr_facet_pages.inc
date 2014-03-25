@@ -276,7 +276,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     // Set facet parameters.
     $facet_params = array('facet' => 'true',
 			  'facet.field' => $solr_field,
-			  'facet.sort' => 'index',
+			  'facet.sort' => 'count',
 			  'facet.mincount' => 1,
 			  'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
 			  'qt' => variable_get('islandora_solr_request_handler', 'standard'),
@@ -304,7 +304,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     // Set facet parameters.
     $facet_params = array('facet' => 'true',
 			  'facet.field' => $solr_field,
-			  'facet.sort' => 'index',
+			  'facet.sort' => 'count',
 			  'facet.mincount' => 1,
 			  'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
 			  'qt' => variable_get('islandora_solr_request_handler', 'standard'),

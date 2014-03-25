@@ -889,6 +889,17 @@ SolrQuery.prototype = {
 				}
 			    }
 
+			    /**
+			     * Parse the Solr query from the URL
+			     * Resolves DSS-203
+			     */
+			    var last_url_segment = decodeURI(document.URL).split('/').pop().split('?').shift().replace('%3A', ':');
+
+			    if(last_url_segment.match(':')) {
+
+				facetParams['query'] = last_url_segment;
+			    }
+
 			    var fancyBoxContainer = $('<div class="fancy-box-container loading"></div>').appendTo($('body')).dialog({ title: SolrQuery.fieldMap(solrField),
 																      modal: true,
 																      minHeight: 280,

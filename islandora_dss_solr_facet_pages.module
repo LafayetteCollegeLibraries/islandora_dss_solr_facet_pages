@@ -79,8 +79,6 @@ function islandora_dss_solr_facet_pages_block_view_islandora_solr_facet_pages_is
  */
 function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_field, $solr_query='*:*', $facets=array()) {
 
-
-
   $solr_query = implode(' AND ', array_merge(array($solr_query), $facets));
 
   $prefix = t('ALL');
@@ -148,9 +146,18 @@ function _islandora_dss_solr_facet_pages_facets($paths, $solr_field) {
   //if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
   if(true) {
 
-    //$query = $_GET['q'];
+    /*
+    if(array_key_exists('q', $_GET)) {
+
+      $query = $_GET['q'];
+    } else {
+
+      $query = '*:*';
+    }
+    */
 
     $query = '*:*';
+
     $facets = array();
     if(array_key_exists('query', $_GET)) {
 
