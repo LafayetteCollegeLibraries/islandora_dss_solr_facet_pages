@@ -43,6 +43,41 @@ var LafayetteDssObjectList = function($, element, options) {
  * ObjectList Object
  *
  */
+
+/**
+ * Static methods
+ *
+ */
+
+/**
+ * AJAX-integrated page browsing
+ *
+ */
+LafayetteDssObjectList.paginationLinkHandler = function(e) {
+
+    e.preventDefault();
+
+    var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
+    var listGridParams = $(document).data('islandoraDssSolrResultsViewParams') || {};
+    var sortParams = $(document).data('islandoraDssSolrResultsSortParams') || {};
+
+    params = $.extend(params, listGridParams, sortParams);
+
+    /**
+     *
+     */
+    $.get($(e.target).attr('href'), params, function(data) {
+
+	    $('.islandora-solr-search-results').removeClass('loading')
+		.append($(data).find('.islandora-solr-search-results').children())
+		.prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
+	    
+	    $('.pagination li a').click(LafayetteDssObjectList.paginationLinkHandler);
+	});
+    
+    $('.islandora-solr-search-results').empty().addClass('loading');
+};
+
 LafayetteDssObjectList.prototype = {
 
     constructor: LafayetteDssObjectList,
@@ -118,6 +153,8 @@ LafayetteDssObjectList.prototype = {
 		$('.islandora-solr-search-results').removeClass('loading')
 		    .append($(data).find('.islandora-solr-search-results').children())
 		    .prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
+
+		$('.pagination li a').click(LafayetteDssObjectList.paginationLinkHandler);
 	    });
 
 	$('.islandora-solr-search-results').empty().addClass('loading');
@@ -189,32 +226,7 @@ LafayetteDssObjectList.prototype = {
 		objectList.sort();
 	    });
 
-	/**
-	 * AJAX-integrated page browsing
-	 *
-	 */
-	$('.pagination li a').click(function(e) {
-
-		e.preventDefault();
-
-		var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
-		var listGridParams = $(document).data('islandoraDssSolrResultsViewParams') || {};
-		var sortParams = $(document).data('islandoraDssSolrResultsSortParams') || {};
-
-		params = $.extend(params, listGridParams, sortParams);
-
-		/**
-		 *
-		 */
-		$.get($(this).attr('href'), params, function(data) {
-
-			$('.islandora-solr-search-results').removeClass('loading')
-			    .append($(data).find('.islandora-solr-search-results').children())
-			    .prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
-		    });
-
-		$('.islandora-solr-search-results').empty().addClass('loading');
-	    });
+	$('.pagination li a').click(LafayetteDssObjectList.paginationLinkHandler);
     };
 
     // @todo Refactor
