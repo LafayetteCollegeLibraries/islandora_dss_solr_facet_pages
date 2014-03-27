@@ -250,6 +250,36 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
   }
 
 /**
+ * Work-around for MARC relator values in fields
+ * @todo Remove after reindexing has completed
+ *
+ */
+function _islandora_dss_solr_facet_pages_marc_relator_filter($field_value, $field_name) {
+
+  if($field_name == 'eastasia.Format.Medium') {
+
+    $MARC_RELATOR_MAP = array(
+			      '"photonegative"' => '"Photographic negative"',
+			      '"photoprint"' => '"Photographic print"',
+			      '"slide"' => '"Photographic slide"',
+			      '"picture postcard"' => '"Picture postcard"'
+			      );
+
+    return $MARC_RELATOR_MAP[$field_value];
+
+  } elseif($field_name == 'mdl_prints.format.medium') {
+
+    $MARC_RELATOR_MAP = array(
+			      '"photoprint"' => '"lithograph"',
+			      );
+
+    return $MARC_RELATOR_MAP[$field_value];
+  }
+
+  return $field_value;
+}
+
+/**
  * @author griffinj@lafayette
  * Returns the top Solr facets for any given field
  * (Implemented in a manner similar to the ContentDM 4 advanced search feature)
@@ -571,7 +601,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$child_items_id = preg_replace('/_|\./', '-', $solr_field);
 	$date_reset_id = 'reset-' . $child_items_id;
 
-	$result_fields = islandora_solr_get_fields('result_fields');
+	$result_fields = islandora_solr_get_fields('result_fields');	
 
 	/*
 	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
@@ -619,6 +649,16 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	preg_match('/.+?\:(.+)/', $filter, $token_value_match);
 	$token_value = $token_value_match[1];
+
+	/**
+	 * Work-around for MARC relator terms
+	 * Resolve with re-indexing
+	 *
+	 */
+	$filter_split = explode(':', $filter);
+	$solr_field = $filter_split[0];
+
+	$token_value = _islandora_dss_solr_facet_pages_marc_relator_filter($token_value, $solr_field);
 
 	if(preg_match('/"(.+?)"/', $token_value, $token_value_match)) {
 

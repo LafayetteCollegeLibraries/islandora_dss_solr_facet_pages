@@ -130,10 +130,65 @@ SolrQuery.COLLECTION_FIELD_MAP = {
  *
  */
 
+/**
+ * Work-around for MARC relators inserted into metadata
+ * @todo Resolve by reindexing
+ *
+ */
+SolrQuery.marcRelatorFilter = function(fieldValue, fieldName) {
+
+    if(fieldName == 'eastasia.Format.Medium') {
+
+	var MARC_RELATOR_MAP = {
+
+	    '"Photographic negative"': '"photonegative"',
+	    '"Photographic print"': '"photoprint"',
+	    '"Photographic slide"': '"slide"',
+	    '"Picture postcard"': '"picture postcard"'
+	};
+
+	return MARC_RELATOR_MAP[fieldValue];
+
+    } else if(fieldName == 'mdl_prints.format.medium') {
+
+	var MARC_RELATOR_MAP = {
+
+	    '"lithograph"': '"photoprint"'
+	};
+
+	return MARC_RELATOR_MAP[fieldValue];
+    }
+
+    return fieldValue;
+};
+
+/**
+ * Terrible work-around
+ * @todo Refactor for a more complex mapping between collection names, Solr field names, and field labels
+ *
+ */
 SolrQuery.fieldMap = function(field) {
 
-    if(field == 'Date' || field == 'Format.Medium') {
+    if(field == 'Date') {
 
+	// Simply parse for 'Geology' within the Solr query in the URL
+	if(/Geology/.exec(document.URL)) {
+
+	    return 'geology_slides_esi.date.original';
+	} else {
+
+	    return 'dc.date.sort';
+	}
+    } else if(field == 'Format.Medium') {
+
+	// Simply parse for 'Marquis' within the Solr query in the URL
+	if(/Marquis/.exec(document.URL)) {
+
+	    return 'mdl_prints.format.medium';
+	} else {
+
+	    return 'eastasia.Format.Medium';
+	}
     } else {
 	
 	return SolrQuery.FIELD_MAP[field];
@@ -748,7 +803,14 @@ SolrQuery.prototype = {
 			    for(k in facetQueries[key]) {
 
 				var facetKey = 'f[' + facetIndex + ']';
-				facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+
+				/**
+				 * For handling MARC relator issues
+				 * @todo Remove after re-indexing
+				 *
+				 */
+				//facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+				facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
 				facetIndex++;
 
 				//var parentUrl = facetedSearchAnchor.attr('href');
@@ -1565,7 +1627,14 @@ SolrQuery.prototype = {
 		for(k in facetQueries[key]) {
 
 		    var facetKey = 'f[' + i + ']';
-		    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+
+		    /**
+		     * For handling MARC relator issues
+		     * @todo Remove after re-indexing
+		     *
+		     */
+		    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+		    facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
 		    i++;
 		}
 	    }

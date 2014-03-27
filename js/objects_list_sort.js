@@ -91,6 +91,11 @@ LafayetteDssObjectList.prototype = {
 
 	var sortParam = this.options.field + ' ' + this.options.order;
 
+	if(this.options.field != 'dc.title') {
+
+	    sortParam += ',dc.title asc';
+	}
+
 	/**
 	 * Integrating List/Grid view widgets
 	 * Refactor into a Global Object (accessed by multiple Modules)
@@ -103,12 +108,11 @@ LafayetteDssObjectList.prototype = {
 	params = $.extend(params, listGridParams, { sort: sortParam });
 	$(document).data('islandoraDssDateRangeFacetParams', params);
 
-	/**
+ 	/**
 	 * For AJAX-integration, this assumes that the Solr results are NOT paginated
 	 * Given that this is unsupported until the AJAX-integrated theme is released, this has been disabled
 	 *
 	 */
-	/*
 	$.get(url, params, function(data) {
 
 		$('.islandora-solr-search-results').removeClass('loading')
@@ -117,12 +121,12 @@ LafayetteDssObjectList.prototype = {
 	    });
 
 	$('.islandora-solr-search-results').empty().addClass('loading');
-	*/
 
 	/**
 	 * For integration with the TinySort jQuery plug-in
 	 *
 	 */
+	/*
 	if(listGridParams['display'] == 'grid') {
 
 	    $('.islandora-basic-collection-object').tsort('dd.' + this.options.field.toLowerCase().replace(/\.sort/, '').replace('.', '-', 'g'), { order: this.options.order });
@@ -130,6 +134,7 @@ LafayetteDssObjectList.prototype = {
 
 	    $('.islandora-solr-search-result').tsort('dd.' + this.options.field.toLowerCase().replace(/\.sort/, '').replace('.', '-', 'g'), { order: this.options.order });
 	}
+	*/
 	//$('.islandora-solr-search-results').empty().addClass('loading');
 	
     }
@@ -182,6 +187,33 @@ LafayetteDssObjectList.prototype = {
 		objectList.options.field = $(this).val();
 		objectList.options.order = /field\-sort\-(.+)/.exec( $('.field-sort.active').attr('id'))[1];
 		objectList.sort();
+	    });
+
+	/**
+	 * AJAX-integrated page browsing
+	 *
+	 */
+	$('.pagination li a').click(function(e) {
+
+		e.preventDefault();
+
+		var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
+		var listGridParams = $(document).data('islandoraDssSolrResultsViewParams') || {};
+		var sortParams = $(document).data('islandoraDssSolrResultsSortParams') || {};
+
+		params = $.extend(params, listGridParams, sortParams);
+
+		/**
+		 *
+		 */
+		$.get($(this).attr('href'), params, function(data) {
+
+			$('.islandora-solr-search-results').removeClass('loading')
+			    .append($(data).find('.islandora-solr-search-results').children())
+			    .prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
+		    });
+
+		$('.islandora-solr-search-results').empty().addClass('loading');
 	    });
     };
 
