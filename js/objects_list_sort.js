@@ -55,6 +55,8 @@ var LafayetteDssObjectList = function($, element, options) {
  */
 LafayetteDssObjectList.paginationLinkHandler = function(e) {
 
+    // Work-around, refactor
+    var $ = jQuery;
     e.preventDefault();
 
     var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
