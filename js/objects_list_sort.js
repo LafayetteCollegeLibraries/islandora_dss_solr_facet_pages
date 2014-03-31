@@ -66,6 +66,7 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
     params = $.extend(params, listGridParams, sortParams);
 
     /**
+     * Transmitting the GET request for the desired Solr results page
      *
      */
     $.get($(e.target).attr('href'), params, function(data) {
@@ -128,10 +129,13 @@ LafayetteDssObjectList.prototype = {
 
 	var sortParam = this.options.field + ' ' + this.options.order;
 
+	// This appears to create further issues within islandora_solr
+	/*
 	if(this.options.field != 'dc.title') {
 
 	    sortParam += ',dc.title asc';
 	}
+	*/
 
 	/**
 	 * Integrating List/Grid view widgets
@@ -221,9 +225,17 @@ LafayetteDssObjectList.prototype = {
 		objectList.sort();
 	    });
 
+	/**
+	 * Handler for sorting by a new field
+	 *
+	 */
 	$('#field-sort-select option').click(function(e) {
 
 		objectList.options.field = $(this).val();
+
+		// Reset the sorting order
+		$('.field-sort.active').removeClass('active').siblings('.field-sort').addClass('active');
+
 		objectList.options.order = /field\-sort\-(.+)/.exec( $('.field-sort.active').attr('id'))[1];
 		objectList.sort();
 	    });
