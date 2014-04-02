@@ -74,7 +74,11 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
 	    $('.islandora-solr-search-results').removeClass('loading')
 		.append($(data).find('.islandora-solr-search-results').children())
 		.prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
-	    
+	    //.prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'))
+	    //.prev().find('.pagination-count-bottom').replaceWith($(data).find('.pagination-count-bottom'));
+
+	    //.prev().find('.pagination-count-bottom').replaceWith($(data).find('.pagination-count-bottom'));
+	    $('.pagination-count-bottom').last().replaceWith($(data).find('.pagination-count-bottom'));
 	    $('.pagination li a').click(LafayetteDssObjectList.paginationLinkHandler);
 	});
     
