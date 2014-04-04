@@ -237,8 +237,12 @@ LafayetteDssObjectList.prototype = {
 
 		objectList.options.field = $(this).val();
 
-		// Reset the sorting order
-		$('.field-sort.active').removeClass('active').siblings('.field-sort').addClass('active');
+		/** Reset the sorting order
+		 * This should always set the sort order to "asc"
+		 * Resolves DSSSM-653
+		 */
+		//$('.field-sort.active').removeClass('active').siblings('.field-sort').addClass('active');
+		$('.field-sort.active').removeClass('active').parent().children('#field-sort-asc').addClass('active');
 
 		objectList.options.order = /field\-sort\-(.+)/.exec( $('.field-sort.active').attr('id'))[1];
 		objectList.sort();
