@@ -1703,6 +1703,33 @@ SolrQuery.prototype = {
 	    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
 	    params = $.extend(params, facetParams);
 
+	    /**
+	     * Work-around
+	     * @todo Refactor
+	     * Remove duplicate facet values from the params Object
+	     * This resolves DSSSM-664
+	     *
+	     */
+	    var _params;
+
+	    // Please see the following resource: http://nelsonwells.net/2011/10/swap-object-key-and-values-in-javascript
+	    var invert = function(obj) {
+
+		var new_obj = {};
+
+		for (var prop in obj) {
+
+		    if(obj.hasOwnProperty(prop)) {
+
+			new_obj[obj[prop]] = prop;
+		    }
+		}
+
+		return new_obj;
+	    };	    
+
+	    params = invert(invert(_params));
+
 	    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
 
 		/**
