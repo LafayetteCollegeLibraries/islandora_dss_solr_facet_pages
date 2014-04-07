@@ -1094,6 +1094,19 @@ SolrQuery.prototype = {
 		    $(document).data('islandoraDssDateRangeFacetParams', facetParams);
 
 		    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
+		    /**
+		     * @todo Refactor
+		     * This resolves DSSSM-664
+		     *
+		     */
+		    for(var f in params) {
+
+			if((new RegExp(dateField)).exec(params[f])) {
+
+			    delete params[f];
+			}
+		    }
+
 		    params = $.extend(params, facetParams);
 
 		    /**
@@ -1103,6 +1116,31 @@ SolrQuery.prototype = {
 		     */
 		    delete params['page']; 
 		    url = url.replace(/page=\d+&/, '');
+
+		    /**
+		     * Resolves DSSSM-664
+		     * @todo Refactor
+		     *
+		     */
+		    var _params = params;
+		    // Please see the following resource: http://nelsonwells.net/2011/10/swap-object-key-and-values-in-javascript
+		    var invert = function(obj) {
+
+			var new_obj = {};
+
+			for(var prop in obj) {
+
+			    if(obj.hasOwnProperty(prop) && typeof(new_obj[obj[prop]]) == 'undefined') {
+				
+				new_obj[obj[prop]] = prop;
+			    }
+			}
+
+			return new_obj;
+		    };
+		    params = invert(invert(_params));
+		    $(document).data('islandoraDssDateRangeFacetParams', params);
+		    //$(document).data('islandoraDssSolrResultsViewParams', params);
 
 		    $.get(url, params, that.updatePage);
 		    $('.main-container').empty().addClass('loading');
@@ -1700,37 +1738,37 @@ SolrQuery.prototype = {
 		});
 	    */
 
-	    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
-	    params = $.extend(params, facetParams);
-
-	    /**
-	     * Work-around
-	     * @todo Refactor
-	     * Remove duplicate facet values from the params Object
-	     * This resolves DSSSM-664
-	     *
-	     */
-	    var _params;
-
 	    // Please see the following resource: http://nelsonwells.net/2011/10/swap-object-key-and-values-in-javascript
 	    var invert = function(obj) {
 
 		var new_obj = {};
 
-		for (var prop in obj) {
+		for(var prop in obj) {
 
-		    if(obj.hasOwnProperty(prop)) {
+		    if(obj.hasOwnProperty(prop) && typeof(new_obj[obj[prop]]) == 'undefined') {
 
 			new_obj[obj[prop]] = prop;
 		    }
 		}
 
 		return new_obj;
-	    };	    
+	    };
 
-	    params = invert(invert(_params));
+	    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
+	    params = $.extend(params, facetParams);
 
 	    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
+
+		/**
+		 * Work-around
+		 * @todo Refactor
+		 * Remove duplicate facet values from the params Object
+		 * This resolves DSSSM-664
+		 *
+		 */
+		var _params = params;
+
+		params = invert(invert(_params));
 
 		/**
 		 * Resolves pagination issues
@@ -1739,10 +1777,31 @@ SolrQuery.prototype = {
 		 */
 		delete params['page'];
 		url = url.replace(/page=\d+&/, '');
-		$.get(facetedSearchAnchor.attr('href'), params, that.updatePage);
+		//$.get(facetedSearchAnchor.attr('href'), params, that.updatePage);
+
+		$(document).data('islandoraDssDateRangeFacetParams', params);
+		//$(document).data('islandoraDssSolrResultsViewParams', params);
+
+		/**
+		 * @todo Refactor
+		 *
+		 */
+		url = facetedSearchAnchor.attr('href').split('?').shift().replace(/page=\d+&/, '');
+		$.get(url, params, that.updatePage);
 	    } else {
 
 		params = $.extend(params, facetParams);
+
+		/**
+		 * Work-around
+		 * @todo Refactor
+		 * Remove duplicate facet values from the params Object
+		 * This resolves DSSSM-664
+		 *
+		 */
+		var _params = params;
+
+		params = invert(invert(_params));
 
 		/**
 		 * Resolves pagination issues
@@ -1750,6 +1809,10 @@ SolrQuery.prototype = {
 		 *
 		 */
 		delete params['page'];
+
+		$(document).data('islandoraDssDateRangeFacetParams', params);
+		//$(document).data('islandoraDssSolrResultsViewParams', params);
+
 		url = url.replace(/page=\d+&/, '');
 		$.get(url, params, that.updatePage);
 	    }
