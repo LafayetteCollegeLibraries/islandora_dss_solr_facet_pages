@@ -1390,6 +1390,13 @@ SolrQuery.prototype = {
 			    params = $.extend(params, facetParams);
 
 			    /**
+			     * Resolves DSSSM-666
+			     *
+			     */
+			    var sortParams = $(document).data('islandoraDssSolrResultsSortParams') || {};
+			    params = $.extend(params, sortParams);
+
+			    /**
 			     * Resolves pagination issues
 			     * @todo Refactor
 			     *
