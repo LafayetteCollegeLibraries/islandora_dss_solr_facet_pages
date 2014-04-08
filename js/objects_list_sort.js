@@ -214,7 +214,13 @@ LafayetteDssObjectList.prototype = {
 	var objectList = new LafayetteDssObjectList($, $('.islandora-solr-search-result-list'));
 
 	//$('.islandora-discovery-control.title-sort-control select').change(function() {
+
+	/**
+	 * Resolves DSSSM-652
+	 *
+	 */
 	$('.field-sort').click(function(e) {
+	//$('.field-sort').on('click change touchstart', function(e) {
 
 		e.preventDefault();
 		$('.field-sort.active').removeClass('active');
@@ -233,7 +239,14 @@ LafayetteDssObjectList.prototype = {
 	 * Handler for sorting by a new field
 	 *
 	 */
-	$('#field-sort-select option').click(function(e) {
+
+	/**
+	 * Resolves DSSSM-652
+	 *
+	 */
+	//$('#field-sort-select option').click(function(e) {
+	//$('#field-sort-select option').on('click change touchstart', function(e) {
+	$('#field-sort-select').on('change', function(e) {
 
 		objectList.options.field = $(this).val();
 
