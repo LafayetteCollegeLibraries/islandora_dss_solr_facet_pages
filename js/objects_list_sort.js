@@ -69,7 +69,21 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
      * Transmitting the GET request for the desired Solr results page
      *
      */
-    $.get($(e.target).attr('href'), params, function(data) {
+
+    /**
+     * Resolves DSS-249
+     *
+     */
+    var url = $(e.target).attr('href');
+    var pageMatch = /page\=(\d+)/.exec(url);
+    if(pageMatch) {
+
+	params['page'] = pageMatch[1];
+    }
+
+    url = url.split('?').shift();
+
+    $.get(url, params, function(data) {
 
 	    $('.islandora-solr-search-results').removeClass('loading')
 		.append($(data).find('.islandora-solr-search-results').children())
@@ -164,6 +178,11 @@ LafayetteDssObjectList.prototype = {
 		    .append($(data).find('.islandora-solr-search-results').children())
 		    .prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
 
+		/**
+		 * Resolves DSS-249
+		 *
+		 */
+		$('.pagination-count-bottom').last().replaceWith($(data).find('.pagination-count-bottom'));
 		$('.pagination li a').click(LafayetteDssObjectList.paginationLinkHandler);
 	    });
 

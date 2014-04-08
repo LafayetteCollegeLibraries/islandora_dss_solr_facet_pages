@@ -631,7 +631,13 @@ SolrQuery.prototype = {
 	    for(var k in facetQueries[key]) {
 
 		var facetKey = 'f[' + facetIndex + ']';
-		facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+		//facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+
+		/**
+		 * Resolves DSSSM-533
+		 *
+		 */
+		facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
 		facetIndex++;
 	    }
 	}
@@ -810,7 +816,8 @@ SolrQuery.prototype = {
 				 *
 				 */
 				//facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-				facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
+				//facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
+				facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&');
 				facetIndex++;
 
 				//var parentUrl = facetedSearchAnchor.attr('href');
@@ -1087,7 +1094,8 @@ SolrQuery.prototype = {
 			for(k in facetQueries[key]) {
 
 			    var facetKey = 'f[' + facetIndex + ']';
-			    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+			    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+			    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
 			    facetIndex++;
 			}
 		    }
@@ -1340,7 +1348,8 @@ SolrQuery.prototype = {
 				for(k in facetQueries[key]) {
 
 				    var facetKey = 'f[' + i + ']';
-				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+				    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
 				    i++;
 				}
 				//i++;
