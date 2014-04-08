@@ -1757,6 +1757,14 @@ SolrQuery.prototype = {
 	    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
 	    params = $.extend(params, facetParams);
 
+	    /**
+	     * @todo Refactor
+	     * Resolves DSSSM-666
+	     *
+	     */
+	    var sortParams = $(document).data('islandoraDssSolrResultsSortParams') || {};
+	    params = $.extend(params, sortParams);
+
 	    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
 
 		/**
