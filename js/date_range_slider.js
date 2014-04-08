@@ -1659,7 +1659,16 @@ SolrQuery.prototype = {
 			    //return e == facetedSearchAnchor.text() || facetQueries[fieldName] == '"' + facetedSearchAnchor.text() + '"';
 
 			    //return fieldValue == $(facetedSearchAnchor).contents().first().text() || fieldValue == '"' + $(facetedSearchAnchor).contents().first().text() + '"';
-			    return fieldValue == $(facetedSearchAnchor).contents().last().text() || fieldValue == '"' + $(facetedSearchAnchor).contents().last().text() + '"';
+
+			    /**
+			     * Resolves DSSSM-533
+			     * @todo Refactor
+			     *
+			     */
+			    //return fieldValue == $(facetedSearchAnchor).contents().last().text() || fieldValue == '"' + $(facetedSearchAnchor).contents().last().text() + '"';
+
+			    var facetElementContent = $(facetedSearchAnchor).contents().last().text().replace('&', '%26');
+			    return fieldValue == facetElementContent || fieldValue == '"' + facetElementContent + '"';
 			}).length > 0) {
 
 		    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
@@ -1669,7 +1678,16 @@ SolrQuery.prototype = {
 			facetQueries[fieldName] = facetQueries[fieldName].filter(function(fieldValue) {
 
 				//return fieldValue != $(facetedSearchAnchor).contents().first().text() && fieldValue != '"' + $(facetedSearchAnchor).contents().first().text() + '"';
-				return fieldValue != $(facetedSearchAnchor).contents().last().text() && fieldValue != '"' + $(facetedSearchAnchor).contents().last().text() + '"';
+
+				/**
+				 * Resolves DSSSM-533
+				 * @todo Refactor
+				 *
+				 */
+				//return fieldValue != $(facetedSearchAnchor).contents().last().text() && fieldValue != '"' + $(facetedSearchAnchor).contents().last().text() + '"';
+
+				var facetElementContent = $(facetedSearchAnchor).contents().last().text().replace('&', '%26');
+				return fieldValue != facetElementContent && fieldValue != '"' + facetElementContent + '"';
 			    });
 			if(facetQueries[fieldName].length == 0) {
 
@@ -1695,7 +1713,13 @@ SolrQuery.prototype = {
 		     *
 		     */
 		    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-		    facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
+		    //facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
+		    /**
+		     * Resolves DSSSM-533
+		     * @todo Refactor
+		     *
+		     */
+		    facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&');
 		    i++;
 		}
 	    }

@@ -45,8 +45,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
   if(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $filter, $m)) {
 
-    dpm(array('trace'));
-
     $query_field_namespace = $m[1];
     if(preg_match('/"(.+?)"/', $query_field_namespace, $m)) {
 
@@ -217,6 +215,18 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
       //dpm($fields);
     }
+  } else {
+
+    /**
+     * For facets global to the repository, only render cdm.Relation.IsPartOf facets
+     * Resolves DSSSM-682
+     *
+     */
+    // $fields = $_fields;
+    $fields = array(array('solr_field' => 'cdm.Relation.IsPartOf',
+			  'label' => 'Relation.IsPartOf',
+			  'path' => 'collections'
+			  ));
   }
 
   /*
@@ -617,10 +627,10 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 																	     'class' => array('islandora-solr-date-reset islandora-solr-facet-token'),
 																	     'data-target' => '#' . $child_items_id . ' + .islandora-solr-facet-date-slider'
 																	     ),
-														       'fragment' => ' ',
-														       'external' => TRUE,
-														       'html' => TRUE));
-
+												       'fragment' => ' ',
+												       'external' => TRUE,
+												       'html' => TRUE));
+	
       } else {
 
 	$other_tokens = array();
