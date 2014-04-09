@@ -115,12 +115,35 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
     break;
   }
 
+  /**
+   * Refine for anomalous cases (e. g. browsing the contents of the repository)
+   * Resolves DSSSM-682
+   * @todo Refactor with variable_get()
+   *
+   */
+  $islandora_dss_solr_facet_pages_TOP_COLLECTIONS = array('East Asia Image Collection',
+							  'Lafayette Newspaper Collection',
+							  'Historical Photograph Collection',
+							  'Marquis de Lafayette Prints Collection',
+							  'Geology Department Slide Collection',
+							  'McKelvy House Photograph Collection',
+							  'Lafayette World War II Casualties',
+							  );
+
   $options = array();
   foreach($result_fields as $result_field => $count) {
 
     if(!in_array("$solr_field:\"$result_field\"", $facets)) {
 
-      $options[$result_field] = "<span>$result_field</span>" . "&nbsp;<span class='bucket-size'>($count)</span>";
+      /**
+       * Refine for anomalous cases (e. g. browsing the contents of the repository)
+       * Resolves DSSSM-682
+       *
+       */
+      if(($solr_query == '*:*' and in_array($result_field, $islandora_dss_solr_facet_pages_TOP_COLLECTIONS)) or $solr_query != '*:*') {
+
+	$options[$result_field] = "<span>$result_field</span>" . "&nbsp;<span class='bucket-size'>($count)</span>";
+      }
     }
   }
 
@@ -166,6 +189,12 @@ function _islandora_dss_solr_facet_pages_facets($paths, $solr_field) {
 
       $query = $_POST['query'];
     }
+
+    /**
+     * Removes URL fragments
+     *
+     */
+    $query = array_shift(explode('#', '*:*'));
 
     if(array_key_exists('f', $_GET)) {
 

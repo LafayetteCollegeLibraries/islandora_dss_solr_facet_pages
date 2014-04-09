@@ -455,6 +455,37 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       // Merge uppercase with lowercase.
       $result_fields = array_merge($result_fields, $result_fields_lower);
 
+      /**
+       * Refine for anomalous cases (e. g. browsing the contents of the repository)
+       * Resolves DSSSM-682
+       *
+       */
+      $islandora_dss_solr_facet_pages_TOP_COLLECTIONS = array('East Asia Image Collection',
+							      'Lafayette Newspaper Collection',
+							      'Historical Photograph Collection',
+							      'Marquis de Lafayette Prints Collection',
+							      'Geology Department Slide Collection',
+							      'McKelvy House Photograph Collection',
+							      'Lafayette World War II Casualties',
+							      );
+
+
+      dpm( array($solr, $solr_field, $prefix, $islandora_solr_facet_query));
+      if($islandora_solr_facet_query == '*:*') {
+
+	$_result_fields = array();
+
+	foreach($result_fields as $result_field_name => $result_field_count) {
+
+	  if(in_array($result_field_name, $islandora_dss_solr_facet_pages_TOP_COLLECTIONS)) {
+
+	    $_result_fields[$result_field_name] = $result_field_count;
+	  }
+	}
+
+	$result_fields = $_result_fields;
+      }
+
       $child_items = array();
       $child_items_class = array('islandora-solr-facet-list');
       if(preg_match('/\.?[dD]ate\.?/', $solr_field)) {
@@ -464,6 +495,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       $child_items_id = preg_replace('/_|\./', '-', $solr_field);
 
+      // Iterate through the facets
       if(!empty($result_fields)) {
 
 	// Add the field name itself
@@ -574,9 +606,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
     $token_items = array();
     $date_slider_buttons = array();
-
-    $TOP_COLLECTIONS = array('East Asia Image Collection',
-			     '');
 
     /*
 
