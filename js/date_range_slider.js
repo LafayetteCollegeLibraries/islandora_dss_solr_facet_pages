@@ -42,7 +42,7 @@ SolrQuery.FIELD_MAP = {
 
     'Relation.IsPartOf' : 'cdm.Relation.IsPartOf',
 
-    // Historical, McKelvy, and Newspaper
+    // McKelvy, and Newspaper
     'Date' : 'dc.date.sort',
 
     // EAIC
@@ -175,6 +175,8 @@ SolrQuery.fieldMap = function(field) {
     if(field == 'Date') {
 
 	// Simply parse for 'Geology' within the Solr query in the URL
+	// Simply parse for 'Historical' within the Solr query in the URL
+	//if(/Geology/.exec(document.URL) || /Historical/.exec(document.URL)) {
 	if(/Geology/.exec(document.URL)) {
 
 	    return 'geology_slides_esi.date.original';
@@ -186,7 +188,7 @@ SolrQuery.fieldMap = function(field) {
 
 	// Simply parse for 'Marquis' within the Solr query in the URL
 	if(/Marquis/.exec(document.URL)) {
-
+	    
 	    return 'mdl_prints.format.medium';
 	} else {
 

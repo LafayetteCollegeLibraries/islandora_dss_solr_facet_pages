@@ -32,6 +32,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 				     'Geology Department Slide Collection' => 'geology_slides_esi',
 				     'McKelvy House Photograph Collection' => 'mckelvy',
 				     'Lafayette World War II Casualties' => 'war_casualties',
+				     //'Historical Photograph Collection' => 'historical',
 				     );
 
   $filter = '';
@@ -43,6 +44,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
   $fields = array();
   $_fields = variable_get('islandora_solr_facet_pages_fields_data', array());
 
+  $query_field_namespace = '';
   if(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $filter, $m)) {
 
     $query_field_namespace = $m[1];
@@ -169,7 +171,12 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     case 'mdl_prints':
 
       $excluded_fields = array_merge($excluded_fields, array('geology_slides_esi.subject'));
-      //$included_fields = array_merge($included_fields, array('mdl_prints.creator'));
+    //$included_fields = array_merge($included_fields, array('mdl_prints.creator'));
+    break;
+
+    case 'historical':
+      
+      $included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'mdl_prints.date.original'));
     break;
 
     case 'geology_slides_esi':
@@ -200,6 +207,19 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 	*/
 
 	if(in_array($field['solr_field'], $included_fields) or (preg_match("/$query_field_namespace\./", $field['solr_field'], $m) and !in_array($field['solr_field'], $excluded_fields))) {
+
+	  /**
+	   * Work-around for historical
+	   * Resolves 
+	   *
+	   */
+	  if($query_field_namespace == 'historical') {
+
+	    if($field['label'] == 'Date.Original') {
+
+	      $field['label'] = 'Date';
+	    }
+	  }
 
 	  $fields[] = $field;
 	}
@@ -469,8 +489,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							      'Lafayette World War II Casualties',
 							      );
 
-
-      dpm( array($solr, $solr_field, $prefix, $islandora_solr_facet_query));
+      //dpm( array($solr, $solr_field, $prefix, $islandora_solr_facet_query));
       if($islandora_solr_facet_query == '*:*') {
 
 	$_result_fields = array();
