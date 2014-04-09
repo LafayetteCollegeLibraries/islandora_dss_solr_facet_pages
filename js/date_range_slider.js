@@ -312,6 +312,12 @@ SolrQuery.getFacets = function getFacets(url, $) {
 		 */
 		paramValue = paramValue.replace(/#/, '');
 
+		/**
+		 * This resolves arguments
+		 *
+		 */
+		paramValue = paramValue.split('&').shift();
+
 		/*
 		var paramValue = '';
 		for(var i in paramSegments) {
