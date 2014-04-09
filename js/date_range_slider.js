@@ -149,6 +149,7 @@ SolrQuery.marcRelatorFilter = function(fieldValue, fieldName) {
 
 	return MARC_RELATOR_MAP[fieldValue];
 
+	/*
     } else if(fieldName == 'mdl_prints.format.medium') {
 
 	var MARC_RELATOR_MAP = {
@@ -157,6 +158,8 @@ SolrQuery.marcRelatorFilter = function(fieldValue, fieldName) {
 	};
 
 	return MARC_RELATOR_MAP[fieldValue];
+    }
+	*/
     }
 
     return fieldValue;
