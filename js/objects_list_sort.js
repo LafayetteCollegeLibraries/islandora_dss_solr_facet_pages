@@ -37,6 +37,17 @@ var LafayetteDssObjectList = function($, element, options) {
 
     this.$element = $(element);
     this._index = [];
+
+    /**
+     * Ensure that sorting parameters are parsed from the GET request
+     * Resolves DSSSM-683
+     *
+     */
+    var sortMatch = /&sort=(.+)&?/.exec(document.URL);
+    if(sortMatch) {
+
+	$(document).data('islandoraDssSolrResultsSortParams', { sort: decodeURI(sortMatch[1]) });
+    }
 };
 
 /**
