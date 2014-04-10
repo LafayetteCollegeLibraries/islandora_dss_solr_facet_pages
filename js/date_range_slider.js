@@ -137,6 +137,7 @@ SolrQuery.COLLECTION_FIELD_MAP = {
  */
 SolrQuery.marcRelatorFilter = function(fieldValue, fieldName) {
 
+    /*
     if(fieldName == 'eastasia.Format.Medium') {
 
 	var MARC_RELATOR_MAP = {
@@ -145,7 +146,7 @@ SolrQuery.marcRelatorFilter = function(fieldValue, fieldName) {
 	    '"Photographic print"': '"photoprint"',
 	    '"Photographic slide"': '"slide"',
 	    '"Picture postcard"': '"picture postcard"'
-	};
+	};	
 
 	return MARC_RELATOR_MAP[fieldValue];
 
@@ -159,8 +160,9 @@ SolrQuery.marcRelatorFilter = function(fieldValue, fieldName) {
 
 	return MARC_RELATOR_MAP[fieldValue];
     }
-	*/
+
     }
+    */
 
     return fieldValue;
 };

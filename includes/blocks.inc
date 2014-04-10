@@ -9,6 +9,8 @@
 
 function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) {
 
+  dpm(array($query_field));
+
   $query_field_namespace_map = array(
 				     'East Asia Image Collection' => 'eastasia',
 				     'Japanese Imperial House Postcard Album' => 'eastasia',
@@ -44,6 +46,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
   $fields = array();
   $_fields = variable_get('islandora_solr_facet_pages_fields_data', array());
 
+  //dpm(array($filter));
+
   $query_field_namespace = '';
   if(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $filter, $m)) {
 
@@ -60,6 +64,9 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
       $query_field_namespace = 'dc';
     }
+  } elseif(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $query_field, $m)) {
+
+    $query_field_namespace = $m[1];
   } elseif(preg_match('/(.+?)\./', $query_field, $m) or preg_match('/(.+?)\./', $filter, $m)) {
 
     $query_field_namespace = $m[1];
