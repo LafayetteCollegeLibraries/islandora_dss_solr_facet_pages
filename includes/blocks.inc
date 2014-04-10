@@ -282,6 +282,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
  */
 function _islandora_dss_solr_facet_pages_marc_relator_filter($field_value, $field_name) {
 
+  /*  
   if($field_name == 'eastasia.Format.Medium') {
 
     $MARC_RELATOR_MAP = array(
@@ -293,7 +294,6 @@ function _islandora_dss_solr_facet_pages_marc_relator_filter($field_value, $fiel
 
     return $MARC_RELATOR_MAP[$field_value];
 
-    /*
   } elseif($field_name == 'mdl_prints.format.medium') {
 
     $MARC_RELATOR_MAP = array(
@@ -301,9 +301,8 @@ function _islandora_dss_solr_facet_pages_marc_relator_filter($field_value, $fiel
 			      );
 
     return $MARC_RELATOR_MAP[$field_value];
-    */
   }
-
+  */
 
   return $field_value;
 }
