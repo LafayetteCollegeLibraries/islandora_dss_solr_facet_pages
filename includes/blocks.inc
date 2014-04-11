@@ -481,8 +481,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
       }
 
-      dpm(array($islandora_solr_facet_query));
-
       if(!empty($filters)) {
 
 	/*
@@ -494,10 +492,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	$islandora_solr_facet_query = implode(' AND ', array_merge(array($islandora_solr_facet_query), $filters));
       }
-
-      dpm(array($solr_field));
-      dpm(array($prefix));
-      dpm(array($islandora_solr_facet_query));
 
       // Collect results.
       $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);
@@ -543,7 +537,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							      'Lafayette World War II Casualties',
 							      );
 
-      //dpm( array($solr, $solr_field, $prefix, $islandora_solr_facet_query));
       if($islandora_solr_facet_query == '*:*') {
 
 	$_result_fields = array();
@@ -568,8 +561,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       $child_items_id = preg_replace('/_|\./', '-', $solr_field);
 
-      dpm($result_fields);
-
       // Iterate through the facets
       if(!empty($result_fields)) {
 
@@ -580,8 +571,16 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	// Sort by the most populated facets
 	arsort($result_fields);
 
-	// Top 5 facets
-	$result_fields = array_slice($result_fields, 0, 5);
+	/**
+	 * Disables the modal for browsing all repository content
+	 * Resolves DSSSM-710
+	 *
+	 */
+	if($islandora_solr_facet_query != '*:*') {
+
+	  // Top 5 facets
+	  $result_fields = array_slice($result_fields, 0, 5);
+	}
 
 	/**
 	 * This will need to be refactored once (if) islandora_search is integrated with the Drupal Search API
@@ -647,7 +646,15 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  }
 	}
 
-	$child_items[] = l('Show more...', "browse/{$value['path']}");
+	/**
+	 * Disables the modal for browsing all repository content
+	 * Resolves DSSSM-710
+	 *
+	 */
+	if($islandora_solr_facet_query != '*:*') {
+
+	  $child_items[] = l('Show more...', "browse/{$value['path']}");
+	}
       }
 
       if(!empty($child_items)) {
@@ -660,8 +667,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       }
     }
-
-    dpm($items);
 
     if(!empty($items)) {
 
