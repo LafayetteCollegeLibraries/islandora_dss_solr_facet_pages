@@ -53,8 +53,7 @@ function islandora_dss_solr_facet_pages_block_view(&$data, $block) {
     
   case 'islandora-solr-facet-pages':
     
-    dpm($block);
-    dpm($data);
+    dpm(array());
     break;
 
   default:

@@ -249,7 +249,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 
   // Special cases for newspapers
   // cdm.Relation.IsPartOf:"Lafayette Newspaper Collection"
-  dpm(array($query));
+
   if( preg_match('/cdm.Relation.IsPartOf:"(.+)"/', $query, $query_collection_match) ) {
 
     $query_collection = $query_collection_match[1];
@@ -375,6 +375,27 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     }
   }
   }
+  }
+
+  if(!isset($facet_params)) {
+
+    $filter_queries = $query;
+
+    // Set facet parameters.
+    $facet_params = array('facet' => 'true',
+			  'facet.field' => $solr_field,
+			  'facet.sort' => 'count',
+			  'facet.mincount' => 1,
+			  'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
+			  'qt' => variable_get('islandora_solr_request_handler', 'standard'),
+			  'facet.query' => $filter_queries
+			  );
+
+    // Set the facet prefix.
+    if ($prefix != 'ALL' && $prefix != 'all') {
+      
+      $facet_params['facet.prefix'] = $prefix;
+    }
   }
 
   // Hard-code default sorting

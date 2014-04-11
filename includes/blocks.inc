@@ -493,6 +493,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$islandora_solr_facet_query = implode(' AND ', array_merge(array($islandora_solr_facet_query), $filters));
       }
 
+      dpm(array($solr_field, $prefix, $islandora_solr_facet_query));
+
       // Collect results.
       $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);
 
@@ -539,6 +541,14 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       if($islandora_solr_facet_query == '*:*') {
 
+	/**
+	 * Modify the field label
+	 * Resolves 
+	 * @todo Refactor
+	 *
+	 */
+	$value['label'] = 'Choose a Collection';
+
 	$_result_fields = array();
 
 	foreach($result_fields as $result_field_name => $result_field_count) {
@@ -551,6 +561,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	$result_fields = $_result_fields;
       }
+
+      dpm($result_fields);
 
       $child_items = array();
       $child_items_class = array('islandora-solr-facet-list');
