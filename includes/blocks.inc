@@ -437,7 +437,51 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       }
       */
 
+      /**
+       * Resolves issues related to full-text searches
+       *
+       */
       $islandora_solr_facet_query = isset($islandora_solr_query) ? $islandora_solr_query : "$solr_field:[* TO *]";
+      $SOLR_INDEXED_FIELDS = array(
+				   //'dc.title',
+				   'eastasia.Title.Japanese',
+				   'eastasia.Title.Chinese',
+				   'eastasia.Title.Korean',
+				   'eastasia.Subject.OCM',
+				   'eastasia.Description.Critical',
+				   'eastasia.Description.Caption.English',
+				   'eastasia.Description.Caption.Japanese',
+				   'eastasia.Description.Indicia',
+				   'eastasia.Coverage.Location',
+				   'eastasia.Coverage.Location.Country',
+				   'eastasia.Description.Ethnicity',
+				   'eastasia.Contributors.Digital',
+				   'cdm.Relation.IsPartOf',
+				   'eastasia.Description.Citation',
+				   'eastasia.Format.Medium',
+				   'eastasia.Creator.Company',
+				   'eastasia.Creator.Maker',
+				   'eastasia.Format.Extent',
+				   'eastasia.Contributor.Donor',
+				   );
+
+      foreach($SOLR_INDEXED_FIELDS as $solr_indexed_field) { // For Solr-indexed fields with specific Analyzers (i. e. not optimized for tokenization of contents)
+
+	$islandora_solr_facet_query = str_replace('"', '*', $islandora_solr_facet_query);
+
+	/**
+	 * This resolves DSSSM-709
+	 * Work-around
+	 * @todo Refactor
+	 *
+	 */
+	if(!preg_match("/c_$solr_indexed_field/", $islandora_solr_facet_query)) {
+
+	  $islandora_solr_facet_query = str_replace($solr_indexed_field, 'c_' . $solr_indexed_field, $islandora_solr_facet_query);
+	}
+      }
+
+      dpm(array($islandora_solr_facet_query));
 
       if(!empty($filters)) {
 
@@ -450,6 +494,10 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	$islandora_solr_facet_query = implode(' AND ', array_merge(array($islandora_solr_facet_query), $filters));
       }
+
+      dpm(array($solr_field));
+      dpm(array($prefix));
+      dpm(array($islandora_solr_facet_query));
 
       // Collect results.
       $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);
@@ -519,6 +567,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       }
 
       $child_items_id = preg_replace('/_|\./', '-', $solr_field);
+
+      dpm($result_fields);
 
       // Iterate through the facets
       if(!empty($result_fields)) {
@@ -610,6 +660,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       }
     }
+
+    dpm($items);
 
     if(!empty($items)) {
 
