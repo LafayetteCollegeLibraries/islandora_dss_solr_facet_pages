@@ -966,7 +966,13 @@ SolrQuery.prototype = {
 				for(k in facetQueries[key]) {
 
 				    var facetKey = 'f[' + facetIndex + ']';
-				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+				    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+
+				    /**
+				     * Resolves DSSSM-533
+				     *
+				     */
+				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
 				    facetIndex++;
 				}
 			    }
