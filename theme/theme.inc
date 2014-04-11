@@ -26,9 +26,11 @@ function _islandora_dss_solr_facet_pages_preprocess_islandora_solr_facet_pages_r
       
       $filter = $vars['solr_field'] . ':"' . addslashes($result) . 'T00:00:00Z"';
     $class[] = 'islandora-solr-facet-date';
-      break;
+
+    break;
 
     default:
+
       $filter = $vars['solr_field'] . ':"' . addslashes($result) . '"';
     }
 

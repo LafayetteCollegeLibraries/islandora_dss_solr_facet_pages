@@ -416,16 +416,12 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
   //$result_object = json_decode($solr->search("$solr_field:[* TO *]", 0, 0, $facet_params)->getRawResponse());
   //$result_object = json_decode($solr->search("*:*", 0, 0, $facet_params)->getRawResponse());
 
-  dpm($result_object);
-
   if(isset($query_collection) and $query_collection == 'Lafayette Newspaper Collection' and $solr_field == 'dc.date.sort') {
 
     $fields = (array) $result_object->facet_counts->facet_dates->$solr_field;
     unset($fields['gap']);
     unset($fields['start']);
     unset($fields['end']);
-
-    dpm($fields);
   } else {
 
     $fields = (array) $result_object->facet_counts->facet_fields->$solr_field;

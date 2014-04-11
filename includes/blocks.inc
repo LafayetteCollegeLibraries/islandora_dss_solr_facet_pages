@@ -9,8 +9,6 @@
 
 function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) {
 
-  dpm(array($query_field));
-
   $query_field_namespace_map = array(
 				     'East Asia Image Collection' => 'eastasia',
 				     'Japanese Imperial House Postcard Album' => 'eastasia',
@@ -493,8 +491,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$islandora_solr_facet_query = implode(' AND ', array_merge(array($islandora_solr_facet_query), $filters));
       }
 
-      dpm(array($solr_field, $prefix, $islandora_solr_facet_query));
-
       // Collect results.
       $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);
 
@@ -561,8 +557,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	$result_fields = $_result_fields;
       }
-
-      dpm($result_fields);
 
       $child_items = array();
       $child_items_class = array('islandora-solr-facet-list');
