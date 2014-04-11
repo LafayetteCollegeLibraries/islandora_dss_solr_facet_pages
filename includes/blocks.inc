@@ -655,7 +655,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * Resolves DSSSM-710
 	 *
 	 */
-	if($islandora_solr_facet_query != '*:*') {
+	if(count($child_items) > 1 and $islandora_solr_facet_query != '*:*') {
 
 	  $child_items[] = l('Show more...', "browse/{$value['path']}");
 	}

@@ -260,8 +260,6 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 
       case 'dc.date.sort':
 
-	dpm(array('trace8'));
-
 	// Set facet parameters.
 	$facet_params = array('facet' => 'true',
 			      'facet.field' => $solr_field,
@@ -270,9 +268,14 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 			      'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
 			      'qt' => variable_get('islandora_solr_request_handler', 'standard'),
 			      'facet.date' => $solr_field,
+			      /*
 			      'facet.date.start' => '1870-01-01T00:00:00Z/YEAR',
-			      'facet.date.end' => 'NOW',
-			      'facet.date.gap' => '+10YEAR',
+			      'facet.date.end' => 'NOW+1YEAR/YEAR',
+			      'facet.date.gap' => '+1YEAR',
+			      */
+			      'facet.date.start' => '1870-01-01T00:00:00Z/MONTH',
+			      'facet.date.end' => 'NOW+1MONTH/MONTH',
+			      'facet.date.gap' => '+1MONTH',
 			      //'facet.query' => $filter_queries
 			      );
 

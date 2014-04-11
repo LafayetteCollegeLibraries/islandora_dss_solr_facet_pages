@@ -44,6 +44,7 @@ SolrQuery.FIELD_MAP = {
 
     // McKelvy, and Newspaper
     'Date' : 'dc.date.sort',
+    'Publisher' : 'dc.publisher',
 
     // EAIC
     'Subject.OCM' : 'eastasia.Subject.OCM',
@@ -83,6 +84,8 @@ SolrQuery.FIELD_MAP = {
     // Refactor: labels
 
     'cdm.Relation.IsPartOf' : 'Relation.IsPartOf',
+
+    'dc.publisher' : 'Publisher',
 
     // EAIC
     'eastasia.Subject.OCM' : 'Subject.OCM',
