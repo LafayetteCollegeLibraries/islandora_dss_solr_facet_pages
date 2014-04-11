@@ -247,6 +247,60 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
   }
   */
 
+  // Special cases for newspapers
+  // cdm.Relation.IsPartOf:"Lafayette Newspaper Collection"
+  dpm(array($query));
+  if( preg_match('/cdm.Relation.IsPartOf:"(.+)"/', $query, $query_collection_match) ) {
+
+    $query_collection = $query_collection_match[1];
+
+    if($query_collection == 'Lafayette Newspaper Collection') {
+
+      switch($solr_field) {
+
+      case 'dc.date.sort':
+
+	dpm(array('trace8'));
+
+	// Set facet parameters.
+	$facet_params = array('facet' => 'true',
+			      'facet.field' => $solr_field,
+			      'facet.sort' => 'count',
+			      'facet.mincount' => 1,
+			      'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
+			      'qt' => variable_get('islandora_solr_request_handler', 'standard'),
+			      'facet.date' => $solr_field,
+			      'facet.date.start' => '1870-01-01T00:00:00Z/YEAR',
+			      'facet.date.end' => 'NOW',
+			      'facet.date.gap' => '+10YEAR',
+			      //'facet.query' => $filter_queries
+			      );
+
+	break;
+
+      default:
+	//$filter_queries = preg_split('/ AND /', $query);
+	$filter_queries = $query;
+
+	// Set facet parameters.
+	$facet_params = array('facet' => 'true',
+			      'facet.field' => $solr_field,
+			      'facet.sort' => 'count',
+			      'facet.mincount' => 1,
+			      'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
+			      'qt' => variable_get('islandora_solr_request_handler', 'standard'),
+			      'facet.query' => $filter_queries
+			      );
+
+	// Set the facet prefix.
+	if ($prefix != 'ALL' && $prefix != 'all') {
+      
+	  $facet_params['facet.prefix'] = $prefix;
+	}
+      }
+
+    } else {
+
   switch($solr_field) {
 
   case 'eastasia.Date.Artifact.Upper':
@@ -317,6 +371,8 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
       $facet_params['facet.prefix'] = $prefix;
     }
   }
+  }
+  }
 
   // Hard-code default sorting
   // Refactoring
@@ -336,7 +392,20 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
   //$result_object = json_decode($solr->search("$solr_field:[* TO *]", 0, 0, $facet_params)->getRawResponse());
   //$result_object = json_decode($solr->search("*:*", 0, 0, $facet_params)->getRawResponse());
 
-  $fields = (array) $result_object->facet_counts->facet_fields->$solr_field;
+  dpm($result_object);
+
+  if(isset($query_collection) and $query_collection == 'Lafayette Newspaper Collection' and $solr_field == 'dc.date.sort') {
+
+    $fields = (array) $result_object->facet_counts->facet_dates->$solr_field;
+    unset($fields['gap']);
+    unset($fields['start']);
+    unset($fields['end']);
+
+    dpm($fields);
+  } else {
+
+    $fields = (array) $result_object->facet_counts->facet_fields->$solr_field;
+  }
 
   switch($solr_field) {
 

@@ -576,7 +576,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * Resolves DSSSM-710
 	 *
 	 */
-	if($islandora_solr_facet_query != '*:*') {
+	/*
+	 * Disables the restriction for all Newspaper Objects
+	 * Resolves DSSSM-712
+	 */
+	if($islandora_solr_facet_query != '*:*' and !(preg_match('/Newspaper Collection/', $islandora_solr_facet_query) and $solr_field == 'dc.date.sort') ) {
 
 	  // Top 5 facets
 	  $result_fields = array_slice($result_fields, 0, 5);
