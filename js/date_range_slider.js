@@ -1681,7 +1681,9 @@ SolrQuery.prototype = {
 			    //return fieldValue == $(facetedSearchAnchor).contents().last().text() || fieldValue == '"' + $(facetedSearchAnchor).contents().last().text() + '"';
 
 			    var facetElementContent = $(facetedSearchAnchor).contents().last().text().replace('&', '%26');
-			    return fieldValue == facetElementContent || fieldValue == '"' + facetElementContent + '"';
+			    var rawFacetElementContent = $(facetedSearchAnchor).contents().last().text();
+			    //return fieldValue == facetElementContent || fieldValue == '"' + facetElementContent + '"';
+			    return fieldValue == facetElementContent || fieldValue == '"' + facetElementContent + '"' || fieldValue == rawFacetElementContent || fieldValue == '"' + rawFacetElementContent + '"';
 			}).length > 0) {
 
 		    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
@@ -1700,7 +1702,9 @@ SolrQuery.prototype = {
 				//return fieldValue != $(facetedSearchAnchor).contents().last().text() && fieldValue != '"' + $(facetedSearchAnchor).contents().last().text() + '"';
 
 				var facetElementContent = $(facetedSearchAnchor).contents().last().text().replace('&', '%26');
-				return fieldValue != facetElementContent && fieldValue != '"' + facetElementContent + '"';
+				var rawFacetElementContent = $(facetedSearchAnchor).contents().last().text();
+				//return fieldValue != facetElementContent && fieldValue != '"' + facetElementContent + '"';
+				return fieldValue != facetElementContent && fieldValue != '"' + facetElementContent + '"' && fieldValue != rawFacetElementContent && fieldValue != '"' + rawFacetElementContent + '"';
 			    });
 			if(facetQueries[fieldName].length == 0) {
 
