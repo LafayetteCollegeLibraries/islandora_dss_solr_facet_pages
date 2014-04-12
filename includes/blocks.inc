@@ -661,7 +661,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * Resolves DSSSM-710
 	 *
 	 */
-	if(count($child_items) > 1 and $islandora_solr_facet_query != '*:*') {
+	/**
+	 * This must remain enabled for date fields
+	 * Resolves DSSSM-716
+	 */
+	if(preg_match('/Date\.?/', $value['label']) or (count($child_items) > 1 and $islandora_solr_facet_query != '*:*')) {
 
 	  $child_items[] = l('Show more...', "browse/{$value['path']}");
 	}
