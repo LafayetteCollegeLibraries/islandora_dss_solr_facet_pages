@@ -607,8 +607,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	foreach($result_fields as $result => $count) {
 
+	  // Ensure that facets already applied to this search are not tokenized
 	  if(!in_array($result, $filtered_facets)) {
-	    //if(true) {
 
 	    $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
 	    $query = array('f' => $filter);
@@ -653,6 +653,9 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 								      //'attributes' => array('class' => $class),
 								      'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	    }
+	  } else {
+
+	    dpm(array($result));
 	  }
 	}
 
@@ -669,6 +672,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	  $child_items[] = l('Show more...', "browse/{$value['path']}");
 	}
+
+	if(empty($child_items)) {
+
+	  //$items = array();
+	}
       }
 
       if(!empty($child_items)) {
@@ -679,6 +687,15 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 								  'id' => $child_items_id
 								  )));
 
+      } elseif(preg_match("/'islandora-solr-facet'/", $items[count($items) - 1])) {
+
+	/**
+	 * Work-around for cases where empty lists are rendered
+	 * Titles are generated for lists containing only facets which are filtered
+	 * Resolves DSSSM-717
+	 *
+	 */
+	unset($items[count($items) - 1]);
       }
     }
 
