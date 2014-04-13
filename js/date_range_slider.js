@@ -912,7 +912,7 @@ SolrQuery.prototype = {
 	 */
 	this.facetModalHandler = function() {
 
-	    $('.islandora-solr-facet-list .last a').each(function(i, e) {
+	    $('.islandora-solr-facet-list .last a').filter(function(i, e) { return $(e).text() == 'Show more...' }).each(function(i, e) {
 
 		    $(e).click(function(event) {
 

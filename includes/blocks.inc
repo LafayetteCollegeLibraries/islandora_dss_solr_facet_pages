@@ -687,7 +687,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 								  'id' => $child_items_id
 								  )));
 
-      } elseif(!empty($items) and preg_match("/'islandora-solr-facet'/", $items[count($items) - 1])) {
+      } elseif(!empty($items) and preg_match("/islandora-solr-facet/", $items[count($items) - 1]) and
+	       !preg_match("/Date\./", $items[count($items) - 1])) {
 
 	/**
 	 * Work-around for cases where empty lists are rendered
