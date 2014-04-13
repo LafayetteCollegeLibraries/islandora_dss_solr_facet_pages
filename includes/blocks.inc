@@ -535,7 +535,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							      'Lafayette World War II Casualties',
 							      );
 
-      if($islandora_solr_facet_query == '*:*') {
+      //dpm($islandora_solr_facet_query);
+
+      //if($islandora_solr_facet_query == '*:*') {
+      if($islandora_solr_facet_query == '*:*' or
+	 $islandora_solr_facet_query == '*: *') {
 
 	/**
 	 * Modify the field label
@@ -556,6 +560,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
 
 	$result_fields = $_result_fields;
+
+	dpm($result_fields);
       }
 
       $child_items = array();
@@ -653,9 +659,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 								      //'attributes' => array('class' => $class),
 								      'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	    }
-	  } else {
-
-	    dpm(array($result));
 	  }
 	}
 
@@ -687,7 +690,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 								  'id' => $child_items_id
 								  )));
 
-      } elseif(!empty($items) and preg_match("/islandora-solr-facet/", $items[count($items) - 1]) and
+      } elseif(!empty($items) and preg_match("/'islandora-solr-facet'/", $items[count($items) - 1]) and
 	       !preg_match("/Date\./", $items[count($items) - 1])) {
 
 	/**
