@@ -40,6 +40,9 @@ var SolrQuery = function($, options) {
 
 SolrQuery.FIELD_MAP = {
 
+    // Specialized for top-level collections
+    'Choose a Collection' : 'cdm.Relation.IsPartOf',
+
     'Relation.IsPartOf' : 'cdm.Relation.IsPartOf',
 
     // McKelvy, and Newspaper
@@ -177,7 +180,17 @@ SolrQuery.marcRelatorFilter = function(fieldValue, fieldName) {
  */
 SolrQuery.fieldMap = function(field) {
 
-    if(field == 'Date') {
+    if(field == 'cdm.Relation.IsPartOf') {
+
+	// For the top-level collections
+	if(/collections\/browse/.exec(document.URL)) {
+	    
+	    return 'Choose a Collection';
+	} else {
+
+	    return SolrQuery.FIELD_MAP[field];
+	}
+    } else if(field == 'Date') {
 
 	// Simply parse for 'Geology' within the Solr query in the URL
 	// Simply parse for 'Historical' within the Solr query in the URL
@@ -1607,8 +1620,16 @@ SolrQuery.prototype = {
 	    //var url = facetedSearchAnchor.attr('href');
 	    var url = $(document).data('islandoraDssDateRangeSlider')['query'];
 
-	    // Cannot locate the source of this bug
-	    url = '/' + url;
+	    /**
+	     * Work-around for issue
+	     * Resolves DSSSM-718
+	     *
+	     */
+	    if(!/collections\/browse\/?$/.exec(url)) {
+
+		// Cannot locate the source of this bug
+		url = '/' + url;
+	    }
 
 	    var facetParams = {};
 	    var facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
@@ -1895,6 +1916,7 @@ SolrQuery.prototype = {
 		//$(document).data('islandoraDssSolrResultsViewParams', params);
 
 		url = url.replace(/page=\d+&/, '');
+
 		$.get(url, params, that.updatePage);
 	    }
 
