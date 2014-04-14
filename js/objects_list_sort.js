@@ -162,6 +162,9 @@ LafayetteDssObjectList.prototype = {
 	if(/\/browse/.exec(url)) {
 	    
 	    url = '/islandora/search/*:*';
+	} else {
+
+	    url = '/islandora/search/*:*';
 	}
 
 	/**
