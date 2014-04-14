@@ -463,7 +463,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       foreach($SOLR_INDEXED_FIELDS as $solr_indexed_field) { // For Solr-indexed fields with specific Analyzers (i. e. not optimized for tokenization of contents)
 
-	$islandora_solr_facet_query = str_replace('"', '*', $islandora_solr_facet_query);
+	//$islandora_solr_facet_query = str_replace('"', '*', $islandora_solr_facet_query);
 
 	/**
 	 * This resolves DSSSM-709
@@ -507,6 +507,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  }
 	}
       }
+
+      dpm(array($islandora_solr_facet_query));
 
       // Collect results.
       $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);
