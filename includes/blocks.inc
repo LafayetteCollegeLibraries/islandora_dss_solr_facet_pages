@@ -44,8 +44,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
   $fields = array();
   $_fields = variable_get('islandora_solr_facet_pages_fields_data', array());
 
-  //dpm(array($filter));
-
   $query_field_namespace = '';
   if(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $filter, $m)) {
 
@@ -491,6 +489,25 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$islandora_solr_facet_query = implode(' AND ', array_merge(array($islandora_solr_facet_query), $filters));
       }
 
+      /**
+       * Ensures that queries are properly structured for Solr indexing issues
+       * @todo Properly resolve by reindexing for c_dc.title, c_dc.description, and c_dc.type (with the appropriate analyzer)
+       *
+       */
+      $SOLR_UNINDEXED_FIELDS = array('dc.title', 'dc.description', 'dc.type');
+      foreach($SOLR_UNINDEXED_FIELDS as $solr_unindexed_field) {
+
+	if(preg_match("/$solr_unindexed_field/", $islandora_solr_facet_query)) {
+
+	  if(preg_match("/$solr_unindexed_field:\(\*(.+?)\*\)/", $islandora_solr_facet_query, $query_m)) {
+
+	    $widened_query = '*' . strtolower($query_m) . '* OR *' . mb_convert_case($query_m, MB_CASE_TITLE, "UTF-8")  . '* OR *' . strtoupper($query_m) . '*';
+
+	    $islandora_solr_facet_query = preg_replace("/$solr_unindexed_field:\(.+?\)/", "$solr_unindexed_field:($widened_query)", $islandora_solr_facet_query);
+	  }
+	}
+      }
+
       // Collect results.
       $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);
 
@@ -535,8 +552,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							      'Lafayette World War II Casualties',
 							      );
 
-      //dpm($islandora_solr_facet_query);
-
       //if($islandora_solr_facet_query == '*:*') {
       if($islandora_solr_facet_query == '*:*' or
 	 $islandora_solr_facet_query == '*: *') {
@@ -560,8 +575,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
 
 	$result_fields = $_result_fields;
-
-	dpm($result_fields);
       }
 
       $child_items = array();
@@ -572,6 +585,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       }
 
       $child_items_id = preg_replace('/_|\./', '-', $solr_field);
+
+      dpm($result_fields);
 
       // Iterate through the facets
       if(!empty($result_fields)) {
