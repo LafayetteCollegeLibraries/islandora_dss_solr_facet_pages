@@ -1664,7 +1664,7 @@ SolrQuery.prototype = {
 	     * Resolves DSSSM-718
 	     *
 	     */
-	    if(!/collections\/browse\/?$/.exec(url)) {
+	    if(!/collections\/browse\/?/.exec(url)) {
 
 		// Cannot locate the source of this bug
 		url = '/' + url;
@@ -1935,7 +1935,7 @@ SolrQuery.prototype = {
 		 */
 		if(/collections\/browse/.exec(url)) {
 		    
-		    url = 'islandora/search/*:*';
+		    url = '/islandora/search/*:*';
 		}
 
 		$.get(url, params, that.updatePage);
@@ -1972,7 +1972,7 @@ SolrQuery.prototype = {
 		 */
 		if(/collections\/browse/.exec(url)) {
 
-		    url = 'islandora/search/*:*';
+		    url = '/islandora/search/*:*';
 		}
 
 		$.get(url, params, that.updatePage);
@@ -1983,13 +1983,9 @@ SolrQuery.prototype = {
 	};
 
 	//$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
-	/*
 	$('.islandora-solr-facet-list li a, .islandora-solr-facet-token-list li a').filter(function(i, e) {
 
-		return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
-	*/
-	
-    
+		return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);    
     };
 
     // @todo: Refactor
