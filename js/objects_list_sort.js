@@ -90,6 +90,9 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
     if(pageMatch) {
 
 	params['page'] = pageMatch[1];
+    } else {
+
+	delete params['page'];
     }
 
     url = url.split('?').shift();
