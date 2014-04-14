@@ -94,6 +94,15 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
 
     url = url.split('?').shift();
 
+    /**
+     * Resolves DSSSM-725
+     *
+     */
+    if(/collections\/browse/.exec(url)) {
+		    
+	url = '/islandora/search/*:*';
+    }
+
     $.get(url, params, function(data) {
 
 	    $('.islandora-solr-search-results').removeClass('loading')
@@ -144,10 +153,25 @@ LafayetteDssObjectList.prototype = {
 	url = url.replace('&sort=dc.date.sort asc', '');
 
 	/**
+	 * Resolves DSSSM-725
+	 *
+	 */
+	if(/\/browse/.exec(url)) {
+	    
+	    url = '/islandora/search/*:*';
+	}
+
+	/**
 	 * @todo Resolve
 	 *
 	 */
-	url = '/' + url;
+	/*
+	if(!/\browse/.exec(url)) {
+
+	    url = '/' + url;
+	}
+	*/
+
 	var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
 	
 	/**
