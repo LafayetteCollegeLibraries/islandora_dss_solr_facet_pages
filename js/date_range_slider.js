@@ -217,6 +217,16 @@ SolrQuery.fieldMap = function(field) {
 
 	    return 'eastasia.Format.Medium';
 	}
+    } else if(field == 'Subject') {
+
+	// Simply parse for 'Historical' within the Solr query in the URL
+	if(/Historical/.exec(document.URL)) {
+	    
+	    return 'dc.subject';
+	} else {
+
+	    return 'geology_slides_esi.subject';
+	}
     } else {
 	
 	return SolrQuery.FIELD_MAP[field];
