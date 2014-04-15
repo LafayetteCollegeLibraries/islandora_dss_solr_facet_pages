@@ -589,7 +589,22 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       $child_items_id = preg_replace('/_|\./', '-', $solr_field);
 
-      dpm($result_fields);
+      /**
+       * Refines facets
+       * Resolves DSSSM-731
+       * @todo Refactor for performance (awful implementation)
+       *
+       */
+      $filtered_result_fields = array();
+      foreach($result_fields as $result => $count) {
+
+	// Ensure that facets already applied to this search are not tokenized
+	if(!in_array($result, $filtered_facets)) {
+
+	  $filtered_result_fields[$result] = $count;
+	}
+      }
+      $result_fields = $filtered_result_fields;
 
       // Iterate through the facets
       if(!empty($result_fields)) {
@@ -631,8 +646,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	foreach($result_fields as $result => $count) {
 
-	  // Ensure that facets already applied to this search are not tokenized
-	  if(!in_array($result, $filtered_facets)) {
+	  //if(!in_array($result, $filtered_facets)) {
+	  if(true) {
 
 	    $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
 	    $query = array('f' => $filter);
@@ -710,7 +725,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       } elseif(!empty($items) and preg_match("/'islandora-solr-facet'/", $items[count($items) - 1]) and
 	       !preg_match("/Date\./", $items[count($items) - 1])) {
-
+	
 	/**
 	 * Work-around for cases where empty lists are rendered
 	 * Titles are generated for lists containing only facets which are filtered

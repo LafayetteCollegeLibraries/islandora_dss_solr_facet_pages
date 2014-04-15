@@ -1565,6 +1565,14 @@ SolrQuery.prototype = {
 			// Work-around
 			// There can only ever be one element within an array of values for Date fields
 			var minValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[0].slice(1));
+
+			/*
+			 cdm.Relation.IsPartOf:"Geology Department Slide Collection"
+			  f[1]geology_slides_esi.date.original:[1964-05-18T08:17:56.007Z TO 1973-02-01T00:00:00.000Z]
+			  f[2]geology_slides_esi.coverage.location:"Mouth of McGee Creek canyon, E base of Sierra Nevada W of Crowley Lake, California. Looking upstream, approximately W."
+			 f[3]geology_slides_esi.subject:"JOINTS AND FAULTS"
+			 f[4]geology_slides_esi.subject:"QUATERNARY FAULTS"
+			*/
 			var maxValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[1].slice(0, -1));
 			options['values'] = [minValue, maxValue];
 		    } else if(typeof(_facets[solrFieldName]) !== 'undefined') { // Populate from the facet queries first...
@@ -1602,6 +1610,9 @@ SolrQuery.prototype = {
 
 			    $dateSlider.slider(options);
 			}
+		    } else {
+
+			$facetList.prev().hide();
 		    }
 
 		    $facetList.children('li').hide();
