@@ -741,9 +741,13 @@ SolrQuery.prototype = {
 		$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
 		$(data).find('.main-container').children().appendTo($('.main-container').empty().removeClass('loading'));
 
-		//$('.snap-trigger').toggleClass('shown').children('img').toggleClass('shown');
 		$('.snap-trigger').parent().toggleClass('loaded').children().toggleClass('shown').children('img').toggleClass('shown');
-		$('.snap-trigger').html( $('.snap-trigger').html().replace('Refine', 'Hide'));
+
+		// Only if the query has returned results for the query
+		if($('.snap-trigger').html()) {
+
+		    $('.snap-trigger').html( $('.snap-trigger').html().replace('Refine', 'Hide'));
+		}
 
 		// Abstract and refactor
 		Drupal.theme('bootstrapDssObjectList');
@@ -1362,7 +1366,25 @@ SolrQuery.prototype = {
 			    url = '/' + url;
 
 			    var maxFacet = $(document).data('islandoraDssDateRangeSlider')['maxFacet'] + 1;
-			    var menuArgs = /islandora\/search\/(.+)/.exec(url)[1];
+
+			    // Handling for the path alias
+			    try {
+
+				if(/collections\/browse\/?/.exec(url)) {
+				
+				    var menuArgs = /collections\/browse\/?(.+)/.exec(document.URL)[1];
+				} else if(/islandora\/search\/(.+)/.exec(url)) { // Parse the URL for the argument to the Drupal Menu Item /islandora/search/%query
+
+				    var menuArgs = /islandora\/search\/(.+)/.exec(url)[1];
+				} else {
+				    
+				    throw "Could not parse the Solr query from the URL " + url;
+				}
+			    } catch(e) {
+
+				console.error(e);
+			    }
+
 
 			    // query += '&f[' + maxFacet + ']=' + dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
 
@@ -1482,7 +1504,7 @@ SolrQuery.prototype = {
 			     */
 			    if(/collections\/browse/.exec(url)) {
 			    
-				url = 'islandora/search/*:*';
+				url = '/islandora/search/*:*';
 			    }
 			    
 			    $.get(url, params, that.updatePage);
