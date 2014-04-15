@@ -509,6 +509,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       }
 
       dpm(array($islandora_solr_facet_query));
+      dpm(array($solr_field));
 
       // Collect results.
       $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);

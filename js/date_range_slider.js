@@ -1579,20 +1579,29 @@ SolrQuery.prototype = {
 			options['values'] = [ options['min'], options['max'] ];
 		    }
 
-		    //$dateTerm.text( new Date(options['values'][1]).toLocaleDateString());
-		    //$dateInit.text( new Date(options['values'][0]).toLocateDateString());
-		    //$dateTerm.text( new Date(options['values'][1]).toGMTString());
-		    //$dateInit.text( new Date(options['values'][0]).toGMTString());
+		    /**
+		     * No ranged faceting when only a single facet is available
+		     * Resolves DSSSM-370
+		     * @todo This should be more properly resolved by ensuring that facet.mincount is properly set within the request transmitted to Solr
+		     *
+		     */
+		    if($facetListItems.length > 1) {
 
-		    $dateTerm.text( moment(options['values'][1]).format("MMM. DD YYYY"));
-		    $dateInit.text( moment(options['values'][0]).format("MMM. DD YYYY"));
+			//$dateTerm.text( new Date(options['values'][1]).toLocaleDateString());
+			//$dateInit.text( new Date(options['values'][0]).toLocateDateString());
+			//$dateTerm.text( new Date(options['values'][1]).toGMTString());
+			//$dateInit.text( new Date(options['values'][0]).toGMTString());
 
-		    if(!defaultValues) {
+			$dateTerm.text( moment(options['values'][1]).format("MMM. DD YYYY"));
+			$dateInit.text( moment(options['values'][0]).format("MMM. DD YYYY"));
 
-			$dateSlider.slider(options).children('.ui-slider-handle').addClass('date-slider-handle-refined');
-		    } else {
+			if(!defaultValues) {
 
-			$dateSlider.slider(options);
+			    $dateSlider.slider(options).children('.ui-slider-handle').addClass('date-slider-handle-refined');
+			} else {
+
+			    $dateSlider.slider(options);
+			}
 		    }
 
 		    $facetList.children('li').hide();

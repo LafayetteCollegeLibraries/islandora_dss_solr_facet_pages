@@ -250,68 +250,65 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
   // Special cases for newspapers
   // cdm.Relation.IsPartOf:"Lafayette Newspaper Collection"
 
-  if( preg_match('/cdm.Relation.IsPartOf:"(.+)"/', $query, $query_collection_match) ) {
+  if( preg_match('/cdm.Relation.IsPartOf:"(.+?)"/', $query, $query_collection_match) ) {
 
     $query_collection = $query_collection_match[1];
 
-    if($query_collection == 'Lafayette Newspaper Collection') {
+    dpm('trace6');
+    dpm(array($query_collection, $solr_field));
 
-      switch($solr_field) {
+    if($query_collection == 'Lafayette Newspaper Collection' and $solr_field == 'dc.date.sort') {
 
-      case 'dc.date.sort':
-
-	// Set facet parameters.
-	$facet_params = array('facet' => 'true',
-			      'facet.field' => $solr_field,
-			      'facet.sort' => 'count',
-			      'facet.mincount' => 1,
-			      'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
-			      'qt' => variable_get('islandora_solr_request_handler', 'standard'),
-			      'facet.date' => $solr_field,
-			      /*
+      // Set facet parameters.
+      $facet_params = array('facet' => 'true',
+			    'facet.field' => $solr_field,
+			    'facet.sort' => 'count',
+			    'facet.mincount' => 1,
+			    'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
+			    'qt' => variable_get('islandora_solr_request_handler', 'standard'),
+			    'facet.date' => $solr_field,
+			    /*
 			      'facet.date.start' => '1870-01-01T00:00:00Z/YEAR',
 			      'facet.date.end' => 'NOW+1YEAR/YEAR',
 			      'facet.date.gap' => '+1YEAR',
-			      */
-			      'facet.date.start' => '1870-01-01T00:00:00Z/MONTH',
-			      'facet.date.end' => 'NOW+1MONTH/MONTH',
-			      'facet.date.gap' => '+1MONTH',
-			      //'facet.query' => $filter_queries
-			      );
+			    */
+			    'facet.date.start' => '1870-01-01T00:00:00Z/MONTH',
+			    'facet.date.end' => 'NOW+1MONTH/MONTH',
+			    'facet.date.gap' => '+1MONTH',
+			    //'facet.query' => $filter_queries
+			    );
 
-	break;
+    } elseif($query_collection == 'Geology Department Slide Collection' and $solr_field == 'geology_slides_esi.date.original') {
 
-      default:
-	//$filter_queries = preg_split('/ AND /', $query);
-	$filter_queries = $query;
-
-	// Set facet parameters.
-	$facet_params = array('facet' => 'true',
-			      'facet.field' => $solr_field,
-			      'facet.sort' => 'count',
-			      'facet.mincount' => 1,
-			      'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
-			      'qt' => variable_get('islandora_solr_request_handler', 'standard'),
-			      'facet.query' => $filter_queries
-			      );
-
-	// Set the facet prefix.
-	if ($prefix != 'ALL' && $prefix != 'all') {
-      
-	  $facet_params['facet.prefix'] = $prefix;
-	}
-      }
+      // Set facet parameters.
+      $facet_params = array('facet' => 'true',
+			    'facet.field' => $solr_field,
+			    'facet.sort' => 'count',
+			    'facet.mincount' => 1,
+			    'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
+			    'qt' => variable_get('islandora_solr_request_handler', 'standard'),
+			    'facet.date' => $solr_field,
+			    /*
+			      'facet.date.start' => '1870-01-01T00:00:00Z/YEAR',
+			      'facet.date.end' => 'NOW+1YEAR/YEAR',
+			      'facet.date.gap' => '+1YEAR',
+			    */
+			    'facet.date.start' => '1870-01-01T00:00:00Z/YEAR',
+			    'facet.date.end' => 'NOW+1YEAR/YEAR',
+			    'facet.date.gap' => '+1YEAR',
+			    //'facet.query' => $filter_queries
+			    );
 
     } else {
 
-  switch($solr_field) {
+      switch($solr_field) {
 
-  case 'eastasia.Date.Artifact.Upper':
-  case 'eastasia.Date.Artifact.Lower':
-  case 'eastasia.Date.Image.Upper':
-  case 'eastasia.Date.Image.Lower':
-  case 'geology_slides_esi.date.original':
-  case 'dc.date.sort':
+      case 'eastasia.Date.Artifact.Upper':
+      case 'eastasia.Date.Artifact.Lower':
+      case 'eastasia.Date.Image.Upper':
+      case 'eastasia.Date.Image.Lower':
+      case 'geology_slides_esi.date.original':
+      case 'dc.date.sort':
 
     /*
       $prefix .= '-01-01';
