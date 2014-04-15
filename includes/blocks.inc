@@ -782,7 +782,24 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$child_items_id = preg_replace('/_|\./', '-', $solr_field);
 	$date_reset_id = 'reset-' . $child_items_id;
 
-	$result_fields = islandora_solr_get_fields('result_fields');	
+	$result_fields = islandora_solr_get_fields('result_fields');
+
+	/**
+	 * Work-around for McKelvy
+	 * Resolves DSSSM-737
+	 *
+	 */
+	//if(true) {
+
+	if(preg_match('/McKelvy House Photograph Collection/', $islandora_solr_facet_query)) {
+
+	  $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Date.Original');
+
+	  if(array_key_exists($solr_field, $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS)) {
+	    
+	    $result_fields[$solr_field] = $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS[$solr_field];
+	  }
+	}
 
 	/*
 	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',

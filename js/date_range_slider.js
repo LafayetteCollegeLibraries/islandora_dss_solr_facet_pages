@@ -49,6 +49,9 @@ SolrQuery.FIELD_MAP = {
     'Date' : 'dc.date.sort',
     'Publisher' : 'dc.publisher',
 
+    // McKelvy
+    'Date.Original' : 'mckelvy.date.original.display',
+
     // EAIC
     'Subject.OCM' : 'eastasia.Subject.OCM',
     'Coverage.Location.Country' : 'eastasia.Coverage.Location.Country',
@@ -123,7 +126,9 @@ SolrQuery.FIELD_MAP = {
     'geology_slides_esi.subject' : 'Subject',
     'geology_slides_esi.coverage.location' : 'Coverage.Location',
     'geology_slides_esi.description.vantagepoint' : 'Vantage Point',
-    'geology_slides_esi.date.original' : 'Date'
+    'geology_slides_esi.date.original' : 'Date',
+
+    'mckelvy.date.original.display' : 'Date.Original',
 };
 
 SolrQuery.COLLECTION_FIELD_MAP = {
@@ -629,8 +634,15 @@ SolrQuery.prototype = {
 
 	var facets = document.URL.split(/f\[\d\]/);
 
-	var _query = SolrQuery.getQuery(document.URL, $, Drupal.settings.islandoraDssSolrFacetPages.query);
-	var _facets = SolrQuery.getFacets(document.URL, $, Drupal.settings.islandoraDssSolrFacetPages.facets, Drupal.settings.islandoraDssSolrFacetPages.query);
+	if(Drupal.settings.islandoraDssSolrFacetPages) {
+
+	    var _query = SolrQuery.getQuery(document.URL, $, Drupal.settings.islandoraDssSolrFacetPages.query);
+	    var _facets = SolrQuery.getFacets(document.URL, $, Drupal.settings.islandoraDssSolrFacetPages.facets, Drupal.settings.islandoraDssSolrFacetPages.query);
+	} else {
+
+	    var _query = SolrQuery.getQuery(document.URL);
+	    var _facets = SolrQuery.getFacets(document.URL);
+	}
 
 	/**
 	 * Global variables
@@ -1139,7 +1151,16 @@ SolrQuery.prototype = {
 		    //that.dateSliderStop();
 
 		    var url = $(document).data('islandoraDssDateRangeSlider')['query'];
-		    url = '/' + url;
+
+		    /**
+		     * Work-around for DSSSM-737
+		     * @todo Refactor
+		     *
+		     */
+		    if(!/browse/.exec(url)) {
+
+			url = '/' + url;
+		    }
 
 		    var facetParams = {};
 
@@ -1223,7 +1244,7 @@ SolrQuery.prototype = {
 		     */
 		    if(/collections\/browse/.exec(url)) {
 
-			url = 'islandora/search/*:*';
+			url = '/islandora/search/*:*';
 		    }
 
 		    $.get(url, params, that.updatePage);
