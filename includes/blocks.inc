@@ -191,6 +191,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     case 'war_casualties':
 
       //dpm($excluded_fields);
+      $included_fields = array_merge($included_fields, array('war_casualties.contributor.military.unit'));
       break;
     default:
 
@@ -210,19 +211,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 	*/
 
 	if(in_array($field['solr_field'], $included_fields) or (preg_match("/$query_field_namespace\./", $field['solr_field'], $m) and !in_array($field['solr_field'], $excluded_fields))) {
-
-	  /**
-	   * Work-around for historical
-	   * Resolves 
-	   *
-	   */
-	  if($query_field_namespace == 'historical') {
-
-	    if($field['label'] == 'Date.Original') {
-
-	      $field['label'] = 'Date';
-	    }
-	  }
 
 	  $fields[] = $field;
 	}
@@ -585,7 +573,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 													'war_casualties.description.class' => 'Graduating Class',
 													'war_casualties.description.honors' => 'Honors',
 													'war_casualties.description.military.branch' => 'Military Branch',
-													'war_casualties.description.military.rank' => 'Military Rank')
+													'war_casualties.description.military.rank' => 'Military Rank',
+													'war_casualties.description.military.unit' => 'Military Unit')
 							   );
 
       //if($islandora_solr_facet_query == '*:*') {

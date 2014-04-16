@@ -86,6 +86,7 @@ SolrQuery.FIELD_MAP = {
     'Honors' : 'war_casualties.description.honors',
     'Military Branch' : 'war_casualties.description.military.branch',
     'Military Rank' : 'war_casualties.description.military.rank',
+    'Military Unit' : 'war_casualties.contributor.military.unit',
 
     // Refactor: labels
 
@@ -123,6 +124,7 @@ SolrQuery.FIELD_MAP = {
     'war_casualties.description.honors' : 'Description.Honors',
     'war_casualties.description.military.branch' : 'Description.Military.Branch',
     'war_casualties.description.military.rank' : 'Description.Military.Rank',
+    'war_casualties.contributor.military.unit' : 'Military Unit',
 
     // Geology
     'geology_slides_esi.subject' : 'Subject',
