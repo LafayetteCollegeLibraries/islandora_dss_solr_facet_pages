@@ -581,6 +581,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							   'Geology Department Slide Collection' => array('geology_slides_esi.date.original' => 'Publication Date',
 													  'geology_slides_esi.coverage.location' => 'Coverage'),
 							   'Lafayette Newspaper Collection' => array('dc.date.sort' => 'Publication Date'),
+							   'Lafayette World War II Casualties' => array(
+													'war_casualties.description.class' => 'Graduating Class',
+													'war_casualties.description.honors' => 'Honors',
+													'war_casualties.description.military.branch' => 'Military Branch',
+													'war_casualties.description.military.rank' => 'Military Rank')
 							   );
 
       //if($islandora_solr_facet_query == '*:*') {

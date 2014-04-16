@@ -82,10 +82,10 @@ SolrQuery.FIELD_MAP = {
     'dc.contributor.author' : 'ldr.dc.contributor.author',
 
     // War Casualties
-    'Description.Class' : 'war_casualties.description.class',
-    'Description.Honors' : 'war_casualties.description.honors',
-    'Description.Military.Branch' : 'war_casualties.description.military.branch',
-    'Description.Military.Rank' : 'war_casualties.description.military.rank',
+    'Graduating Class' : 'war_casualties.description.class',
+    'Honors' : 'war_casualties.description.honors',
+    'Military Branch' : 'war_casualties.description.military.branch',
+    'Military Rank' : 'war_casualties.description.military.rank',
 
     // Refactor: labels
 
