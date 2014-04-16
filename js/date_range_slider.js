@@ -221,7 +221,11 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Subject') {
 
 	// Simply parse for 'Historical' within the Solr query in the URL
-	if(/Historical/.exec(document.URL)) {
+	/**
+	 * Resolves DSS-258
+	 *
+	 */
+	if(/Historical/.exec(document.URL) || /Newspaper/.exec(document.URL) ) {
 	    
 	    return 'dc.subject';
 	} else {
