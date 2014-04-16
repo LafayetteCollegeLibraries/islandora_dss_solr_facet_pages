@@ -111,6 +111,7 @@ SolrQuery.FIELD_MAP = {
     'mdl_prints.format.medium' : 'Format.Medium',
     'mdl_prints.description.series' : 'Description.Series',
     'mdl_prints.creator' : 'Creator',
+    'mdl_prints.date.original' : 'Date.Original',
 
     // LDR
     'ldr.dc.date.accessioned' : 'dc.date.accessioned',
@@ -226,6 +227,16 @@ SolrQuery.fieldMap = function(field) {
 	} else {
 
 	    return 'geology_slides_esi.subject';
+	}
+    } else if(field == 'Date.Original') {
+
+	// Simply parse for 'Marquis' within the Solr query in the URL
+	if(/Marquis/.exec(document.URL)) {
+	    
+	    return 'mdl_prints.date.original';
+	} else {
+
+	    return 'mckelvy.date.original.display';
 	}
     } else {
 	
