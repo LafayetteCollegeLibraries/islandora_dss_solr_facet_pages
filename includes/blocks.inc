@@ -661,7 +661,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       foreach($result_fields as $result => $count) {
 
 	// Ensure that facets already applied to this search are not tokenized
-	if(!in_array($result, $filtered_facets)) {
+	/**
+	 * For removing "----" and "_empty_" values created by the DC XSLT upon the updating of datastream content
+	 *
+	 */
+	if(!in_array($result, array('----', '_empty_')) and !in_array($result, $filtered_facets)) {
 
 	  $filtered_result_fields[$result] = $count;
 	}

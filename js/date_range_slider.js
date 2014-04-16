@@ -120,19 +120,19 @@ SolrQuery.FIELD_MAP = {
     'ldr.dc.contributor.author' : 'dc.contributor.author',
 
     // War Casualties
-    'war_casualties.description.class' : 'Description.Class',
-    'war_casualties.description.honors' : 'Description.Honors',
-    'war_casualties.description.military.branch' : 'Description.Military.Branch',
-    'war_casualties.description.military.rank' : 'Description.Military.Rank',
+    'war_casualties.description.class' : 'Graduating Class',
+    'war_casualties.description.honors' : 'Honors',
+    'war_casualties.description.military.branch' : 'Military Branch',
+    'war_casualties.description.military.rank' : 'Military Rank',
     'war_casualties.contributor.military.unit' : 'Military Unit',
 
     // Geology
     'geology_slides_esi.subject' : 'Subject',
     'geology_slides_esi.coverage.location' : 'Coverage',
     'geology_slides_esi.description.vantagepoint' : 'Vantage Point',
-    'geology_slides_esi.date.original' : 'Date',
+    'geology_slides_esi.date.original' : 'Publication Date',
 
-    'mckelvy.date.original.display' : 'Date.Original',
+    'mckelvy.date.original.display' : 'Publication Date',
 };
 
 SolrQuery.COLLECTION_FIELD_MAP = {

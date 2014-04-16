@@ -91,9 +91,35 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
   $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $solr_query);
   // Collect results with lowercase.
   $prefix_lower = strtolower($prefix);
+
   $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower, $solr_query);
+
   // Merge uppercase with lowercase.
-  $result_fields = array_merge($result_fields, $result_fields_lower);
+  //$result_fields = array_merge($result_fields, $result_fields_lower);
+
+  /**
+   * Odd work-around; Uncertain as to how this behavior occurred (PHP core update?)
+   * Resolves DSSSM-751
+   *
+   */
+  if($solr_field == 'war_casualties.description.class') {
+
+    $_result_fields = array();
+
+    foreach(array($result_fields, $result_fields_lower) as $result_field_subset) {
+
+      foreach($result_field_subset as $facet => $count) {
+
+	$_result_fields[$facet] = $count;
+      }
+    }
+
+    $result_fields = $_result_fields;
+  } else {
+
+    // Merge uppercase with lowercase.
+    $result_fields = array_merge($result_fields, $result_fields_lower);
+  }
 
   switch($solr_field) {
 

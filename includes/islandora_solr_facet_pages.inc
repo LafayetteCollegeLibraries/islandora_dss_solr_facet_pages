@@ -348,27 +348,27 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 
     break;
 
-  default:
-    //$filter_queries = preg_split('/ AND /', $query);
-    $filter_queries = $query;
+      default:
+	//$filter_queries = preg_split('/ AND /', $query);
+	$filter_queries = $query;
 
-    // Set facet parameters.
-    $facet_params = array('facet' => 'true',
-			  'facet.field' => $solr_field,
-			  'facet.sort' => 'count',
-			  'facet.mincount' => 1,
-			  'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
-			  'qt' => variable_get('islandora_solr_request_handler', 'standard'),
-			  'facet.query' => $filter_queries
-			  );
+	// Set facet parameters.
+	$facet_params = array('facet' => 'true',
+			      'facet.field' => $solr_field,
+			      'facet.sort' => 'count',
+			      'facet.mincount' => 1,
+			      'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
+			      'qt' => variable_get('islandora_solr_request_handler', 'standard'),
+			      'facet.query' => $filter_queries
+			      );
 
-    // Set the facet prefix.
-    if ($prefix != 'ALL' && $prefix != 'all') {
-      
-      $facet_params['facet.prefix'] = $prefix;
+	// Set the facet prefix.
+	if ($prefix != 'ALL' && $prefix != 'all') {
+	  
+	  $facet_params['facet.prefix'] = $prefix;
+	}
+      }
     }
-  }
-  }
   }
 
   if(!isset($facet_params)) {
@@ -466,6 +466,22 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     break;
   }
 
+  /**
+   * For removing "----" and "_empty_" values created by the DC XSLT upon the updating of datastream content
+   *
+   */
+  $_fields = array();
+  foreach($fields as $facet => $value) {
+
+    if(!in_array($facet, array('----', '_empty_'))) {
+
+      //continue;
+      $_fields[$facet] = $value;
+    }
+  }
+
+  $fields = $_fields;
+
   return $fields;
 }
 
@@ -528,8 +544,30 @@ function islandora_dss_solr_facet_pages_callback($path = NULL, $prefix = NULL) {
   // Collect results with lowercase.
   $prefix_lower = strtolower($prefix);
   $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower);
-  // Merge uppercase with lowercase.
-  $result_fields = array_merge($result_fields, $result_fields_lower);
+
+  /**
+   * Odd work-around; Uncertain as to how this behavior occurred (PHP core update?)
+   * Resolves DSSSM-751
+   *
+   */
+  if($solr_field == 'war_casualties.description.class') {
+
+    $_result_fields = array();
+
+    foreach(array($result_fields, $result_fields_lower) as $result_field_subset) {
+
+      foreach($result_field_subset as $facet => $count) {
+
+	$_result_fields[$facet] = $count;
+      }
+    }
+
+    $result_fields = $_result_fields;
+  } else {
+
+    // Merge uppercase with lowercase.
+    $result_fields = array_merge($result_fields, $result_fields_lower);
+  }
 
   switch($solr_field) {
 
@@ -550,6 +588,21 @@ function islandora_dss_solr_facet_pages_callback($path = NULL, $prefix = NULL) {
     $result_fields = $_result_fields;
     break;
   }
+
+  /**
+   * For removing "----" and "_empty_" values created by the DC XSLT upon the updating of datastream content
+   *
+   */
+  $_result_fields = array();
+  foreach($result_fields as $result_field => $value) {
+
+    if(!in_array($result, array('----', '_empty_'))) {
+
+      $_result_fields[$result] = $value;
+    }
+  }
+  $result_fields = $_result_fields;
+  $results = $result_fields;
 
   // Set up pager.
   $pager_data = _islandora_solr_facet_pages_pager($result_fields);
