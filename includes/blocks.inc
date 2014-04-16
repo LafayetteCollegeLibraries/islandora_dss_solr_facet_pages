@@ -526,6 +526,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       $prefix_lower = strtolower($prefix);
       $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower, $islandora_solr_facet_query);
 
+      dpm($result_fields);
+
       /*
       if(!empty($filters)) {
 
@@ -539,7 +541,32 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       */
 
       // Merge uppercase with lowercase.
-      $result_fields = array_merge($result_fields, $result_fields_lower);
+      /**
+       * Odd work-around; Uncertain as to how this behavior occurred (PHP core update?)
+       * Resolves DSSSM-751
+       *
+       */
+      if($solr_field == 'war_casualties.description.class') {
+
+	dpm('trace');
+
+	$_result_fields = array();
+
+	foreach(array($result_fields, $result_fields_lower) as $result_field_subset) {
+
+	  foreach($result_field_subset as $facet => $count) {
+
+	    $_result_fields[$facet] = $count;
+	  }
+	}
+
+	$result_fields = $_result_fields;
+      } else {
+
+	$result_fields = array_merge($result_fields, $result_fields_lower);
+      }
+
+      dpm($result_fields);
 
       /**
        * Refine for anomalous cases (e. g. browsing the contents of the repository)
@@ -558,6 +585,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       //if($islandora_solr_facet_query == '*:*') {
       if($islandora_solr_facet_query == '*:*' or
 	 $islandora_solr_facet_query == '*: *') {
+	//if( (array_key_exists(0, $_GET['f']) and !preg_match('/cdm\.Relation\.IsPartOf/', $_GET['f'][0])) or preg_match('/collections\/browse/', current_path()) ) {
 
 	/**
 	 * Modify the field label
@@ -617,15 +645,34 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	arsort($result_fields);
 
 	/**
-	 * Disables the modal for browsing all repository content
-	 * Resolves DSSSM-710
+	 * Odd work-around; Uncertain as to how this behavior occurred (PHP core update?)
+	 * Resolves DSSSM-751
 	 *
 	 */
+	if($solr_field == 'war_casualties.description.class') {
+
+	  $_result_fields = array();
+
+	  for($i=0;$i<5;$i++) {
+
+	    $_keys = array_keys($result_fields);
+	    $_result_fields[ $_keys[$i] ] = $result_fields[$_keys[$i]];
+	  }
+
+	  $result_fields = $_result_fields;
+
+	} elseif ($islandora_solr_facet_query != '*:*' and !(preg_match('/Newspaper Collection/', $islandora_solr_facet_query) and $solr_field == 'dc.date.sort') ) {
+
 	/*
 	 * Disables the restriction for all Newspaper Objects
 	 * Resolves DSSSM-712
 	 */
-	if($islandora_solr_facet_query != '*:*' and !(preg_match('/Newspaper Collection/', $islandora_solr_facet_query) and $solr_field == 'dc.date.sort') ) {
+
+	/**
+	 * Disables the modal for browsing all repository content
+	 * Resolves DSSSM-710
+	 *
+	 */
 
 	  // Top 5 facets
 	  $result_fields = array_slice($result_fields, 0, 5);

@@ -254,9 +254,6 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 
     $query_collection = $query_collection_match[1];
 
-    dpm('trace6');
-    dpm(array($query_collection, $solr_field));
-
     if($query_collection == 'Lafayette Newspaper Collection' and $solr_field == 'dc.date.sort') {
 
       // Set facet parameters.
@@ -419,6 +416,18 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     unset($fields['gap']);
     unset($fields['start']);
     unset($fields['end']);
+  } elseif($solr_field == 'war_casualties.description.class') {
+
+    /**
+     * Odd work-around; Uncertain as to how this behavior occurred (PHP core update?)
+     * Resolves DSSSM-751
+     *
+     */
+    $fields = array();
+    foreach($result_object->facet_counts->facet_fields->$solr_field as $facet => $count) {
+
+      $fields[$facet] = $count;
+    }
   } else {
 
     $fields = (array) $result_object->facet_counts->facet_fields->$solr_field;
