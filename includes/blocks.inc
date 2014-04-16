@@ -402,7 +402,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       $page = $query_params['page'];
     }
-
+    
     /*
     $solr_field_name = array_shift(explode(':', $solr_field));
     */
@@ -661,18 +661,19 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	  $result_fields = $_result_fields;
 
-	} elseif ($islandora_solr_facet_query != '*:*' and !(preg_match('/Newspaper Collection/', $islandora_solr_facet_query) and $solr_field == 'dc.date.sort') ) {
+	  //} elseif ($islandora_solr_facet_query != '*:*' and !(preg_match('/Newspaper Collection/', $islandora_solr_facet_query) and $solr_field == 'dc.date.sort') ) {
+	} elseif($islandora_solr_facet_query != '*:*' and !preg_match('/\.?[dD]ate\.?/', $solr_field)) { // Resolves DSSSM-753
 
-	/*
-	 * Disables the restriction for all Newspaper Objects
-	 * Resolves DSSSM-712
-	 */
+	  /*
+	   * Disables the restriction for all Newspaper Objects
+	   * Resolves DSSSM-712
+	   */
 
-	/**
-	 * Disables the modal for browsing all repository content
-	 * Resolves DSSSM-710
-	 *
-	 */
+	  /**
+	   * Disables the modal for browsing all repository content
+	   * Resolves DSSSM-710
+	   *
+	   */
 
 	  // Top 5 facets
 	  $result_fields = array_slice($result_fields, 0, 5);
