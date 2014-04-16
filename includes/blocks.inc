@@ -526,8 +526,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       $prefix_lower = strtolower($prefix);
       $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower, $islandora_solr_facet_query);
 
-      dpm($result_fields);
-
       /*
       if(!empty($filters)) {
 
@@ -548,8 +546,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
        */
       if($solr_field == 'war_casualties.description.class') {
 
-	dpm('trace');
-
 	$_result_fields = array();
 
 	foreach(array($result_fields, $result_fields_lower) as $result_field_subset) {
@@ -565,8 +561,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	$result_fields = array_merge($result_fields, $result_fields_lower);
       }
-
-      dpm($result_fields);
 
       /**
        * Refine for anomalous cases (e. g. browsing the contents of the repository)
@@ -606,6 +600,15 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
 
 	$result_fields = $_result_fields;
+      } elseif(preg_match('/McKelvy House Photograph Collection/', $islandora_solr_facet_query)) { // Resolves DSSSM-756
+
+	$ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Publication Date',
+							     'mdl_prints.format.medium' => 'Medium');
+
+	if(array_key_exists($solr_field, $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS)) {
+	    
+	  $value['label'] = $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS[$solr_field];
+	}
       }
 
       $child_items = array();
@@ -841,7 +844,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	if(preg_match('/McKelvy House Photograph Collection/', $islandora_solr_facet_query)) {
 
-	  $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Date.Original');
+	  $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Publication Date');
 
 	  if(array_key_exists($solr_field, $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS)) {
 	    

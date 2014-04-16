@@ -218,6 +218,15 @@ SolrQuery.fieldMap = function(field) {
 
 	    return 'eastasia.Format.Medium';
 	}
+    } else if(field == 'Medium') {  // Resolves DSSSM-756
+
+	if(/Newspaper/.exec(document.URL)) {
+	    
+	    return 'dc.type';
+	} else {
+
+	    return 'mdl_prints.format.medium';
+	}
     } else if(field == 'Subject') {
 
 	// Simply parse for 'Historical' within the Solr query in the URL
@@ -241,6 +250,15 @@ SolrQuery.fieldMap = function(field) {
 	} else {
 
 	    return 'mckelvy.date.original.display';
+	}
+    } else if(field == 'Publication Date') {
+
+	if(/McKelvy/.exec(document.URL)) { // Resolves DSSSM-756
+	    
+	    return 'mckelvy.date.original.display';
+	} else {
+
+	    return 'dc.date';
 	}
     } else {
 	
