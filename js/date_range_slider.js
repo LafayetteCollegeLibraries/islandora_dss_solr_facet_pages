@@ -73,7 +73,7 @@ SolrQuery.FIELD_MAP = {
 
     // Geology
     'Subject' : 'geology_slides_esi.subject',
-    'Coverage.Location' : 'geology_slides_esi.coverage.location',
+    'Coverage' : 'geology_slides_esi.coverage.location',
     'Vantage Point' : 'geology_slides_esi.description.vantagepoint',
     'Date' : 'geology_slides_esi.date.original',
 
@@ -125,7 +125,7 @@ SolrQuery.FIELD_MAP = {
 
     // Geology
     'geology_slides_esi.subject' : 'Subject',
-    'geology_slides_esi.coverage.location' : 'Coverage.Location',
+    'geology_slides_esi.coverage.location' : 'Coverage',
     'geology_slides_esi.description.vantagepoint' : 'Vantage Point',
     'geology_slides_esi.date.original' : 'Date',
 
@@ -256,6 +256,9 @@ SolrQuery.fieldMap = function(field) {
 	if(/McKelvy/.exec(document.URL)) { // Resolves DSSSM-756
 	    
 	    return 'mckelvy.date.original.display';
+	} else if(/Geology/.exec(document.URL)) { // Resolves DSSSM-757
+
+	    return 'geology_slides_esi.date.original';
 	} else {
 
 	    return 'dc.date';

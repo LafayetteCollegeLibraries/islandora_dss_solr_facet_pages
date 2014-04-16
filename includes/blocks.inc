@@ -576,6 +576,12 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							      'Lafayette World War II Casualties',
 							      );
 
+      $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('McKelvy House Photograph Collection' => array('mckelvy.date.original.display' => 'Publication Date',
+													  'mdl_prints.format.medium' => 'Medium'),
+							   'Geology Department Slide Collection' => array('geology_slides_esi.date.original' => 'Publication Date',
+													  'geology_slides_esi.coverage.location' => 'Coverage'),
+							   );
+
       //if($islandora_solr_facet_query == '*:*') {
       if($islandora_solr_facet_query == '*:*' or
 	 $islandora_solr_facet_query == '*: *') {
@@ -600,6 +606,24 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
 
 	$result_fields = $_result_fields;
+      } else {
+
+	/**
+	 * Slow, refactor with preg_match
+	 *
+	 */
+	foreach($ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS as $collection_key => $field_labels) {
+	  
+	  if(preg_match("/$collection_key/", $islandora_solr_facet_query)) { // Resolves DSSSM-756
+	    
+	    if(array_key_exists($solr_field, $field_labels)) {
+	      
+	      $value['label'] = $field_labels[$solr_field];
+	    }
+	  }
+	}
+      }
+	/*
       } elseif(preg_match('/McKelvy House Photograph Collection/', $islandora_solr_facet_query)) { // Resolves DSSSM-756
 
 	$ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Publication Date',
@@ -609,8 +633,18 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	    
 	  $value['label'] = $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS[$solr_field];
 	}
-      }
+      } elseif(preg_match('/Geology Department Slide Collection/', $islandora_solr_facet_query)) { // Resolves DSSSM-757
 
+	$ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Publication Date',
+							     'mdl_prints.format.medium' => 'Medium');
+
+	if(array_key_exists($solr_field, $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS)) {
+	  
+	  $value['label'] = $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS[$solr_field];
+	}
+      }
+	*/
+      
       $child_items = array();
       $child_items_class = array('islandora-solr-facet-list');
       if(preg_match('/\.?[dD]ate\.?/', $solr_field)) {
