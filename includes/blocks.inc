@@ -580,6 +580,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 													  'mdl_prints.format.medium' => 'Medium'),
 							   'Geology Department Slide Collection' => array('geology_slides_esi.date.original' => 'Publication Date',
 													  'geology_slides_esi.coverage.location' => 'Coverage'),
+							   'Lafayette Newspaper Collection' => array('dc.date.sort' => 'Publication Date'),
 							   );
 
       //if($islandora_solr_facet_query == '*:*') {
@@ -609,13 +610,14 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       } else {
 
 	/**
-	 * Slow, refactor with preg_match
+	 * Terribly slow
+	 * @todo refactor with preg_match
 	 *
 	 */
 	foreach($ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS as $collection_key => $field_labels) {
 	  
 	  if(preg_match("/$collection_key/", $islandora_solr_facet_query)) { // Resolves DSSSM-756
-	    
+
 	    if(array_key_exists($solr_field, $field_labels)) {
 	      
 	      $value['label'] = $field_labels[$solr_field];
@@ -876,6 +878,33 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 */
 	//if(true) {
 
+	/*
+	$ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('McKelvy House Photograph Collection' => array('mckelvy.date.original.display' => 'Publication Date',
+													    'mdl_prints.format.medium' => 'Medium'),
+							     'Geology Department Slide Collection' => array('geology_slides_esi.date.original' => 'Publication Date',
+													    'geology_slides_esi.coverage.location' => 'Coverage'),
+							     'Lafayette Newspaper Collection' => array('dc.date.sort' => 'Publication Date'),
+							     );
+	*/
+
+	/**
+	 * Resolves DSSSM-633
+	 * Terribly slow
+	 * @todo refactor with preg_match
+	 *
+	 */
+	foreach($ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS as $collection_key => $field_labels) {
+	  
+	  if(preg_match("/$collection_key/", $islandora_solr_facet_query)) { // Resolves DSSSM-756
+
+	    if(array_key_exists($solr_field, $field_labels)) {
+	      
+	      $result_fields[$solr_field] = $field_labels[$solr_field];
+	    }
+	  }
+	}
+
+	/*
 	if(preg_match('/McKelvy House Photograph Collection/', $islandora_solr_facet_query)) {
 
 	  $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Publication Date');
@@ -885,6 +914,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	    $result_fields[$solr_field] = $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS[$solr_field];
 	  }
 	}
+	*/
 
 	/*
 	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',

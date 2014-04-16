@@ -92,6 +92,7 @@ SolrQuery.FIELD_MAP = {
     'cdm.Relation.IsPartOf' : 'Relation.IsPartOf',
 
     'dc.publisher' : 'Publisher',
+    'dc.date.sort' : 'Publication Date',
 
     // EAIC
     'eastasia.Subject.OCM' : 'Subject.OCM',
@@ -261,7 +262,7 @@ SolrQuery.fieldMap = function(field) {
 	    return 'geology_slides_esi.date.original';
 	} else {
 
-	    return 'dc.date';
+	    return 'dc.date.sort';
 	}
     } else {
 	
