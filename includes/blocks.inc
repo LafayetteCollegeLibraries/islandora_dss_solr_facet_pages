@@ -179,7 +179,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
     case 'historical':
       
-      $included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'mdl_prints.date.original'));
+      //$excluded_fields = array_merge($excluded_fields, array('dc.type'));
+      //$included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'mdl_prints.format.medium', 'mdl_prints.date.original'));
     break;
 
     case 'geology_slides_esi':
@@ -569,12 +570,12 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							   'Geology Department Slide Collection' => array('geology_slides_esi.date.original' => 'Publication Date',
 													  'geology_slides_esi.coverage.location' => 'Coverage'),
 							   'Lafayette Newspaper Collection' => array('dc.date.sort' => 'Publication Date'),
-							   'Lafayette World War II Casualties' => array(
-													'war_casualties.description.class' => 'Graduating Class',
+							   'Lafayette World War II Casualties' => array('war_casualties.description.class' => 'Graduating Class',
 													'war_casualties.description.honors' => 'Honors',
 													'war_casualties.description.military.branch' => 'Military Branch',
 													'war_casualties.description.military.rank' => 'Military Rank',
-													'war_casualties.description.military.unit' => 'Military Unit')
+													'war_casualties.description.military.unit' => 'Military Unit'),
+							   'Historical Photograph Collection' => array('dc.date.sort' => 'Publication Date'),
 							   );
 
       //if($islandora_solr_facet_query == '*:*') {

@@ -223,7 +223,7 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'Medium') {  // Resolves DSSSM-756
 
-	if(/Newspaper/.exec(document.URL)) {
+	if(/Newspaper/.exec(document.URL) || /Historical/.exec(document.URL) ) {
 	    
 	    return 'dc.type';
 	} else {
