@@ -978,9 +978,9 @@ SolrQuery.prototype = {
 			 * Resolves DSSSM-725
 			 *
 			 */
-			if(/collections\/browse/.exec(url)) {
+			if(/\/browse/.exec(url)) {
 
-			    url = 'islandora/search/*:*';
+			    url = '/islandora/search/*:*';
 			}
 
 			$.get(url, params, that.updatePage);
@@ -1291,7 +1291,7 @@ SolrQuery.prototype = {
 		     * Resolves DSSSM-725
 		     *
 		     */
-		    if(/collections\/browse/.exec(url)) {
+		    if(/\/browse/.exec(url)) {
 
 			url = '/islandora/search/*:*';
 		    }
@@ -1437,12 +1437,16 @@ SolrQuery.prototype = {
 
 			    var maxFacet = $(document).data('islandoraDssDateRangeSlider')['maxFacet'] + 1;
 
-			    // Handling for the path alias
+			    /**
+			     * Resolves DSSSM-725
+			     * Handling for the path alias
+			     *
+			     */
 			    try {
 
-				if(/collections\/browse\/?/.exec(url)) {
+				if(/\/browse\/?/.exec(url)) {
 				
-				    var menuArgs = /collections\/browse\/?(.+)/.exec(document.URL)[1];
+				    var menuArgs = /\/browse\/?(.+)/.exec(document.URL)[1];
 				} else if(/islandora\/search\/(.+)/.exec(url)) { // Parse the URL for the argument to the Drupal Menu Item /islandora/search/%query
 
 				    var menuArgs = /islandora\/search\/(.+)/.exec(url)[1];
@@ -1572,7 +1576,7 @@ SolrQuery.prototype = {
 			     * Resolves DSSSM-725
 			     *
 			     */
-			    if(/collections\/browse/.exec(url)) {
+			    if(/\/browse/.exec(url)) {
 			    
 				url = '/islandora/search/*:*';
 			    }
@@ -2045,7 +2049,7 @@ SolrQuery.prototype = {
 		 * Resolves DSSSM-725
 		 *
 		 */
-		if(/collections\/browse/.exec(url)) {
+		if(/\/browse/.exec(url)) {
 		    
 		    url = '/islandora/search/*:*';
 		}
@@ -2080,9 +2084,9 @@ SolrQuery.prototype = {
 
 		/**
 		 * Resolves DSSSM-725
-		 *
+		 * @todo Refactor
 		 */
-		if(/collections\/browse/.exec(url)) {
+		if(/\/browse/.exec(url)) {
 
 		    url = '/islandora/search/*:*';
 		}
