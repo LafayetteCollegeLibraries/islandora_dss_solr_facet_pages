@@ -505,8 +505,18 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
       }
 
-      dpm(array($islandora_solr_facet_query));
-      dpm(array($solr_field));
+      /**
+       * Handling for Lucene metacharacters
+       * Resolving DSSSM-775
+       * @todo Refactor
+       *
+       */
+      $ISLANDORA_DSS_SOLR_LUCENE_METACHARS = array('/', ':', '?', '&');
+      foreach($ISLANDORA_DSS_SOLR_LUCENE_METACHARS as $metachar) {
+
+	//$search = str_replace("$metachar", urlencode($metachar), $search);
+	$islandora_solr_facet_query = str_replace(urlencode($metachar), $metachar, $islandora_solr_facet_query);
+      }
 
       // Collect results.
       $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);
