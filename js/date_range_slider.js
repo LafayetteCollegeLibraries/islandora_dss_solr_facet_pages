@@ -50,7 +50,8 @@ SolrQuery.FIELD_MAP = {
     'Publisher' : 'dc.publisher',
 
     // McKelvy
-    'Date.Original' : 'mckelvy.date.original.display',
+    //'Date.Original' : 'mckelvy.date.original.display',
+    'Date.Original' : 'mdl_prints.date.original',
 
     // EAIC
     'Subject.OCM' : 'eastasia.Subject.OCM',
@@ -204,7 +205,7 @@ SolrQuery.fieldMap = function(field) {
 	// Simply parse for 'Geology' within the Solr query in the URL
 	// Simply parse for 'Historical' within the Solr query in the URL
 	//if(/Geology/.exec(document.URL) || /Historical/.exec(document.URL)) {
-	if(/Geology/.exec(document.URL)) {
+	if(/geology/i.exec(document.URL)) {
 
 	    return 'geology_slides_esi.date.original';
 	} else {
@@ -214,7 +215,7 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Format.Medium') {
 
 	// Simply parse for 'Marquis' within the Solr query in the URL
-	if(/Marquis/.exec(document.URL)) {
+	if(/Marquis/.exec(document.URL) || /lafayetteprints/.exec(document.URL) ) {
 	    
 	    return 'mdl_prints.format.medium';
 	} else {
@@ -223,7 +224,7 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'Medium') {  // Resolves DSSSM-756
 
-	if(/Newspaper/.exec(document.URL) || /Historical/.exec(document.URL) ) {
+	if(/newspaper/i.exec(document.URL) || /historical/i.exec(document.URL) ) {
 	    
 	    return 'dc.type';
 	} else {
@@ -237,7 +238,7 @@ SolrQuery.fieldMap = function(field) {
 	 * Resolves DSS-258
 	 *
 	 */
-	if(/Historical/.exec(document.URL) || /Newspaper/.exec(document.URL) ) {
+	if(/historical/i.exec(document.URL) || /newspaper/i.exec(document.URL) ) {
 	    
 	    return 'dc.subject';
 	} else {
@@ -247,7 +248,7 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Date.Original') {
 
 	// Simply parse for 'Marquis' within the Solr query in the URL
-	if(/Marquis/.exec(document.URL)) {
+	if(/Marquis/.exec(document.URL) || /lafayetteprints/.exec(document.URL) ) {
 	    
 	    return 'mdl_prints.date.original';
 	} else {
@@ -256,10 +257,10 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'Publication Date') {
 
-	if(/McKelvy/.exec(document.URL)) { // Resolves DSSSM-756
+	if(/mckelvy/i.exec(document.URL)) { // Resolves DSSSM-756
 	    
 	    return 'mckelvy.date.original.display';
-	} else if(/Geology/.exec(document.URL)) { // Resolves DSSSM-757
+	} else if(/geology/i.exec(document.URL)) { // Resolves DSSSM-757
 
 	    return 'geology_slides_esi.date.original';
 	} else {
@@ -1442,14 +1443,17 @@ SolrQuery.prototype = {
 			     * Handling for the path alias
 			     *
 			     */
+
+			    var menuArgs, menuArgsMatch;
 			    try {
 
 				if(/\/browse\/?/.exec(url)) {
 				
-				    var menuArgs = /\/browse\/?(.+)/.exec(document.URL)[1];
+				    menuArgsMatch = /\/browse\/?(.+)/.exec(document.URL);
 				} else if(/islandora\/search\/(.+)/.exec(url)) { // Parse the URL for the argument to the Drupal Menu Item /islandora/search/%query
 
-				    var menuArgs = /islandora\/search\/(.+)/.exec(url)[1];
+				    //var menuArgs = /islandora\/search\/(.+)/.exec(url)[1];
+				    menuArgsMatch = /islandora\/search\/(.+)/.exec(url);
 				} else {
 				    
 				    throw "Could not parse the Solr query from the URL " + url;
@@ -1459,6 +1463,10 @@ SolrQuery.prototype = {
 				console.error(e);
 			    }
 
+			    if(menuArgsMatch) {
+
+				menuArgs = menuArgsMatch[1];
+			    }
 
 			    // query += '&f[' + maxFacet + ']=' + dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
 
