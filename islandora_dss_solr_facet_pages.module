@@ -219,7 +219,7 @@ function _islandora_dss_solr_facet_pages_facets($paths, $solr_field) {
      * Removes URL fragments
      *
      */
-    $query = array_shift(explode('#', '*:*'));
+    $query = array_shift(explode('#', $query));
 
     if(array_key_exists('f', $_GET)) {
 

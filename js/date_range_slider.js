@@ -1088,7 +1088,8 @@ SolrQuery.prototype = {
 			     * Parse the Solr query from the URL
 			     * Resolves DSS-203
 			     */
-			    var last_url_segment = decodeURI(document.URL).split('/').pop().split('?').shift().replace('%3A', ':');
+			    //var last_url_segment = decodeURI(document.URL).split('/').pop().split('?').shift().replace('%3A', ':');
+			    var last_url_segment = decodeURI(document.URL).split('/').pop().split('?').shift().split("%3A").join(':');
 
 			    if(last_url_segment.match(':')) {
 
