@@ -239,7 +239,7 @@ SolrQuery.fieldMap = function(field) {
 	 *
 	 */
 	//if(/historical/i.exec(document.URL) || /newspaper/i.exec(document.URL) ) {
-	if(/historical/i.exec(document.URL) || /newspaper/i.exec(document.URL) ) {
+	if(/newspaper/i.exec(document.URL) ) {
 	    
 	    return 'dc.subject';
 	} else {

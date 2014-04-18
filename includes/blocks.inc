@@ -180,7 +180,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     case 'historical':
       
       //$excluded_fields = array_merge($excluded_fields, array('dc.type', 'dc.date.sort'));
-      $included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'mdl_prints.format.medium', 'mdl_prints.date.original'));
+      $included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'dc.type', 'mdl_prints.date.original'));
       //$included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'dc.type', 'dc.date'));
     break;
 
@@ -226,7 +226,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
       }
       */
 
-      dpm($fields);
+      //dpm($fields);
     }
   } else {
 
