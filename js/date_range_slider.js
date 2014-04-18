@@ -238,6 +238,7 @@ SolrQuery.fieldMap = function(field) {
 	 * Resolves DSS-258
 	 *
 	 */
+	//if(/historical/i.exec(document.URL) || /newspaper/i.exec(document.URL) ) {
 	if(/historical/i.exec(document.URL) || /newspaper/i.exec(document.URL) ) {
 	    
 	    return 'dc.subject';
@@ -263,6 +264,9 @@ SolrQuery.fieldMap = function(field) {
 	} else if(/geology/i.exec(document.URL)) { // Resolves DSSSM-757
 
 	    return 'geology_slides_esi.date.original';
+	} else if(/historical/i.exec(document.URL)) { // Resolves DSS-261
+
+	    return 'mdl_prints.date.original';
 	} else {
 
 	    return 'dc.date.sort';

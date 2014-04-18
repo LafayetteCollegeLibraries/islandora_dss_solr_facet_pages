@@ -32,7 +32,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 				     'Geology Department Slide Collection' => 'geology_slides_esi',
 				     'McKelvy House Photograph Collection' => 'mckelvy',
 				     'Lafayette World War II Casualties' => 'war_casualties',
-				     //'Historical Photograph Collection' => 'historical',
+				     'Historical Photograph Collection' => 'historical',
 				     );
 
   $filter = '';
@@ -179,8 +179,9 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
     case 'historical':
       
-      //$excluded_fields = array_merge($excluded_fields, array('dc.type'));
-      //$included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'mdl_prints.format.medium', 'mdl_prints.date.original'));
+      //$excluded_fields = array_merge($excluded_fields, array('dc.type', 'dc.date.sort'));
+      $included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'mdl_prints.format.medium', 'mdl_prints.date.original'));
+      //$included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'dc.type', 'dc.date'));
     break;
 
     case 'geology_slides_esi':
@@ -225,7 +226,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
       }
       */
 
-      //dpm($fields);
+      dpm($fields);
     }
   } else {
 
@@ -593,7 +594,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 													'war_casualties.description.military.branch' => 'Military Branch',
 													'war_casualties.description.military.rank' => 'Military Rank',
 													'war_casualties.description.military.unit' => 'Military Unit'),
-							   'Historical Photograph Collection' => array('dc.date.sort' => 'Publication Date'),
+							   'Historical Photograph Collection' => array('mdl_prints.date.original' => 'Publication Date'),
 							   );
 
       //if($islandora_solr_facet_query == '*:*') {
