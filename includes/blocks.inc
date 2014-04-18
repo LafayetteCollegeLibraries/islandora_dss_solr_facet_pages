@@ -401,6 +401,18 @@ function _islandora_dss_solr_facet_pages_block_callback() {
     //$fields = variable_get('islandora_solr_facet_pages_fields_data', array());
     $fields = module_invoke_all('dss_solr_fields', $path, $filters);
 
+    /**
+     * Work-around
+     * Resolves DSSSM-780
+     * @todo Refactor
+     */
+    if(empty($filtered_facets)) {
+      
+      $fields = array(array('solr_field' => 'cdm.Relation.IsPartOf',
+			    'label' => 'Relation.IsPartOf',
+			    'path' => 'collections'));
+    }
+
     $items = array();
 
     //foreach($solr_fields as $solr_field) {
@@ -611,8 +623,9 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							   );
 
       //if($islandora_solr_facet_query == '*:*') {
-      if($islandora_solr_facet_query == '*:*' or
-	 $islandora_solr_facet_query == '*: *') {
+      if($islandora_solr_facet_query == '*:*'
+	 or $islandora_solr_facet_query == '*: *'
+	 or empty($filtered_facets)) {
 	//if( (array_key_exists(0, $_GET['f']) and !preg_match('/cdm\.Relation\.IsPartOf/', $_GET['f'][0])) or preg_match('/collections\/browse/', current_path()) ) {
 
 	/**
@@ -703,6 +716,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
       }
       $result_fields = $filtered_result_fields;
+
+      dpm($result_fields);
 
       // Iterate through the facets
       if(!empty($result_fields)) {
