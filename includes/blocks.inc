@@ -478,6 +478,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$islandora_solr_facet_query = implode(' AND ', array_merge(array($islandora_solr_facet_query), $filters));
       }
 
+      dpm(array($islandora_solr_facet_query));
+
       /**
        * Ensures that queries are properly structured for Solr indexing issues
        * @todo Properly resolve by reindexing for c_dc.title, c_dc.description, and c_dc.type (with the appropriate analyzer)
@@ -491,6 +493,12 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  if(preg_match("/$solr_unindexed_field:\(\*(.+?)\*\)/", $islandora_solr_facet_query, $query_m)) {
 
 	    $widened_query = '*' . strtolower($query_m) . '* OR *' . mb_convert_case($query_m, MB_CASE_TITLE, "UTF-8")  . '* OR *' . strtoupper($query_m) . '*';
+
+	    $islandora_solr_facet_query = preg_replace("/$solr_unindexed_field:\(.+?\)/", "$solr_unindexed_field:($widened_query)", $islandora_solr_facet_query);
+	  } elseif(preg_match("/$solr_unindexed_field:\(\"(.+?)\"\)/", $islandora_solr_facet_query, $query_m)) {
+	    
+	    $term = $query_m[1];
+	    $widened_query = '*' . strtolower($term) . '* OR *' . mb_convert_case($term, MB_CASE_TITLE, "UTF-8")  . '* OR *' . strtoupper($term) . '*';
 
 	    $islandora_solr_facet_query = preg_replace("/$solr_unindexed_field:\(.+?\)/", "$solr_unindexed_field:($widened_query)", $islandora_solr_facet_query);
 	  }
@@ -691,9 +699,10 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	  $_result_fields = array();
 
-	  for($i=0;$i<5;$i++) {
+	  $_keys = array_keys($result_fields);
+	  $_keys_count = count($_keys);
+	  for($i=0;$i < ($_keys_count < 5 ? $_keys_count : 5);$i++) {
 
-	    $_keys = array_keys($result_fields);
 	    $_result_fields[ $_keys[$i] ] = $result_fields[$_keys[$i]];
 	  }
 
