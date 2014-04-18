@@ -404,7 +404,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     $facet_params['sort'] = 'dc.title asc';
   }
   */
-  dpm($facet_params);
+  //dpm($facet_params);
 
   // Solr results in JSON format.
   $result_object = json_decode($solr->search($query, 0, 0, $facet_params)->getRawResponse());

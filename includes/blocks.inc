@@ -465,6 +465,19 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	  $islandora_solr_facet_query = str_replace($solr_indexed_field, 'c_' . $solr_indexed_field, $islandora_solr_facet_query);
 	}
+
+	/**
+	 * Work-around
+	 * This resolves DSSSM-728
+	 *
+	 */
+	if(preg_match("/$solr_indexed_field:\(\"(.+?)\"\)/", $islandora_solr_facet_query, $query_m) or preg_match("/c_$solr_indexed_field:\(\"(.+?)\"\)/", $islandora_solr_facet_query, $query_m)) {
+
+	  $term = $query_m[1];
+	  $widened_query = '*' . $term . '*';
+	
+	  $islandora_solr_facet_query = preg_replace("/$solr_indexed_field:\(.+?\)/", "$solr_indexed_field:($widened_query)", $islandora_solr_facet_query);
+	}
       }
 
       if(!empty($filters)) {
