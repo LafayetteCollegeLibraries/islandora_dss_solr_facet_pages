@@ -190,10 +190,24 @@ SolrQuery.marcRelatorFilter = function(fieldValue, fieldName) {
  */
 SolrQuery.fieldMap = function(field) {
 
+    // Work-around
+    $ = jQuery;
+    var facetQueries = jQuery(document).data('islandoraDssDateRangeFacetQueries');
+    var collection = facetQueries['cdm.Relation.IsPartOf'] || [''];
+    collection = collection[0];
+
+    /*
+    if(typeof(facetQueries['cdm.Relation.IsPartOf']) !== 'undefined') {
+
+	collection = facetQueries['cdm.Relation.IsPartOf'];
+    }
+    */
+
     if(field == 'cdm.Relation.IsPartOf') {
 
 	// For the top-level collections
-	if(/collections\/browse/.exec(document.URL)) {
+	//if(/collections\/browse/.exec(document.URL)) {
+	if(/collections\/browse/.exec(collection) || /collections\/browse/.exec(document.URL) ) {
 	    
 	    return 'Choose a Collection';
 	} else {
@@ -205,7 +219,8 @@ SolrQuery.fieldMap = function(field) {
 	// Simply parse for 'Geology' within the Solr query in the URL
 	// Simply parse for 'Historical' within the Solr query in the URL
 	//if(/Geology/.exec(document.URL) || /Historical/.exec(document.URL)) {
-	if(/geology/i.exec(document.URL)) {
+	//if(/geology/i.exec(document.URL)) {
+	if(/geology/i.exec(collection) || /geology/i.exec(document.URL) ) {
 
 	    return 'geology_slides_esi.date.original';
 	} else {
@@ -215,7 +230,8 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Format.Medium') {
 
 	// Simply parse for 'Marquis' within the Solr query in the URL
-	if(/Marquis/.exec(document.URL) || /lafayetteprints/.exec(document.URL) ) {
+	//if(/Marquis/.exec(document.URL) || /lafayetteprints/.exec(document.URL) ) {
+	if(/Marquis/.exec(collection) || /lafayetteprints/.exec(document.URL)) {
 	    
 	    return 'mdl_prints.format.medium';
 	} else {
@@ -224,8 +240,10 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'Medium') {  // Resolves DSSSM-756
 
-	if(/newspaper/i.exec(document.URL) || /historical/i.exec(document.URL) ) {
-	    
+	//if(/newspaper/i.exec(document.URL) || /historical/i.exec(document.URL) ) {
+	if(/newspaper/i.exec(collection) || /historical/i.exec(collection) ||
+	   /newspaper/i.exec(document.URL) || /historical/i.exec(document.URL) ) {
+
 	    return 'dc.type';
 	} else {
 
@@ -239,7 +257,8 @@ SolrQuery.fieldMap = function(field) {
 	 *
 	 */
 	//if(/historical/i.exec(document.URL) || /newspaper/i.exec(document.URL) ) {
-	if(/newspaper/i.exec(document.URL) ) {
+	//if(/newspaper/i.exec(document.URL) ) {
+	if(/newspaper/i.exec(collection) || /newspaper/i.exec(document.URL) ) {
 	    
 	    return 'dc.subject';
 	} else {
@@ -249,7 +268,9 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Date.Original') {
 
 	// Simply parse for 'Marquis' within the Solr query in the URL
-	if(/Marquis/.exec(document.URL) || /lafayetteprints/.exec(document.URL) ) {
+	//if(/Marquis/.exec(document.URL) || /lafayetteprints/.exec(document.URL) ) {
+	if(/Marquis/.exec(collection) ||
+	   /lafayetteprints/.exec(document.URL) ) {
 	    
 	    return 'mdl_prints.date.original';
 	} else {
@@ -258,13 +279,19 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'Publication Date') {
 
-	if(/mckelvy/i.exec(document.URL)) { // Resolves DSSSM-756
+	//if(/mckelvy/i.exec(document.URL)) { // Resolves DSSSM-756
+	if(/mckelvy/i.exec(collection) ||
+	   /mckelvy/i.exec(document.URL)) { // Resolves DSSSM-756
 	    
 	    return 'mckelvy.date.original.display';
-	} else if(/geology/i.exec(document.URL)) { // Resolves DSSSM-757
+	    //} else if(/geology/i.exec(document.URL)) { // Resolves DSSSM-757
+	} else if(/geology/i.exec(collection) ||
+		  /geology/i.exec(document.URL)) { // Resolves DSSSM-757
 
 	    return 'geology_slides_esi.date.original';
-	} else if(/historical/i.exec(document.URL)) { // Resolves DSS-261
+	    //} else if(/historical/i.exec(document.URL)) { // Resolves DSS-261
+	} else if(/historical/i.exec(collection) ||
+		  /historical/i.exec(document.URL)) { // Resolves DSS-261
 
 	    return 'mdl_prints.date.original';
 	} else {
