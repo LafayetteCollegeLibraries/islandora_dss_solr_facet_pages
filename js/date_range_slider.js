@@ -748,6 +748,19 @@ SolrQuery.prototype = {
 		facetIndex++;
 	    }
 	}
+
+	/**
+	 * Ensures that the sorted field is preserved for URL aliases
+	 * Resolves 
+	 */
+	var sortMatch = /sort\=(.+?) (asc|desc)/i.exec(decodeURI(document.URL));
+	if(sortMatch) {
+
+	    //facetParams['sort'] = sortMatch[1] + ' ' + sortMatch[2];
+	    var sortParams = $(document).data('islandoraDssSolrResultsSortParams') || {};
+	    $(document).data('islandoraDssSolrResultsSortParams', $.extend({sort: sortMatch[1] + ' ' + sortMatch[2] }, sortParams));
+	}
+
 	$(document).data('islandoraDssDateRangeFacetParams', facetParams);
 
 	var that = this;
