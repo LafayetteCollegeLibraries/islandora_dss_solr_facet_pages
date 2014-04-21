@@ -293,7 +293,8 @@ SolrQuery.fieldMap = function(field) {
 	} else if(/historical/i.exec(collection) ||
 		  /historical/i.exec(document.URL)) { // Resolves DSS-261
 
-	    return 'mdl_prints.date.original';
+	    //return 'mdl_prints.date.original';
+	    return 'dc.date.sort';
 	} else {
 
 	    return 'dc.date.sort';

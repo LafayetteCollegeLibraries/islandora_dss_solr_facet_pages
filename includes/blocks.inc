@@ -180,7 +180,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     case 'historical':
       
       //$excluded_fields = array_merge($excluded_fields, array('dc.type', 'dc.date.sort'));
-      $included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'dc.type', 'mdl_prints.date.original'));
+      //$included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'dc.type', 'mdl_prints.date.original'));
+      $included_fields = array_merge($included_fields, array('dc.subject', 'dc.type', 'dc.date.sort'));
       //$included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'dc.type', 'dc.date'));
     break;
 
@@ -213,6 +214,12 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 	*/
 
 	if(in_array($field['solr_field'], $included_fields) or (preg_match("/$query_field_namespace\./", $field['solr_field'], $m) and !in_array($field['solr_field'], $excluded_fields))) {
+
+	  //dpm($field);
+	  if($query_field_namespace == 'historical' and $field['solr_field'] == 'dc.date.sort') {
+
+	    $field['label'] = 'Publication Date';
+	  }
 
 	  $fields[] = $field;
 	}
@@ -619,7 +626,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 													'war_casualties.description.military.branch' => 'Military Branch',
 													'war_casualties.description.military.rank' => 'Military Rank',
 													'war_casualties.description.military.unit' => 'Military Unit'),
-							   'Historical Photograph Collection' => array('mdl_prints.date.original' => 'Publication Date'),
+							   'Historical Photograph Collection' => array('mdl_prints.date.original' => 'Publication Date',
+												       'dc.date.sort' => 'Publication Date'),
 							   );
 
       //if($islandora_solr_facet_query == '*:*') {
@@ -783,51 +791,50 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	  //if(!in_array($result, $filtered_facets)) {
 
-	    $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
-	    $query = array('f' => $filter);
-	    if(isset($page)) {
+	  $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
+	  $query = array('f' => $filter);
+	  if(isset($page)) {
 
-	      //$query['page'] = $page;
-	      /**
-	       * Faceting should not retain the current page being viewed
-	       *
-	       */
-	    }
-
-	    $class = array('islandora-solr-facet');
-
+	    //$query['page'] = $page;
 	    /**
-	     * Work-around for DSS-167
-	     * Work-around for DSS-170
+	     * Faceting should not retain the current page being viewed
 	     *
 	     */
-	    if(array_key_exists($solr_field, $ISLANDORA_MARC_METADB_MAP)) {
+	  }
 
-	      if(array_key_exists($result, $ISLANDORA_MARC_METADB_MAP[$solr_field])) {
-		  
-		$result = $ISLANDORA_MARC_METADB_MAP[$solr_field][$result];
-	      }
+	  $class = array('islandora-solr-facet');
+
+	  /**
+	   * Work-around for DSS-167
+	   * Work-around for DSS-170
+	   *
+	   */
+	  if(array_key_exists($solr_field, $ISLANDORA_MARC_METADB_MAP)) {
+
+	    if(array_key_exists($result, $ISLANDORA_MARC_METADB_MAP[$solr_field])) {
+	      
+	      $result = $ISLANDORA_MARC_METADB_MAP[$solr_field][$result];
 	    }
+	  }
 
-	    // For date values
-	    //if(in_array($value['label'], $date_fields)) {
-	    if(preg_match('/Date\.?/', $value['label'])) {
+	  // For date values
+	  //if(in_array($value['label'], $date_fields)) {
+	  if(preg_match('/Date\.?/', $value['label'])) {
 
-	      $class[] = 'islandora-solr-facet-date';
-	      //$child_items[] = l(truncate_utf8(date('F, Y', strtotime($result)), 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
-	      //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
-	      $child_items[] = l($result, $islandora_solr_path, array(
-								      //'attributes' => array('id' => ),
-								      'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
-	    } else {
+	    $class[] = 'islandora-solr-facet-date';
+	    //$child_items[] = l(truncate_utf8(date('F, Y', strtotime($result)), 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
+	    //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
+	    $child_items[] = l($result, $islandora_solr_path, array(
+								    //'attributes' => array('id' => ),
+								    'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
+	  } else {
 
-	      //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
-	      $child_items[] = l($result, $islandora_solr_path, array(
-								      //'attributes' => array('class' => $class),
-								      'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
-	    }
+	    //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
+	    $child_items[] = l($result, $islandora_solr_path, array(
+								    //'attributes' => array('class' => $class),
+								    'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
+	  }
 	}
-
 
 	/**
 	 * Disables the modal for browsing all repository content
