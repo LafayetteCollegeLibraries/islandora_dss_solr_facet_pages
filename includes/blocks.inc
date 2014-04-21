@@ -401,6 +401,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
     //$fields = variable_get('islandora_solr_facet_pages_fields_data', array());
     $fields = module_invoke_all('dss_solr_fields', $path, $filters);
 
+    dpm($filtered_facets);
+
     /**
      * Work-around
      * Resolves DSSSM-780
@@ -504,14 +506,12 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$islandora_solr_facet_query = implode(' AND ', array_merge(array($islandora_solr_facet_query), $filters));
       }
 
-      dpm(array($islandora_solr_facet_query));
-
       /**
        * Ensures that queries are properly structured for Solr indexing issues
        * @todo Properly resolve by reindexing for c_dc.title, c_dc.description, and c_dc.type (with the appropriate analyzer)
        *
        */
-      $SOLR_UNINDEXED_FIELDS = array('dc.title', 'dc.description', 'dc.type');
+      $SOLR_UNINDEXED_FIELDS = array('dc.title', 'dc.description', 'dc.type', 'dc.contributor');
       foreach($SOLR_UNINDEXED_FIELDS as $solr_unindexed_field) {
 
 	if(preg_match("/$solr_unindexed_field/", $islandora_solr_facet_query)) {
@@ -522,7 +522,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	    $islandora_solr_facet_query = preg_replace("/$solr_unindexed_field:\(.+?\)/", "$solr_unindexed_field:($widened_query)", $islandora_solr_facet_query);
 	  } elseif(preg_match("/$solr_unindexed_field:\(\"(.+?)\"\)/", $islandora_solr_facet_query, $query_m)) {
-	    
+
 	    $term = $query_m[1];
 	    $widened_query = '*' . strtolower($term) . '* OR *' . mb_convert_case($term, MB_CASE_TITLE, "UTF-8")  . '* OR *' . strtoupper($term) . '*';
 
@@ -624,8 +624,10 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       //if($islandora_solr_facet_query == '*:*') {
       if($islandora_solr_facet_query == '*:*'
+	 //} elseif($islandora_solr_facet_query == '*:*'
 	 or $islandora_solr_facet_query == '*: *'
 	 or empty($filtered_facets)) {
+
 	//if( (array_key_exists(0, $_GET['f']) and !preg_match('/cdm\.Relation\.IsPartOf/', $_GET['f'][0])) or preg_match('/collections\/browse/', current_path()) ) {
 
 	/**
@@ -648,7 +650,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	$result_fields = $_result_fields;
       } else {
-
+	
 	/**
 	 * Terribly slow
 	 * @todo refactor with preg_match
@@ -656,7 +658,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 */
 	foreach($ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS as $collection_key => $field_labels) {
 	  
-	  if(preg_match("/$collection_key/", $islandora_solr_facet_query)) { // Resolves DSSSM-756
+	  if(
+	     preg_match("/$collection_key/", $islandora_solr_facet_query)) { // Resolves DSSSM-756
 
 	    if(array_key_exists($solr_field, $field_labels)) {
 	      
@@ -665,7 +668,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  }
 	}
       }
-	/*
+      /*
       } elseif(preg_match('/McKelvy House Photograph Collection/', $islandora_solr_facet_query)) { // Resolves DSSSM-756
 
 	$ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Publication Date',
@@ -685,7 +688,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  $value['label'] = $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS[$solr_field];
 	}
       }
-	*/
+      */
       
       $child_items = array();
       $child_items_class = array('islandora-solr-facet-list');
@@ -716,8 +719,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
       }
       $result_fields = $filtered_result_fields;
-
-      dpm($result_fields);
 
       // Iterate through the facets
       if(!empty($result_fields)) {
@@ -781,7 +782,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	foreach($result_fields as $result => $count) {
 
 	  //if(!in_array($result, $filtered_facets)) {
-	  if(true) {
 
 	    $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
 	    $query = array('f' => $filter);
@@ -826,8 +826,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 								      //'attributes' => array('class' => $class),
 								      'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	    }
-	  }
 	}
+
 
 	/**
 	 * Disables the modal for browsing all repository content
