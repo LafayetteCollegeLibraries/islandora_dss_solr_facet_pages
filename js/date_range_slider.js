@@ -242,7 +242,8 @@ SolrQuery.fieldMap = function(field) {
 
 	//if(/newspaper/i.exec(document.URL) || /historical/i.exec(document.URL) ) {
 	if(/newspaper/i.exec(collection) || /historical/i.exec(collection) ||
-	   /newspaper/i.exec(document.URL) || /historical/i.exec(document.URL) ) {
+	   /newspaper/i.exec(document.URL) || /historical/i.exec(document.URL) ||
+	   /mckelvy/i.exec(collection) || /mckelvy/i.exec(document.URL)) {
 
 	    return 'dc.type';
 	} else {
@@ -258,7 +259,9 @@ SolrQuery.fieldMap = function(field) {
 	 */
 	//if(/historical/i.exec(document.URL) || /newspaper/i.exec(document.URL) ) {
 	//if(/newspaper/i.exec(document.URL) ) {
-	if(/newspaper/i.exec(collection) || /newspaper/i.exec(document.URL) ) {
+	if(/newspaper/i.exec(collection) || /newspaper/i.exec(document.URL) ||
+	   /mckelvy/i.exec(collection) || /mckelvy/i.exec(document.URL) ||
+	   /historical/i.exec(collection) || /historical/i.exec(document.URL)) {
 	    
 	    return 'dc.subject';
 	} else {

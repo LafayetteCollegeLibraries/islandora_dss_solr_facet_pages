@@ -186,11 +186,16 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     break;
 
     case 'geology_slides_esi':
-    case 'mckelvy':
 
       //$included_fields = array_merge($included_fields, array('dc.subject', 'mdl_prints.format.medium', 'mckelvy.date.original.display'));
       $included_fields = array_merge($included_fields, array('geology_slides_esi.subject', 'mdl_prints.format.medium', 'mckelvy.date.original.display'));
     break;
+
+    case 'mckelvy':
+
+      $included_fields = array_merge($included_fields, array('dc.subject', 'dc.type', 'mckelvy.date.original.display'));
+    break;
+
     case 'war_casualties':
 
       //dpm($excluded_fields);
@@ -617,7 +622,9 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							      );
 
       $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('McKelvy House Photograph Collection' => array('mckelvy.date.original.display' => 'Publication Date',
-													  'mdl_prints.format.medium' => 'Medium'),
+													  'dc.type' => 'Medium',
+													  'dc.subject' => 'Subject',
+													  ),
 							   'Geology Department Slide Collection' => array('geology_slides_esi.date.original' => 'Publication Date',
 													  'geology_slides_esi.coverage.location' => 'Coverage'),
 							   'Lafayette Newspaper Collection' => array('dc.date.sort' => 'Publication Date'),
