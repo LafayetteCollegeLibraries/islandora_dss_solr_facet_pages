@@ -351,7 +351,12 @@ SolrQuery.getFacets = function getFacets(url, $, facets, query) {
      */
     if(facets) {
 
-	var urlSegments = facets.split(/\??&?\d\=/).map(function(e, i) { return decodeURI(e).replace('+', ' ', 'g'); });
+	//var urlSegments = facets.split(/\??&?\d\=/).map(function(e, i) { return decodeURI(e).replace('+', ' ', 'g'); });
+	/**
+	 * This must be a RegExp Object for v8 Core based browsers
+	 * Resolves DSSSM-790
+	 */
+	var urlSegments = facets.split(/\??&?\d\=/).map(function(e, i) { return decodeURI(e).replace(/\+/g, ' ', 'g'); });
     } else {
 
 	var urlSegments = url.split(/\??&?f\[\d\]\=/);
