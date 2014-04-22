@@ -210,17 +210,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
       foreach($_fields as $field) {
 
-	/*
-	if($field['label'] == 'Subject') {
-
-	  dpm($field);
-	  dpm( in_array($field['solr_field'], $included_fields) );
-	}
-	*/
-
 	if(in_array($field['solr_field'], $included_fields) or (preg_match("/$query_field_namespace\./", $field['solr_field'], $m) and !in_array($field['solr_field'], $excluded_fields))) {
 
-	  //dpm($field);
 	  if($query_field_namespace == 'historical' and $field['solr_field'] == 'dc.date.sort') {
 
 	    $field['label'] = 'Publication Date';
@@ -237,8 +228,36 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
       uasort($fields, $sort);
       }
       */
+      switch($query_field_namespace) {
 
-      //dpm($fields);
+      case 'mckelvy':
+
+	$sort = function($u, $v) {
+	  
+	  $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELDS_SORT = array('mckelvy.date.original.display' => 2,
+							      'dc.subject' => 0,
+							      'dc.type' => 1,
+							      );
+
+	  return ($ISLANDORA_DSS_SOLR_FACET_PAGES_FIELDS_SORT[$u['solr_field']] < $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELDS_SORT[$v['solr_field']]) ? -1 : 1;
+	};
+	uasort($fields, $sort);
+	break;
+
+      case 'historical':
+
+	$sort = function($u, $v) {
+	  
+	  $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELDS_SORT = array('dc.date.sort' => 2,
+							      'dc.subject' => 0,
+							      'dc.type' => 1,
+							      );
+
+	  return ($ISLANDORA_DSS_SOLR_FACET_PAGES_FIELDS_SORT[$u['solr_field']] < $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELDS_SORT[$v['solr_field']]) ? -1 : 1;
+	};
+	uasort($fields, $sort);
+	break;
+      }
     }
   } else {
 
@@ -269,6 +288,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     }
   }
   */
+  dpm($fields);
 
   return $fields;
   }
