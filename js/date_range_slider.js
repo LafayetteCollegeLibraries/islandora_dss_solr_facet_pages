@@ -376,10 +376,24 @@ SolrQuery.getFacets = function getFacets(url, $, facets, query) {
 		// new Date(/\[(.+?)\sT/.exec(decodeURI('geology_slides_esi.date.original%3A[1967-12-01T00%3A00%3A00Z TO 1968-06-01T00%3A00%3A00Z]'))[1].replace('%3A',':','g'))
 		var paramValueStr = e.split(/(\s|\+)TO(\s|\+)/);
 		var paramMinStr = paramValueStr[0];
-		paramMinStr = /\[(.+)/.exec(paramMinStr)[1].replace('%3A',':','g');
+
+ 		/**
+		 * RegExp Objects must be utilized within String.prototype.replace() invocations
+		 * (Specific to V8 engine)
+		 * Resolves DSS-271
+		 *
+		 */
+		paramMinStr = /\[(.+)/.exec(paramMinStr)[1].replace(/%3A/g,':','g');
 
 		var paramMaxStr = paramValueStr.pop();
-		paramMaxStr = /(.+?)\]/.exec(paramMaxStr)[1].replace('%3A', ':', 'g');
+
+ 		/**
+		 * RegExp Objects must be utilized within String.prototype.replace() invocations
+		 * (Specific to V8 engine)
+		 * Resolves DSS-271
+		 *
+		 */
+		paramMaxStr = /(.+?)\]/.exec(paramMaxStr)[1].replace(/%3A/g, ':', 'g');
 
 		//var paramMin = +new Date(/\[(.+?)\sT/.exec(e)[1].replace('%3A',':','g'));
 		//var paramMax = +new Date(/TO\s(.+?)\]/.exec(e)[1].replace('%3A',':','g'));
