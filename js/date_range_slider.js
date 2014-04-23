@@ -794,7 +794,8 @@ SolrQuery.prototype = {
 		 * Resolves DSSSM-533
 		 *
 		 */
-		facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
+		//facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
+		facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
 		facetIndex++;
 	    }
 	}
@@ -991,7 +992,7 @@ SolrQuery.prototype = {
 				 */
 				//facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
 				//facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
-				facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&');
+				facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&').replace('%2F', '/');
 				facetIndex++;
 
 				//var parentUrl = facetedSearchAnchor.attr('href');
@@ -1142,7 +1143,7 @@ SolrQuery.prototype = {
 				     * Resolves DSSSM-533
 				     *
 				     */
-				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
+				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
 				    facetIndex++;
 				}
 			    }
@@ -1294,7 +1295,7 @@ SolrQuery.prototype = {
 
 			    var facetKey = 'f[' + facetIndex + ']';
 			    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-			    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
+			    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
 			    facetIndex++;
 			}
 		    }
@@ -1593,7 +1594,7 @@ SolrQuery.prototype = {
 
 				    var facetKey = 'f[' + i + ']';
 				    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
+				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
 				    i++;
 				}
 				//i++;
@@ -1941,7 +1942,7 @@ SolrQuery.prototype = {
 			     */
 			    //return fieldValue == $(facetedSearchAnchor).contents().last().text() || fieldValue == '"' + $(facetedSearchAnchor).contents().last().text() + '"';
 
-			    var facetElementContent = $(facetedSearchAnchor).contents().last().text().replace('&', '%26');
+			    var facetElementContent = $(facetedSearchAnchor).contents().last().text().replace('&', '%26').replace('/', '%2F');
 			    var rawFacetElementContent = $(facetedSearchAnchor).contents().last().text();
 			    //return fieldValue == facetElementContent || fieldValue == '"' + facetElementContent + '"';
 			    return fieldValue == facetElementContent || fieldValue == '"' + facetElementContent + '"' || fieldValue == rawFacetElementContent || fieldValue == '"' + rawFacetElementContent + '"';
@@ -1962,7 +1963,7 @@ SolrQuery.prototype = {
 				 */
 				//return fieldValue != $(facetedSearchAnchor).contents().last().text() && fieldValue != '"' + $(facetedSearchAnchor).contents().last().text() + '"';
 
-				var facetElementContent = $(facetedSearchAnchor).contents().last().text().replace('&', '%26');
+				var facetElementContent = $(facetedSearchAnchor).contents().last().text().replace('&', '%26').replace('/', '%2F');
 				var rawFacetElementContent = $(facetedSearchAnchor).contents().last().text();
 				//return fieldValue != facetElementContent && fieldValue != '"' + facetElementContent + '"';
 				return fieldValue != facetElementContent && fieldValue != '"' + facetElementContent + '"' && fieldValue != rawFacetElementContent && fieldValue != '"' + rawFacetElementContent + '"';
@@ -1997,7 +1998,7 @@ SolrQuery.prototype = {
 		     * @todo Refactor
 		     *
 		     */
-		    facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&');
+		    facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&').replace('%2F', '/');
 		    i++;
 		}
 	    }
