@@ -865,6 +865,7 @@ SolrQuery.prototype = {
 	this.updatePage = function(data, tokenCallback, activeToken, tokens) {
 
 	    //var facetParams = $(document).data('islandoraDssDateRangeFacetParams') || {};
+	    var snapTriggerHandler = $(document).data('snapTriggerHandler');
 
 	    if($(data).find('#page-header p.lead a.active').text() != ('0' + '\xA0' + 'Items Found')) {
 
@@ -886,6 +887,13 @@ SolrQuery.prototype = {
 		that.facetDateHandler();
 		that.facetModalHandler();
 		that.dateSliderResetHandler();
+
+		/**
+		 * @todo Decouple and refactor
+		 *
+		 */
+		snapTriggerHandler();
+		$('.snap-trigger').parent().toggleClass('loaded').children().toggleClass('shown').children('img').toggleClass('shown');
 		
 		$('.islandora-solr-facet-list li a, .islandora-solr-facet-token-list li a').filter(function(i, e) {
 
@@ -900,6 +908,13 @@ SolrQuery.prototype = {
 		//that.facetDateHandler();
 		//that.facetModalHandler();
 		that.dateSliderResetHandler();
+
+		/**
+		 * @todo Decouple and refactor
+		 *
+		 */
+		snapTriggerHandler();
+		$('.snap-trigger').parent().toggleClass('loaded').children().toggleClass('shown').children('img').toggleClass('shown');
 
 		$('.islandora-solr-facet-list li a, .islandora-solr-facet-token-list li a').filter(function(i, e) {
 			
