@@ -1936,6 +1936,45 @@ SolrQuery.prototype = {
 		}
 	    }
 
+	    /**
+	     * Work-around for removing improperly serialized facets
+	     * @todo Properly address within other scripts
+	     *
+	     */
+	    var i = 0;
+	    for(key in facetQueries) {
+
+		for(k in facetQueries[key]) {
+
+		    var facetKey = 'f[' + i + ']';
+		    var resultsViewParams = $(document).data('islandoraDssSolrResultsViewParams');
+
+		    if(resultsViewParams) {
+
+			delete resultsViewParams[facetKey];
+			$(document).data('islandoraDssSolrResultsViewParams', resultsViewParams);
+		    }
+
+		    var dateRangeParams = $(document).data('islandoraDssDateRangeFacetParams');
+
+		    if(dateRangeParams) {
+
+			delete dateRangeParams[facetKey];
+			$(document).data('islandoraDssDateRangeFacetParams', dateRangeParams);
+		    }
+
+		    var sortParams = $(document).data('islandoraDssSolrResultsSortParams');
+		    if(sortParams) {
+
+			delete sortParams[facetKey];
+			$(document).data('islandoraDssSolrResultsSortParams', sortParams);
+		    }
+
+		    i++;
+		}
+	    }
+
+
 	    // Update the active facet queries
 	    // Refactor for efficiency
 	    for(var fieldName in facetQueries) {
@@ -1981,6 +2020,7 @@ SolrQuery.prototype = {
 			    });
 			if(facetQueries[fieldName].length == 0) {
 
+			    var fieldValue = facetQueries[fieldName];
 			    delete facetQueries[fieldName];
 			}
 		    }
@@ -2010,6 +2050,7 @@ SolrQuery.prototype = {
 		     *
 		     */
 		    facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&').replace('%2F', '/');
+
 		    i++;
 		}
 	    }
