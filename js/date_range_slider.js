@@ -937,6 +937,17 @@ SolrQuery.prototype = {
 		});
 	    */
 
+	    /**
+	     * Implementing functionality to restrict facet selection
+	     * Resolves DSSSM-804
+	     */
+	    $('#islandora-dss-solr-facet-pages-facets-form').find('.form-checkbox').click(function(e) {
+
+		    //$(this).parents('.form-type-checkbox').siblings().find('.form-checkbox').prop('disabled', true);
+		    var siblingCheckboxes = $(this).parents('.form-type-checkbox').siblings().find('.form-checkbox');
+		    siblingCheckboxes.prop('disabled', !siblingCheckboxes.prop('disabled'));
+		});
+
 	    //$('#islandora-dss-solr-facet-pages-facets-form').submit(function(event) {
 	    $('#islandora-dss-solr-facet-pages-facets-form .form-submit').click(function(event) {
 
