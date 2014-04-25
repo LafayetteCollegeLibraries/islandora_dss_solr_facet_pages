@@ -1298,7 +1298,13 @@ SolrQuery.prototype = {
 
 		    var facetParams = {};
 
-		    var dateField = SolrQuery.fieldMap( $dateSlider.prev().prev().text() );
+		    if($dateSlider.prev().prev().length == 0) {
+
+			var dateField = SolrQuery.fieldMap($(e.target).parent().text().replace(/×/, ''));
+		    } else {
+
+			var dateField = SolrQuery.fieldMap( $dateSlider.prev().prev().text() );
+		    }
 		    var facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
 		    delete facetQueries[dateField];
 		    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
@@ -1442,7 +1448,8 @@ SolrQuery.prototype = {
 
 		    minMax[dateField] = {};
 		    minMax[dateField]['min'] = +new Date($facetListItems.first().children('a').text());
-		    
+		    //minMax[dateField]['min'] = +new Date($facetListItems.first().children('a').text()) - (new Date($facetListItems.first().children('a').text())).getTimezoneOffset();
+
 		    // If there is only one facet value for the range, create a second by incrementing 10 years
 		    /**
 		     * If there is only one facet value for the range, prepend and append 10 years
@@ -1473,6 +1480,7 @@ SolrQuery.prototype = {
 
 		    //var minDate = +new Date( $facetListItems.first().children('a').text());
 		    //var maxDate = +new Date( $facetListItems.first().children('a').text());
+		    //minMax[dateField]['min'] = +new Date($facetListItems.first().children('a').text()) - (new Date($facetListItems.first().children('a').text())).getTimezoneOffset();
 		    var minDate = minMax[dateField]['min'];
 		    var maxDate = minMax[dateField]['max'];
 
@@ -1486,8 +1494,8 @@ SolrQuery.prototype = {
 			//min: +new Date( $facetListItems.first().children('a').text()),
 			//max: +new Date( $facetListItems.last().children('a').text()),
 
-			min: minDate,
-			max: maxDate,
+			min: minDate ,
+			max: maxDate ,
 			range: true,
 			slide: function(e, ui) {
 
@@ -1732,13 +1740,6 @@ SolrQuery.prototype = {
 			// There can only ever be one element within an array of values for Date fields
 			var minValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[0].slice(1));
 
-			/*
-			 cdm.Relation.IsPartOf:"Geology Department Slide Collection"
-			  f[1]geology_slides_esi.date.original:[1964-05-18T08:17:56.007Z TO 1973-02-01T00:00:00.000Z]
-			  f[2]geology_slides_esi.coverage.location:"Mouth of McGee Creek canyon, E base of Sierra Nevada W of Crowley Lake, California. Looking upstream, approximately W."
-			 f[3]geology_slides_esi.subject:"JOINTS AND FAULTS"
-			 f[4]geology_slides_esi.subject:"QUATERNARY FAULTS"
-			*/
 			var maxValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[1].slice(0, -1));
 			options['values'] = [minValue, maxValue];
 		    } else if(typeof(_facets[solrFieldName]) !== 'undefined') { // Populate from the facet queries first...
@@ -1760,11 +1761,6 @@ SolrQuery.prototype = {
 		     *
 		     */
 		    if($facetListItems.length > 1) {
-
-			//$dateTerm.text( new Date(options['values'][1]).toLocaleDateString());
-			//$dateInit.text( new Date(options['values'][0]).toLocateDateString());
-			//$dateTerm.text( new Date(options['values'][1]).toGMTString());
-			//$dateInit.text( new Date(options['values'][0]).toGMTString());
 
 			$dateTerm.text( moment(options['values'][1]).format("MMM. DD YYYY"));
 			$dateInit.text( moment(options['values'][0]).format("MMM. DD YYYY"));

@@ -851,6 +851,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	    $class[] = 'islandora-solr-facet-date';
 	    //$child_items[] = l(truncate_utf8(date('F, Y', strtotime($result)), 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
 	    //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
+	    
 	    $child_items[] = l($result, $islandora_solr_path, array(
 								    //'attributes' => array('id' => ),
 								    'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
