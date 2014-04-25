@@ -941,7 +941,8 @@ SolrQuery.prototype = {
 	     * Implementing functionality to restrict facet selection
 	     * Resolves DSSSM-804
 	     */
-	    $('#islandora-dss-solr-facet-pages-facets-form').find('.form-checkbox').click(function(e) {
+	    $('.ui-dialog .fancy-box-container #islandora-dss-solr-facet-pages-facets-form').find('.form-checkbox').click(function(e) {
+	    //	    $('#islandora-dss-solr-facet-pages-facets-form').find('.form-checkbox').click(function(e) {
 
 		    //$(this).parents('.form-type-checkbox').siblings().find('.form-checkbox').prop('disabled', true);
 		    var siblingCheckboxes = $(this).parents('.form-type-checkbox').siblings().find('.form-checkbox');
@@ -952,10 +953,11 @@ SolrQuery.prototype = {
 	    $('#islandora-dss-solr-facet-pages-facets-form .form-submit').click(function(event) {
 
 		    event.preventDefault();
-
 		    facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
 
-		    var formValues = $('#islandora-dss-solr-facet-pages-facets-form').serializeArray();
+		    //var formValues = $('#islandora-dss-solr-facet-pages-facets-form').serializeArray();
+		    //var formValues = $('.ui-dialog .fancy-box-container #islandora-dss-solr-facet-pages-facets-form').serializeArray();
+		    var formValues = $('.ui-dialog .fancy-box-container #islandora-dss-solr-facet-pages-facets-form').filter(':visible').serializeArray();
 		    var fieldObjects = formValues.filter(function (fieldObj) {
 		    
 			    return fieldObj.name != 'form_build_id' && fieldObj.name != 'form_id' && fieldObj.name != 'form_token';
@@ -1053,6 +1055,44 @@ SolrQuery.prototype = {
 			    */
 			    }
 			}
+			/**
+			 * Work-around for removing improperly serialized facets
+			 * @todo Properly address within other scripts
+			 * Resolves DSSSM-813
+			 *
+			 */
+			var i = 0;
+			for(key in facetQueries) {
+
+			    for(k in facetQueries[key]) {
+				
+				var facetKey = 'f[' + i + ']';
+				var resultsViewParams = $(document).data('islandoraDssSolrResultsViewParams');
+				
+				if(resultsViewParams) {
+
+				    delete resultsViewParams[facetKey];
+				    $(document).data('islandoraDssSolrResultsViewParams', resultsViewParams);
+				}
+
+				var dateRangeParams = $(document).data('islandoraDssDateRangeFacetParams');
+
+				if(dateRangeParams) {
+				    
+				    delete dateRangeParams[facetKey];
+				    $(document).data('islandoraDssDateRangeFacetParams', dateRangeParams);
+				}
+
+				var sortParams = $(document).data('islandoraDssSolrResultsSortParams');
+				if(sortParams) {
+				    
+				    delete sortParams[facetKey];
+				    $(document).data('islandoraDssSolrResultsSortParams', sortParams);
+				}
+				
+				i++;
+			    }
+			}
 		    
 			$('.fancy-box-container').dialog('close');
 
@@ -1060,6 +1100,14 @@ SolrQuery.prototype = {
 
 			var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
 			params = $.extend(params, facetParams);
+
+			/**
+			 * @todo Refactor
+			 * Resolves DSSSM-666
+			 *
+			 */
+			var sortParams = $(document).data('islandoraDssSolrResultsSortParams') || {};
+			params = $.extend(params, sortParams);
 
 			/**
 			 * Resolves pagination issues
@@ -1192,7 +1240,7 @@ SolrQuery.prototype = {
 																      minWidth: 392,
 																      closeText: 'Close',
 																      beforeClose: function(event, ui) {
-
+					
 					this.$parent = $(this);
 						
 					var fieldObjects = $(this).find('#islandora-dss-solr-facet-pages-facets-form').serializeArray().filter(function (fieldObj) {
