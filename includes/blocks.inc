@@ -288,7 +288,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     }
   }
   */
-  dpm($fields);
+  //dpm($fields);
 
   return $fields;
   }
@@ -344,11 +344,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
    */
   $ISLANDORA_MARC_METADB_MAP = array(
 				     'eastasia.Format.Medium' => array(
-									   "photonegative" => 'Photographic negative',
-									   "photoprint" => 'Photographic print',
-									   "slide" => 'Photographic slide',
-									   "picture postcard" => 'Picture postcard',
-									   ),
+								       "photonegative" => 'Photographic negative',
+								       "photoprint" => 'Photographic print',
+								       "slide" => 'Photographic slide',
+								       "picture postcard" => 'Picture postcard',
+								       ),
 				     'mdl_prints.format.medium' => array(
 									 "photoprint" => 'lithograph',
 									 )

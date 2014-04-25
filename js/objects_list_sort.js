@@ -101,7 +101,7 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
      * Resolves DSSSM-725
      *
      */
-    if(/collections\/browse/.exec(url)) {
+    if(/\/browse/.exec(url)) {
 		    
 	url = '/islandora/search/*:*';
     }
@@ -164,7 +164,7 @@ LafayetteDssObjectList.prototype = {
 	    url = '/islandora/search/*:*';
 	} else {
 
-	    url = '/islandora/search/*:*';
+	    url = document.URL.split('?').shift();
 	}
 
 	/**
