@@ -109,8 +109,10 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
     $.get(url, params, function(data) {
 
 	    $('.islandora-solr-search-results').removeClass('loading')
-		.append($(data).find('.islandora-solr-search-results').children())
-		.prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
+	    .append($(data).find('.islandora-solr-search-results').children())
+	    //.prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
+	    .siblings('.islandora-discovery-controls').find('.pagination-count').replaceWith($(data).find('.pagination-count'));
+
 	    //.prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'))
 	    //.prev().find('.pagination-count-bottom').replaceWith($(data).find('.pagination-count-bottom'));
 
