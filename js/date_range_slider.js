@@ -456,6 +456,13 @@ SolrQuery.getFacets = function getFacets(url, $, facets, query) {
 		 */
 		paramValue = paramValue.split('&').shift();
 
+		/**
+		 * This decodes URI-encoded characters
+		 * Resolves DSSSM-460
+		 */
+		paramValue = paramValue.replace(/%26/g, '&', 'g');
+		paramValue = paramValue.replace(/%2F/g, '/', 'g');
+
 		/*
 		var paramValue = '';
 		for(var i in paramSegments) {
@@ -574,6 +581,35 @@ SolrQuery.updateFacetTokenUrl = function updateFacetTokenUrl(facetToken, newFace
     newFacetQuery = $(newFacetToken).attr('href');
 
     return facetQuery + 'f[' + (parseInt(newFacetQuery.split(/\??f\[/).pop()[0]) - 1).toString() + ']=' + newFacetQuery.split(/\??f\[\d\]\=?/).pop();
+};
+
+SolrQuery.getQueries = function(facetQueries) {
+
+    var facetParams = {};
+
+    var i = 0;
+    for(key in facetQueries) {
+
+	for(k in facetQueries[key]) {
+
+	    var facetKey = 'f[' + i + ']';
+	    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+
+	    //if(/"(.+?)"/.exec(facetQueries[key][k])) {
+	    if(true) {
+
+		//facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
+		facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+	    } else {
+
+		facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
+	    }
+	    i++;
+	}
+	//i++;
+    }
+
+    return facetParams;
 };
 
 SolrQuery.prototype = {
@@ -781,8 +817,12 @@ SolrQuery.prototype = {
 
 	// For facetParams
 	// Refactor
+	var facetParams = SolrQuery.getQueries(facetQueries);
+
+	/*
 	var facetParams = {};
 	var facetIndex = 0;
+
 	for(var key in facetQueries) {
 
 	    for(var k in facetQueries[key]) {
@@ -793,12 +833,13 @@ SolrQuery.prototype = {
 		/**
 		 * Resolves DSSSM-533
 		 *
-		 */
+		 * /
 		//facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
 		facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
 		facetIndex++;
 	    }
 	}
+	*/
 
 	/**
 	 * Ensures that the sorted field is preserved for URL aliases
@@ -1003,8 +1044,11 @@ SolrQuery.prototype = {
 
 			// Cannot locate the source of this bug
 			url = '/' + url;
+			
+			facetParams = SolrQuery.getQueries(facetQueries);
 
-			facetParams = {};
+			/*
+			  facetParams = {};
 
 			var facetIndex = 0;
 			for(key in facetQueries) {
@@ -1020,19 +1064,19 @@ SolrQuery.prototype = {
 				 */
 				//facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
 				//facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
+
+			/*
 				facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&').replace('%2F', '/');
 				facetIndex++;
+			*/
 
 				//var parentUrl = facetedSearchAnchor.attr('href');
 				//parentUrl = getFacetTokenUrl(facetedSearchAnchor);
 
+			/*
 				var parentUrl = url;
 				var linkText = '';
-
-				/**
-				 * Work-around
-				 *
-				 */
+			*/
 
 			    /*
 			    parentUrl += /f\[\d\]/.exec(parentUrl) ? '&' : '?';
@@ -1052,10 +1096,11 @@ SolrQuery.prototype = {
 				    $facetToken = $(facetToken);
 				    $facetToken.attr('href', SolrQuery.updateFacetTokenUrl( $facetToken, facetedSearchAnchor));
 				});
+}
+		    }
 			    */
-			    }
-			}
-			/**
+
+				/**
 			 * Work-around for removing improperly serialized facets
 			 * @todo Properly address within other scripts
 			 * Resolves DSSSM-813
@@ -1203,6 +1248,9 @@ SolrQuery.prototype = {
 			     */
 			    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
+			    facetParams = SolrQuery.getQueries(facetQueries);
+
+			    /*
 			    facetParams = {};
 
 			    var facetIndex = 0;
@@ -1216,11 +1264,12 @@ SolrQuery.prototype = {
 				    /**
 				     * Resolves DSSSM-533
 				     *
-				     */
+				     * /
 				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
 				    facetIndex++;
 				}
 			    }
+			    */
 
 			    /**
 			     * Parse the Solr query from the URL
@@ -1368,6 +1417,9 @@ SolrQuery.prototype = {
 		    delete facetQueries[dateField];
 		    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
+		    facetParams = SolrQuery.getQueries(facetQueries);
+
+		    /*
 		    var facetIndex = 0;
 		    for(key in facetQueries) {
 
@@ -1379,6 +1431,9 @@ SolrQuery.prototype = {
 			    facetIndex++;
 			}
 		    }
+		    */
+
+
 		    $(document).data('islandoraDssDateRangeFacetParams', facetParams);
 
 		    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
@@ -1667,6 +1722,9 @@ SolrQuery.prototype = {
 
 			    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
+			    facetParams = SolrQuery.getQueries(facetQueries);
+
+			    /*
 			    facetParams = {};
 
 			    var i = 0;
@@ -1681,6 +1739,7 @@ SolrQuery.prototype = {
 				}
 				//i++;
 			    }
+			    */
 
 			    /*
 			    $.get(query, facetParams, function(data) {
@@ -1842,66 +1901,6 @@ SolrQuery.prototype = {
 	};
 	this.facetDateHandler();
 
-	/**
-	 * Transmit the GET request with the appropriate parameters
-	 *
-	 */
-	this.tokenHandler = function(facetedSearchAnchor, $facetTokens) {
-
-	    /**
-	     * For Islandora Solr tokens (Solr facets actively applied)
-	     *
-	     */
-	    if(facetedSearchAnchor.hasClass('islandora-solr-facet-token')) {
-
-		/**
-		 * @todo Refactor
-		 *
-		 */
-		if($facetTokens.length > 1) {
-			
-		    $facetTokens.children().each(function(i, facetToken) {
-
-			    $facetToken = $(facetToken);
-			    if(! $facetToken.is(facetedSearchAnchor) ) {
-
-				$facetToken.attr('href', SolrQuery.removeFacet( $facetToken, facetedSearchAnchor));
-			    }
-			});
-		}
-
-		// Remove the parent <li> element
-		facetedSearchAnchor.parent().remove();
-
-	    } else {
-
-		var parentUrl = facetedSearchAnchor.attr('href');
-
-		    /**
-		     * Terrible work-around, must refactor this
-		     *
-		     * Scope the other token links for this new filter...
-		     */
-		$facetTokens.children().each(function(i, facetToken) {
-
-			$facetToken = $(facetToken);
-			$facetToken.attr('href', SolrQuery.updateFacetTokenUrl( $facetToken, facetedSearchAnchor));
-		    });
-
-		/**
-		 * ...and ensure that the link for this anchor is scoped properly:
-		 *
-		 */
-		parentUrl = SolrQuery.getFacetTokenUrl(facetedSearchAnchor);
-
-		$('.islandora-solr-facet-token-list').append( $('<li></li>').append($('<a href="' + parentUrl + '" class="islandora-solr-facet-token">' + facetedSearchAnchor.text() + '</a>').click(function(e) {
-				
-				that.facetLinkHandler(e, $(this));
-			    })
-			));
-	    }
-	};
-
 	this.facetLinkHandler = function(e, element) {
 
 	    e.stopImmediatePropagation();
@@ -2033,7 +2032,6 @@ SolrQuery.prototype = {
 		}
 	    }
 
-
 	    // Update the active facet queries
 	    // Refactor for efficiency
 	    for(var fieldName in facetQueries) {
@@ -2088,6 +2086,10 @@ SolrQuery.prototype = {
 
 	    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
+	    facetParams = SolrQuery.getQueries(facetQueries);
+
+	    /*
+
 	    facetParams = {};
 	    var i = 0;
 	    for(key in facetQueries) {
@@ -2100,19 +2102,20 @@ SolrQuery.prototype = {
 		     * For handling MARC relator issues
 		     * @todo Remove after re-indexing
 		     *
-		     */
+		     * /
 		    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
 		    //facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
 		    /**
 		     * Resolves DSSSM-533
 		     * @todo Refactor
 		     *
-		     */
+		     * /
 		    facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&').replace('%2F', '/');
 
 		    i++;
 		}
 	    }
+	    */
 
 	    /*
 	    queryUrl = queryUrl.split('?')[0];
