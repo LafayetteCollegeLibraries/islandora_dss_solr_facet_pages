@@ -57,12 +57,6 @@ function islandora_dss_solr_facet_pages_preprocess_islandora_solr(&$variables) {
     $sorted_field = 'dc.title';
   }
 
-  /**
-   * For the TinySort dependency
-   *
-   */
-  drupal_add_js(base_path() . libraries_get_path('TinySort') . '/dist/jquery.tinysort.min.js');
-
   drupal_add_js(base_path() . drupal_get_path('module', 'islandora_dss_solr_facet_pages') . '/js/objects_list_sort.js');
   drupal_add_js(array('islandoraDssSolrFacetPages' => array('order' => $sorted_order,
 							    'field' => $sorted_field)), 'setting');
