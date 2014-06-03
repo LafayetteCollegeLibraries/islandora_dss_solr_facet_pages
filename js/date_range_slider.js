@@ -1608,8 +1608,10 @@ SolrQuery.prototype = {
 			//min: +new Date( $facetListItems.first().children('a').text()),
 			//max: +new Date( $facetListItems.last().children('a').text()),
 
-			min: minDate ,
-			max: maxDate ,
+			//min: (minDate / 10000000000) + 400,
+			//max: (maxDate / 10000000000) + 400,
+			min: minDate,
+			max: maxDate,
 			range: true,
 			slide: function(e, ui) {
 

@@ -433,8 +433,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
     //$fields = variable_get('islandora_solr_facet_pages_fields_data', array());
     $fields = module_invoke_all('dss_solr_fields', $path, $filters);
 
-    dpm($filtered_facets);
-
     /**
      * Work-around
      * Resolves DSSSM-780

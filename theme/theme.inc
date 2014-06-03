@@ -54,7 +54,21 @@ function islandora_dss_solr_facet_pages_preprocess_islandora_solr(&$variables) {
     }
   } else {
 
+    /**
+     * If this is a member of the newspaper collection, sort by the publication date
+     * Resolves DSSSM-865
+     *
+     */
     $sorted_field = 'dc.title';
+    $params = $_GET;
+
+    if(array_key_exists('f', $params) and !empty($params['f'])) {
+
+      if($params['f'][0] == 'cdm.Relation.IsPartOf:"Lafayette Newspaper Collection"') {
+
+	$sorted_field = 'dc.date.sort';
+      }
+    }
   }
 
   drupal_add_js(base_path() . drupal_get_path('module', 'islandora_dss_solr_facet_pages') . '/js/objects_list_sort.js');
