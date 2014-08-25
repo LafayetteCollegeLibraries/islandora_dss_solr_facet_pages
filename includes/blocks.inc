@@ -875,11 +875,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	  $child_items[] = l('Show more...', "browse/{$value['path']}");
 	}
-
-	if(empty($child_items)) {
-
-	  //$items = array();
-	}
       }
 
       if(!empty($child_items)) {
@@ -902,25 +897,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	unset($items[count($items) - 1]);
       }
     }
-
-    if(!empty($items)) {
-
-      /*
-      $results = implode($items);
-      */
-
-      /*
-	$results = theme('item_list', array('items' => array(),
-					  'type' => 'ul',
-					  'attributes' => array('class' => 'islandora-solr-facet-token-list',),
-					  )) . implode($items);
-      */
-
-    } else {
-      
-      //$items = '';
-    }
-
     $token_items = array();
     $date_slider_buttons = array();
 
@@ -969,61 +945,31 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	/**
 	 * Resolves DSSSM-633
-	 * Terribly slow
-	 * @todo refactor with preg_match
+	 * @todo Scheduled for review on 08/27/14
+	 * If closed, removed; if opened, refactored
 	 *
 	 */
+	
+	/*
 	foreach($ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS as $collection_key => $field_labels) {
 	  
 	  if(preg_match("/$collection_key/", $islandora_solr_facet_query)) { // Resolves DSSSM-756
-
+	    
 	    if(array_key_exists($solr_field, $field_labels)) {
 	      
 	      $result_fields[$solr_field] = $field_labels[$solr_field];
 	    }
 	  }
 	}
-
-	/*
-	if(preg_match('/McKelvy House Photograph Collection/', $islandora_solr_facet_query)) {
-
-	  $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Publication Date');
-
-	  if(array_key_exists($solr_field, $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS)) {
-	    
-	    $result_fields[$solr_field] = $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS[$solr_field];
-	  }
-	}
 	*/
 
-	/*
-	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
-							    '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" data-target="#' . $child_items_id . ' + .islandora-solr-facet-date-slider" >Reset ' . $result_fields[$solr_field] . '</button>');
-	*/
-
-	/*
-	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
-							    '#markup' => '<button id="' . $date_reset_id . '" class="islandora-solr-date-reset" data-target="#' . $child_items_id . ' + .islandora-solr-facet-date-slider" >Reset ' . $result_fields[$solr_field] . '</button>');
-	*/
-
-	/*
-	$date_slider_buttons[$date_slider_match[1]] = array('#type' => 'markup',
-							    '#markup' => l(t('Reset&nbsp;' . $result_fields[$solr_field]) . '<span class="close">×</span>', '#', array('attributes' => array('class' => array('islandora-solr-date-reset islandora-solr-facet-token'),
-																					     'data-target' => '#' . $child_items_id . ' + .islandora-solr-facet-date-slider'
-																					     ),
-																		       'fragment' => ' ',
-																		       'external' => TRUE,
-																		       'html' => TRUE))
-							    );
-	*/
-
-	$token_items[] = l('<span class="close">×</span>' . t($result_fields[$solr_field]), '#', array('attributes' => array(
-																	     'class' => array('islandora-solr-date-reset islandora-solr-facet-token'),
-																	     'data-target' => '#' . $child_items_id . ' + .islandora-solr-facet-date-slider'
-																	     ),
-												       'fragment' => ' ',
-												       'external' => TRUE,
-												       'html' => TRUE));
+	// Append the token element
+	$token_items[] = l('<span class="close">×</span>' . t($result_fields[$solr_field]), '#',
+			   array('attributes' => array('class' => array('islandora-solr-date-reset islandora-solr-facet-token'),
+						       'data-target' => '#' . $child_items_id . ' + .islandora-solr-facet-date-slider'),
+				 'fragment' => ' ',
+				 'external' => TRUE,
+				 'html' => TRUE));
 	
       } else {
 
