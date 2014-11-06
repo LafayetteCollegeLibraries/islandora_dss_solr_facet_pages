@@ -106,6 +106,28 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
 	url = '/islandora/search/*:*';
     }
 
+    /**
+     * Clean URL encoding from certain fields
+     * Resolves DSSSM-1037
+     * @todo Refactor
+     *
+     */
+
+    for(var facet in params) {
+
+	var facetQuery = params[facet];
+	
+	if(/mdl_prints\.description\.series/.exec(facetQuery)) {
+
+	    facetQuery = facetQuery.replace('Portraits: Debucourt%2C', 'Portraits: Debucourt,');
+	    facetQuery = facetQuery.replace('Portraits: Julien%2C', 'Portraits: Julien,');
+	    facetQuery = facetQuery.replace('Portraits: Martinet%2C', 'Portraits: Martinet,');
+	}
+
+	params[facet] = facetQuery;
+    }
+
+    // Submit the GET request to the Islandora Solr endpoint
     $.get(url, params, function(data) {
 
 	    $('.islandora-solr-search-results').removeClass('loading')
