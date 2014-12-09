@@ -103,7 +103,7 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
    *
    */
   if($solr_field == 'war_casualties.description.class' or
-     $solr_field == 'MODS.mods.relatedItem.part.text.volume_s') {
+     $solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
 
     $_result_fields = array();
 

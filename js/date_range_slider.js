@@ -91,7 +91,7 @@ SolrQuery.FIELD_MAP = {
 
     // Alumni
     'Series' : 'MODS.mods.relatedItem.titleInfo.title_s',
-    'Volume' : 'MODS.mods.relatedItem.part.text.volume_s',
+    'Volume' : 'MODS.mods.relatedItem.part.detail.volume.number_i',
 
     // Refactor: labels
 
@@ -139,10 +139,11 @@ SolrQuery.FIELD_MAP = {
 
     'mckelvy.date.original.display' : 'Publication Date',
 
+    // Alumni
     'MODS.mods.originInfo.publisher_s' : 'Publisher',
     'MODS.mods.relatedItem.date.w3cdtf_dts' : 'Date',
     'MODS.mods.relatedItem.titleInfo.title_s' : 'Series',
-    'MODS.mods.relatedItem.part.text.volume_s' : 'Volume'
+    'MODS.mods.relatedItem.part.detail.volume.number_i' : 'Volume'
 };
 
 SolrQuery.COLLECTION_FIELD_MAP = {

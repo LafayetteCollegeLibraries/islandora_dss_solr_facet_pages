@@ -218,7 +218,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 			    'label' => 'Series',
 			    'path' => ''
 			    ),
-		      array('solr_field' => 'MODS.mods.relatedItem.part.text.volume_s',
+		      array('solr_field' => 'MODS.mods.relatedItem.part.detail.volume.number_i',
 			    'label' => 'Volume',
 			    'path' => ''
 			    ),
@@ -632,7 +632,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
        *
        */
       if($solr_field == 'war_casualties.description.class' or
-	 $solr_field == 'MODS.mods.relatedItem.part.text.volume_s') {
+	 $solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
 
 	$_result_fields = array();
 
@@ -795,7 +795,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 *
 	 */
 	if($solr_field == 'war_casualties.description.class' or
-	   $solr_field == 'MODS.mods.relatedItem.part.text.volume_s') {
+	   $solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
 
 	  $_result_fields = array();
 
