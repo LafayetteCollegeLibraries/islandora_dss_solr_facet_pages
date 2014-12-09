@@ -33,6 +33,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 				     'McKelvy House Photograph Collection' => 'mckelvy',
 				     'Lafayette World War II Casualties' => 'war_casualties',
 				     'Historical Photograph Collection' => 'historical',
+				     
+				     'Alumni Publications' => 'alumni',
 				     );
 
   $filter = '';
@@ -201,6 +203,28 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
       //dpm($excluded_fields);
       $included_fields = array_merge($included_fields, array('war_casualties.contributor.military.unit'));
       break;
+
+    case 'alumni':
+
+      $fields = array(array('solr_field' => 'MODS.mods.relatedItem.date.w3cdtf_dts',
+			    'label' => 'Date',
+			    'path' => ''
+			    ),
+		      array('solr_field' => 'MODS.mods.originInfo.publisher_s',
+			    'label' => 'Publisher',
+			    'path' => ''
+			    ),
+		      array('solr_field' => 'MODS.mods.relatedItem.titleInfo.title_s',
+			    'label' => 'Series',
+			    'path' => ''
+			    ),
+		      array('solr_field' => 'MODS.mods.relatedItem.part.text.volume_s',
+			    'label' => 'Volume',
+			    'path' => ''
+			    ),
+		      );
+      break;
+
     default:
 
       break;
@@ -607,7 +631,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
        * Resolves DSSSM-751
        *
        */
-      if($solr_field == 'war_casualties.description.class') {
+      if($solr_field == 'war_casualties.description.class' or
+	 $solr_field == 'MODS.mods.relatedItem.part.text.volume_s') {
 
 	$_result_fields = array();
 
@@ -637,6 +662,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							      'Geology Department Slide Collection',
 							      'McKelvy House Photograph Collection',
 							      'Lafayette World War II Casualties',
+							      'Alumni Publications'
 							      );
 
       $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('McKelvy House Photograph Collection' => array('mckelvy.date.original.display' => 'Publication Date',
@@ -691,8 +717,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 */
 	foreach($ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS as $collection_key => $field_labels) {
 	  
-	  if(
-	     preg_match("/$collection_key/", $islandora_solr_facet_query)) { // Resolves DSSSM-756
+	  if(preg_match("/$collection_key/", $islandora_solr_facet_query)) { // Resolves DSSSM-756
 
 	    if(array_key_exists($solr_field, $field_labels)) {
 	      
@@ -725,6 +750,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       
       $child_items = array();
       $child_items_class = array('islandora-solr-facet-list');
+
       if(preg_match('/\.?[dD]ate\.?/', $solr_field)) {
 
 	$child_items_class[] = 'islandora-solr-facet-date';
@@ -768,7 +794,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * Resolves DSSSM-751
 	 *
 	 */
-	if($solr_field == 'war_casualties.description.class') {
+	if($solr_field == 'war_casualties.description.class' or
+	   $solr_field == 'MODS.mods.relatedItem.part.text.volume_s') {
 
 	  $_result_fields = array();
 
@@ -871,7 +898,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * This must remain enabled for date fields
 	 * Resolves DSSSM-716
 	 */
-	if(preg_match('/Date\.?/', $value['label']) or (count($child_items) > 1 and $islandora_solr_facet_query != '*:*')) {
+	if(preg_match('/\.?[dD]ate\.?/', $value['label']) or (count($child_items) > 1 and $islandora_solr_facet_query != '*:*')) {
 
 	  $child_items[] = l('Show more...', "browse/{$value['path']}");
 	}
@@ -886,7 +913,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 								  )));
 
       } elseif(!empty($items) and preg_match("/'islandora-solr-facet'/", $items[count($items) - 1]) and
-	       !preg_match("/Date\./", $items[count($items) - 1])) {
+	       !preg_match("/\.?[dD]ate\./", $items[count($items) - 1])) {
 	
 	/**
 	 * Work-around for cases where empty lists are rendered
@@ -1009,6 +1036,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 													    'query' => $other_tokens));
       }
     }
+
     $token_list = theme('item_list', array('items' => $token_items,
 					   'type' => 'ul',
 					   'attributes' => array('class' => 'islandora-solr-facet-token-list',),

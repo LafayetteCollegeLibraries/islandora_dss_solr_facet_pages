@@ -89,6 +89,10 @@ SolrQuery.FIELD_MAP = {
     'Military Rank' : 'war_casualties.description.military.rank',
     'Military Unit' : 'war_casualties.contributor.military.unit',
 
+    // Alumni
+    'Series' : 'MODS.mods.relatedItem.titleInfo.title_s',
+    'Volume' : 'MODS.mods.relatedItem.part.text.volume_s',
+
     // Refactor: labels
 
     'cdm.Relation.IsPartOf' : 'Relation.IsPartOf',
@@ -134,6 +138,11 @@ SolrQuery.FIELD_MAP = {
     'geology_slides_esi.date.original' : 'Publication Date',
 
     'mckelvy.date.original.display' : 'Publication Date',
+
+    'MODS.mods.originInfo.publisher_s' : 'Publisher',
+    'MODS.mods.relatedItem.date.w3cdtf_dts' : 'Date',
+    'MODS.mods.relatedItem.titleInfo.title_s' : 'Series',
+    'MODS.mods.relatedItem.part.text.volume_s' : 'Volume'
 };
 
 SolrQuery.COLLECTION_FIELD_MAP = {
@@ -220,7 +229,10 @@ SolrQuery.fieldMap = function(field) {
 	// Simply parse for 'Historical' within the Solr query in the URL
 	//if(/Geology/.exec(document.URL) || /Historical/.exec(document.URL)) {
 	//if(/geology/i.exec(document.URL)) {
-	if(/geology/i.exec(collection) || /geology/i.exec(document.URL) ) {
+	if(/alumni/i.exec(collection) || /alumni/i.exec(document.URL) ) {
+
+	    return 'MODS.mods.relatedItem.date.w3cdtf_dts';
+	} else if(/geology/i.exec(collection) || /geology/i.exec(document.URL) ) {
 
 	    return 'geology_slides_esi.date.original';
 	} else {
@@ -301,6 +313,15 @@ SolrQuery.fieldMap = function(field) {
 	} else {
 
 	    return 'dc.date.sort';
+	}
+    } else if(field == 'Publisher') {
+	if(/alumni/i.exec(collection) ||
+	   /alumni/i.exec(document.URL)) {
+
+	    return 'MODS.mods.originInfo.publisher_s';
+	} else {
+
+	    return 'dc.publisher';
 	}
     } else {
 	
@@ -1100,7 +1121,7 @@ SolrQuery.prototype = {
 		    }
 			    */
 
-				/**
+			/**
 			 * Work-around for removing improperly serialized facets
 			 * @todo Properly address within other scripts
 			 * Resolves DSSSM-813
@@ -1494,7 +1515,7 @@ SolrQuery.prototype = {
 
 		    /**
 		     * Resolves DSSSM-725
-		     *
+		     * @todo Refactor
 		     */
 		    if(/\/browse/.exec(url)) {
 
