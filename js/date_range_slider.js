@@ -92,6 +92,7 @@ SolrQuery.FIELD_MAP = {
     // Alumni
     'Series' : 'MODS.mods.relatedItem.titleInfo.title_s',
     'Volume' : 'MODS.mods.relatedItem.part.detail.volume.number_i',
+    'Publication Sequence' : 'MODS.mods.identifier.local_i',
 
     // Refactor: labels
 
@@ -143,7 +144,8 @@ SolrQuery.FIELD_MAP = {
     'MODS.mods.originInfo.publisher_s' : 'Publisher',
     'MODS.mods.relatedItem.date.w3cdtf_dts' : 'Date',
     'MODS.mods.relatedItem.titleInfo.title_s' : 'Series',
-    'MODS.mods.relatedItem.part.detail.volume.number_i' : 'Volume'
+    'MODS.mods.relatedItem.part.detail.volume.number_i' : 'Volume',
+    'MODS.mods.identifier.local_i' : 'Publication Sequence'
 };
 
 SolrQuery.COLLECTION_FIELD_MAP = {
