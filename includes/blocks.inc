@@ -516,6 +516,17 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 				   'eastasia.Creator.Maker',
 				   'eastasia.Format.Extent',
 				   'eastasia.Contributor.Donor',
+
+				   
+
+				   'MODS.mods.titleInfo.title_ss',
+				   'MODS.mods.titleInfo.subTitle_s',
+				   'MODS.mods.titleInfo.partNumber_s',
+				   'MODS.mods.name.displayForm_s',
+				   'MODS.mods.relatedItem.date.w3cdtf_dts',
+
+				   'MODS.mods.originInfo.publisher_s',
+				   'MODS.mods.relatedItem.titleInfo.title_s'
 				   );
 
       foreach($SOLR_INDEXED_FIELDS as $solr_indexed_field) { // For Solr-indexed fields with specific Analyzers (i. e. not optimized for tokenization of contents)

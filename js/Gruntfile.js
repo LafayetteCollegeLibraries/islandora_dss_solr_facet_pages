@@ -20,7 +20,8 @@ module.exports = function(grunt) {
 
 		    specs: 'spec/*spec.js',
 		    helpers: 'spec/*helper.js',
-		    vendor: [ 'http://code.jquery.com/jquery-1.7.1.js' ]
+		    vendor: [ 'http://code.jquery.com/jquery-1.7.1.js',
+			      'https://raw.githubusercontent.com/velesin/jasmine-jquery/master/lib/jasmine-jquery.js' ]
 		}
 	    },
 	    uglify: {

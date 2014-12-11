@@ -6,6 +6,7 @@
 
 'use strict';
 
+console.log(jasmine.getFixtures);
 describe('SolrQuery', function() {
 
 	describe('.getQuery', function() {
@@ -40,5 +41,11 @@ describe('SolrQuery', function() {
 
 			expect(SolrQuery.getQueries(queries)).toEqual({ 'f[0]': 'testField1:"testValue1"', 'f[1]': 'testField2:"testValue2"', 'f[2]': 'testField3:"testValue3"' });
 		    });
+	    });
+
+	it('Binds to tokenized facets', function() {
+
+		//loadFixtures('eastasia_00.html');
+		expect($('<div><span class="some-class"></span></div>')).toContainElement('span.some-class');
 	    });
     });
