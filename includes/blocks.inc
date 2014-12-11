@@ -791,7 +791,10 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * @todo Implement
 	 *
 	 */
-	if($solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
+	//if($solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
+	if(in_array($solr_field, array('MODS.mods.originInfo.publisher_s',
+				       'MODS.mods.relatedItem.titleInfo.title_s',
+				       'MODS.mods.relatedItem.part.detail.volume.number_i'))) {
 
 	  // Sort by the volume
 	  ksort($result_fields);
