@@ -122,8 +122,21 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
     $result_fields = array_merge($result_fields, $result_fields_lower);
   }
 
-  // Sort by the most populated facets
-  arsort($result_fields);
+  /**
+   * Anomalous sorting for faceted values on certain fields (such as "Volume" for the "Alumni Publications" Collection)
+   * Resolves DSSSM-1081
+   * @todo Implement
+   *
+   */
+  if($solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
+
+    // Sort by the volume
+    ksort($result_fields);
+  } else {
+
+    // Sort by the most populated facets
+    arsort($result_fields);
+  }
 
   switch($solr_field) {
 

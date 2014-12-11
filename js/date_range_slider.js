@@ -1643,6 +1643,12 @@ SolrQuery.prototype = {
 			    //dateInit.text((new Date(ui.values[0])).toLocaleDateString());
 			    //dateInit.text((new Date(ui.values[0])).toGMTString());
 
+			    /**
+			     * This must be overridden for alternate formatting of field values based upon the field itself
+			     * This resolves DSSSM-1083
+			     *
+			     */
+
 			    dateInit.text( moment(ui.values[0]).format("MMM. DD YYYY"));
 
 			    var dateTerm = dateInit.next();

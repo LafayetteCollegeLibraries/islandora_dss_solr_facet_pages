@@ -9,8 +9,7 @@
 
 function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) {
 
-  $query_field_namespace_map = array(
-				     'East Asia Image Collection' => 'eastasia',
+  $query_field_namespace_map = array('East Asia Image Collection' => 'eastasia',
 				     'Japanese Imperial House Postcard Album' => 'eastasia',
 				     'T.W. Ingersoll Co. Stereoviews of the Siege of Port Arthur' => 'eastasia',
 				     'Imperial Postcard Collection' => 'eastasia',
@@ -786,8 +785,21 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	// Terrible, refactor
 	$items[] = "<div class='islandora-solr-facet'>{$value['label']}</div>";
 
-	// Sort by the most populated facets
-	arsort($result_fields);
+	/**
+	 * Anomalous sorting for faceted values on certain fields (such as "Volume" for the "Alumni Publications" Collection)
+	 * Resolves DSSSM-1081
+	 * @todo Implement
+	 *
+	 */
+	if($solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
+
+	  // Sort by the volume
+	  ksort($result_fields);
+	} else {
+
+	  // Sort by the most populated facets
+	  arsort($result_fields);
+	}
 
 	/**
 	 * Odd work-around; Uncertain as to how this behavior occurred (PHP core update?)
