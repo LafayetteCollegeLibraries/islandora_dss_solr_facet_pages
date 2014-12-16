@@ -63,14 +63,18 @@ function islandora_dss_solr_facet_pages_preprocess_islandora_solr(&$variables) {
     $params = $_GET;
 
     if(array_key_exists('f', $params) and !empty($params['f'])) {
+      
+      if(in_array($params['f'][0], array('cdm.Relation.IsPartOf:"Historical Photograph Collection"'))) {
 
-      if(in_array($params['f'][0], array('cdm.Relation.IsPartOf:"Lafayette Newspaper Collection"',
-                                         'cdm.Relation.IsPartOf:"Historical Photograph Collection"'))) {
-	
-        $sorted_field = 'dc.date.sort';
+	$sorted_field = 'dc.date.sort';
+      } elseif(in_array($params['f'][0], array('cdm.Relation.IsPartOf:"Lafayette Newspaper Collection"'))) {
+
+	$sorted_field = 'dc.date.sort';
+	$sorted_order = 'desc';
       } elseif(in_array($params['f'][0], array('cdm.Relation.IsPartOf:"Alumni Publications"'))) {
 
-	$params['sort'] = 'MODS.mods.identifier.local_i asc';
+	$sorted_field = 'MODS.mods.identifier.local_i';
+	$sorted_order = 'desc';
       }
     }
   }
