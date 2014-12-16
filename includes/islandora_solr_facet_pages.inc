@@ -80,9 +80,6 @@ function _islandora_dss_solr_facet_pages_letterer($solr, $solr_field) {
 
     $params = array(
 		    /*
-		    'facet' => 'true',
-		    'facet.field' => $solr_field,
-
 		    'qt' => variable_get('islandora_solr_request_handler', 'standard'),
 		    */
 		    'facet' => 'true',
@@ -229,23 +226,85 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 
     // Get the actual results.
     $query = "$solr_field:[* TO *]";
+  } else {
+
+    $SOLR_INDEXED_FIELDS = array('eastasia.Title.Japanese' => 'Title.Japanese', // Resolve with re-indexing (DSSSM-614 )
+				 'eastasia.Title.Chinese' => 'Title.Chinese', // DSSSM-614
+				 'eastasia.Title.Korean' => 'Title.Korean', // DSSSM-614
+				 "eastasia.Contributors.Digital" => 'Contributor',
+				 "eastasia.Contributor.Donor" => 'Contributor.Donor',
+				 "eastasia.Coverage.Location" => 'Coverage.Location',
+				 "eastasia.Coverage.Location.Country" => 'Coverage.Location.Country',
+				 "eastasia.Creator.Company" => 'Creator.Company',
+				 "eastasia.Creator.Maker" => 'Creator.Maker',
+
+				 "eastasia.Description.Ethnicity" => 'Description.Ethnicity',
+				 "eastasia.Description.Indicia" => 'Description.Indicia',
+
+				 "eastasia.Format.Medium" => 'Format.Medium',
+				 "eastasia.Subject.OCM" => 'Subject.OCM',
+
+				 "cdm.Relation.IsPartOf" => 'Relation.IsPartOf',
+
+				 'dc.description' => 'Description',
+				 'dc.type' => 'Medium',
+
+				 'mdl_prints.creator' => 'creator',
+
+				 'mdl_prints.description' => 'description',
+				 'mdl_prints.description.condition' => 'description.condition',
+				 'mdl_prints.description.note' => 'description.note',
+				 'mdl_prints.description.provenance' => 'description.provenance',
+				 'mdl_prints.description.series' => 'description.series',
+				 'mdl_prints.format.digital' => 'format.digital',
+				 'mdl_prints.format.extent' => 'format.extent',
+				 'mdl_prints.format.medium' => 'format.medium',
+				 'mdl_prints.identifier.itemnumber' => 'identifier.item.number',
+				 'mdl_prints.publisher.digital' => 'publisher.digital',
+				 'mdl_prints.publisher.original' => 'publisher.original',
+
+				 'mdl_prints.rights.digital' => 'rights.digital',
+				 'mdl_prints.publisher.digital' => 'source',
+				 'mdl_prints.subject.lcsh' => 'subject.lcsh',
+
+				 'geology_slides_esi.coverage.location' => 'Coverage',
+				 'geology_slides_esi.description' => 'Description',
+
+				 'geology_slides_esi.relation.seealso.book' => 'Related Book',
+				 'geology_slides_esi.relation.seealso.image' => 'Related Image',
+				 'geology_slides_esi.subject' => 'Subject',
+				 'geology_slides_esi.description.vantagepoint' => 'Vantage Point',
+
+				 'mckelvy.creator.maker' => 'Creator',
+				 'mckelvy.description.size' => 'Dimensions',
+				 'mckelvy.format.medium' => 'Medium',
+				 'mckelvy.description.note' => 'Note',
+
+				 'war_casualties.description.cause.death' => 'Cause of Death',
+				 'war_casualties.description.class' => 'Graduating Class',
+				 'war_casualties.description.military.branch' => 'Military Branch',
+				 'war_casualties.description.honors' => 'Military Honors',
+				 'war_casualties.description.military.rank' => 'Military Rank',
+				 'war_casualties.contributor.military.unit' => 'Military Unit',
+				 'war_casualties.coverage.place.birth' => 'Place of Birth',
+				 'war_casualties.coverage.place.death' => 'Place of Death',
+
+				 'MODS.mods.originInfo.publisher_s' => 'Publisher',
+				 'MODS.mods.relatedItem.titleInfo.title_s' => 'Series',
+
+				 'MODS.mods.titleInfo.title_ss' => 'Title',
+				 'MODS.mods.titleInfo.subTitle_s' => 'Subtitle',
+				 'MODS.mods.titleInfo.partNumber_s' => 'Part Of',
+				 'MODS.mods.name.displayForm_s' => 'Author',
+				 'MODS.mods.originInfo.publisher_s' => 'Publisher',
+				 'MODS.mods.relatedItem.titleInfo.title_s' => 'Series'
+				 );
+
+    foreach($SOLR_INDEXED_FIELDS as $field => $label) {
+
+      $query = str_replace($field, 'c_' . $field, $query);
+    }
   }
-
-  /*
-  // For nested faceting...
-  $facet_params = array();
-
-  foreach($child_facets as $child_facet) {
-
-    $facet_params[] = array('facet' => 'true',
-			    'facet.field' => $child_facet,
-			    'facet.sort' => 'index',
-			    'facet.mincount' => 1,
-			    'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
-			    'qt' => variable_get('islandora_solr_request_handler', 'standard'),
-			    );
-  }
-  */
 
   // Special cases for newspapers
   // cdm.Relation.IsPartOf:"Lafayette Newspaper Collection"
@@ -306,26 +365,10 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
       case 'eastasia.Date.Image.Lower':
       case 'geology_slides_esi.date.original':
       case 'dc.date.sort':
+      case 'MODS.mods.relatedItem.date.w3cdtf_dts':
 
-    /*
-      $prefix .= '-01-01';
-
-    $facet_params = array('facet' => 'true',
-			  'facet.sort' => 'index',
-			  'facet.mincount' => 1,
-			  'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
-			  'qt' => variable_get('islandora_solr_request_handler', 'standard'),
-			  'facet.date' => $solr_field,
-			  "facet.date.start" => $prefix == 'ALL' ? '1900-01-01T00:00:00Z' : gmdate('Y-m-d\TH:i:s\Z', strtotime($prefix)),
-			  "facet.date.end" => $prefix == 'ALL' ? 'NOW' : gmdate('Y-m-d\TH:i:s\Z', strtotime($prefix + 10)),
-			  "facet.date.gap" => '+1YEAR',
-			  );
-    */
-
-    // http://crete0.dev.lafayette.edu:8080/solr/fedora_5/select/?q=geology_slides_esi.date.original+%3A[*+TO+*]&version=2.2&start=0&rows=0&indent=on&facet=true&facet.date=geology_slides_esi.date.original&facet.date.start=1976-03-06T23:59:59.999Z/YEAR&facet.date.end=NOW&facet.date.gap=%2B1YEAR
-
-    // Set facet parameters.
-    $facet_params = array('facet' => 'true',
+	// Set facet parameters.
+	$facet_params = array('facet' => 'true',
 			  'facet.field' => $solr_field,
 			  'facet.sort' => 'count',
 			  'facet.mincount' => 1,
@@ -337,14 +380,6 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 			  //'facet.date.gap' => '+1YEAR',
 			  //'facet.query' => $filter_queries
 			  );
-
-    // Set the facet prefix.
-  /*
-    if ($prefix != 'ALL' && $prefix != 'all') {
-      
-      $facet_params['facet.prefix'] = $prefix;
-    }
-  */
 
     break;
 
@@ -404,7 +439,6 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     $facet_params['sort'] = 'dc.title asc';
   }
   */
-  //dpm($facet_params);
 
   // Solr results in JSON format.
   $result_object = json_decode($solr->search($query, 0, 0, $facet_params)->getRawResponse());
@@ -442,6 +476,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
   case 'eastasia.Date.Image.Lower':
   case 'geology_slides_esi.date.original':
   case 'dc.date.sort':
+  case 'MODS.mods.relatedItem.date.w3cdtf_dts':
 
     if($prefix != 'ALL' && $prefix != 'all') {
       
@@ -578,6 +613,7 @@ function islandora_dss_solr_facet_pages_callback($path = NULL, $prefix = NULL) {
   case 'eastasia.Date.Image.Lower':
   case 'geology_slides_esi.date.original':
   case 'dc.date.sort':
+  case 'MODS.mods.relatedItem.date.w3cdtf_dts':
 
     $_result_fields = array();
 
