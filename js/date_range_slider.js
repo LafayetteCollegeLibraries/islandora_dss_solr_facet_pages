@@ -1664,7 +1664,7 @@ SolrQuery.prototype = {
 			    //$('.islandora-solr-facet-date-term').text((new Date(ui.values[1])).toString());
 
 			    var dateField = SolrQuery.fieldMap($(ui.handle).parent().prev().prev().text());
-
+			    
 			    //var dateField = /f\[\d\]\=(.+?)\:/.exec();
 
 			    //var query = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
@@ -1926,7 +1926,7 @@ SolrQuery.prototype = {
 			    defaultValues = true;
 			} else {
 
-			    options['values'][0] = initDate;
+			    options['values'][0] = initDateValue;
 			}
 		    } else {
 
