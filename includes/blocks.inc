@@ -804,11 +804,14 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 */
 	//if($solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
 	if(in_array($solr_field, array('MODS.mods.originInfo.publisher_s',
-				       'MODS.mods.relatedItem.titleInfo.title_s',
-				       'MODS.mods.relatedItem.part.detail.volume.number_i'))) {
+				       'MODS.mods.relatedItem.titleInfo.title_s'))) {
 
-	  // Sort by the volume
+	  // Sort ascending by the facet values
 	  ksort($result_fields);
+	} elseif(in_array($solr_field, array('MODS.mods.relatedItem.part.detail.volume.number_i'))) {
+
+	  // Sort descending by the facet values
+	  krsort($result_fields);
 	} else {
 
 	  // Sort by the most populated facets
