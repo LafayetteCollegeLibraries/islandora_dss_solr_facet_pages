@@ -1891,13 +1891,43 @@ SolrQuery.prototype = {
 			var minValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[0].slice(1));
 
 			var maxValue = +new Date(facetQueries[solrFieldName][0].split(' TO ')[1].slice(0, -1));
+
 			options['values'] = [minValue, maxValue];
 		    } else if(typeof(_facets[solrFieldName]) !== 'undefined') { // Populate from the facet queries first...
 
 			options['values'] = _facets[solrFieldName];
 		    } else if(typeof(_query[solrFieldName]) !== 'undefined') {
 
-			options['values'] = _query[solrFieldName];
+			/**
+			 * The text strings from these values must be cleaned
+			 * Resolves DSS-416
+			 *
+			 */
+			options['values'] = [ options['min'], options['max'] ];
+
+			/**
+			 * Functionality for setting the position of the slider based upon the query
+			 * @todo Implement
+			 *
+			 */
+			// Attempt to clean the values
+			var initDate = _query[solrFieldName];
+			var initDateMatch = /^\(\[?(.+?)T/.exec(initDate);
+			if(initDateMatch) {
+
+			    initDate = initDateMatch[1];
+			}
+			var initDateValue = +new Date(initDate);
+
+			// If the date query cannot be parsed, use the minimum date parsed from the Solr facet value
+			if(isNaN(initDateValue)) {
+
+			    console.error('Could not parse the following query value into a date: ' + initDate);
+			    defaultValues = true;
+			} else {
+
+			    options['values'][0] = initDate;
+			}
 		    } else {
 
 			defaultValues = true;
