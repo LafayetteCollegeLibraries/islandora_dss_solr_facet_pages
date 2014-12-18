@@ -303,6 +303,11 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     foreach($SOLR_INDEXED_FIELDS as $field => $label) {
 
       $query = str_replace($field, 'c_' . $field, $query);
+
+      if(preg_match("/c_c_$field/", $query)) {
+
+	$query = str_replace('c_c_' . $field, 'c_' . $field, $query);
+      }
     }
   }
 
