@@ -70,11 +70,17 @@ function islandora_dss_solr_facet_pages_preprocess_islandora_solr(&$variables) {
       } elseif(in_array($params['f'][0], array('cdm.Relation.IsPartOf:"Lafayette Newspaper Collection"'))) {
 
 	$sorted_field = 'dc.date.sort';
-	$sorted_order = 'desc';
+	//$sorted_order = 'desc';
+
+	// @todo Resolves DSS-419
+	$sorted_order = 'asc';
       } elseif(in_array($params['f'][0], array('cdm.Relation.IsPartOf:"Alumni Publications"'))) {
 
 	$sorted_field = 'MODS.mods.identifier.local_i';
-	$sorted_order = 'desc';
+	//$sorted_order = 'desc';
+
+	// @todo Resolves DSS-419
+	$sorted_order = 'asc';
       }
     }
   }

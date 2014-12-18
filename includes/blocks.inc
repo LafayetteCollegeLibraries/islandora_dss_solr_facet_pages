@@ -546,12 +546,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	dpm('trace3: ' . $islandora_solr_facet_query);
 
-	if(preg_match("/c_c_$solr_indexed_field/", $islandora_solr_facet_query)) {
 
-	  dpm('trace3');
-
-	  $islandora_solr_facet_query = str_replace('c_c_' . $solr_indexed_field, 'c_ ' . $solr_indexed_field, $islandora_solr_facet_query);
-	}
 
 	/**
 	 * Work-around

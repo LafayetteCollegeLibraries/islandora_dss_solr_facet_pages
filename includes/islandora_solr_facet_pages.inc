@@ -304,6 +304,8 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 
       $query = str_replace($field, 'c_' . $field, $query);
 
+      // Work-around implemented for
+      //
       if(preg_match("/c_c_$field/", $query)) {
 
 	$query = str_replace('c_c_' . $field, 'c_' . $field, $query);
