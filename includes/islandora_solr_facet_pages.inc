@@ -302,6 +302,13 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 
     foreach($SOLR_INDEXED_FIELDS as $field => $label) {
 
+      // Work-around implemented for DSS-422
+      if(preg_match('/' . $field . '\:\("(.+?)"\)/', $query, $query_match)) {
+
+	$escaped_field_query = '(' . $query_match[1] . ')';
+	$query = preg_replace('/' . $field . '\:\("(.+?)"\)/', "$field:$escaped_field_query", $query);
+      }
+
       $query = str_replace($field, 'c_' . $field, $query);
 
       // Work-around implemented for
@@ -309,6 +316,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
       if(preg_match("/c_c_$field/", $query)) {
 
 	$query = str_replace('c_c_' . $field, 'c_' . $field, $query);
+	//$query = str_replace($field, 'c_' . $field, $query);
       }
     }
   }
@@ -451,6 +459,9 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
   $result_object = json_decode($solr->search($query, 0, 0, $facet_params)->getRawResponse());
   //$result_object = json_decode($solr->search("$solr_field:[* TO *]", 0, 0, $facet_params)->getRawResponse());
   //$result_object = json_decode($solr->search("*:*", 0, 0, $facet_params)->getRawResponse());
+
+  //print_r($result_object);
+  //exit(1);
 
   if(isset($query_collection) and $query_collection == 'Lafayette Newspaper Collection' and $solr_field == 'dc.date.sort') {
 

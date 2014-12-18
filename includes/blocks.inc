@@ -821,6 +821,9 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  // Sort by the most populated facets
 	  arsort($result_fields);
 	}
+	
+	// This resolves DSS-422
+	$result_fields_count = count($result_fields);
 
 	/**
 	 * Odd work-around; Uncertain as to how this behavior occurred (PHP core update?)
@@ -858,6 +861,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  // Top 5 facets
 	  $result_fields = array_slice($result_fields, 0, 5);
 	}
+
+	
 
 	/**
 	 * This will need to be refactored once (if) islandora_search is integrated with the Drupal Search API
@@ -931,7 +936,10 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * This must remain enabled for date fields
 	 * Resolves DSSSM-716
 	 */
-	if(preg_match('/\.?[dD]ate\.?/', $value['label']) or (count($child_items) > 1 and $islandora_solr_facet_query != '*:*')) {
+
+	//if(preg_match('/\.?[dD]ate\.?/', $value['label']) or (count($child_items) > 1 and $islandora_solr_facet_query != '*:*')) {
+	// This resolves DSS-422
+	if(preg_match('/\.?[dD]ate\.?/', $value['label']) or ($result_fields_count > 5 and $islandora_solr_facet_query != '*:*')) {
 
 	  $child_items[] = l('Show more...', "browse/{$value['path']}");
 	}
