@@ -33,7 +33,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 				     'Lafayette World War II Casualties' => 'war_casualties',
 				     'Historical Photograph Collection' => 'historical',
 				     
-				     'Alumni Publications' => 'alumni',
+				     'Lafayette Magazine Collection' => 'magazine',
 				     );
 
   $filter = '';
@@ -199,11 +199,10 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
     case 'war_casualties':
 
-      //dpm($excluded_fields);
       $included_fields = array_merge($included_fields, array('war_casualties.contributor.military.unit'));
       break;
 
-    case 'alumni':
+    case 'magazine':
 
       $fields = array(array('solr_field' => 'MODS.mods.relatedItem.date.w3cdtf_dts',
 			    'label' => 'Date',
@@ -311,7 +310,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     }
   }
   */
-  //dpm($fields);
+
 
   return $fields;
   }
@@ -544,10 +543,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  $islandora_solr_facet_query = str_replace($solr_indexed_field, 'c_' . $solr_indexed_field, $islandora_solr_facet_query);
 	}
 
-	dpm('trace3: ' . $islandora_solr_facet_query);
-
-
-
 	/**
 	 * Work-around
 	 * This resolves DSSSM-728
@@ -676,7 +671,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 							      'Geology Department Slide Collection',
 							      'McKelvy House Photograph Collection',
 							      'Lafayette World War II Casualties',
-							      'Alumni Publications'
+							      'Lafayette Magazine Collection'
 							      );
 
       $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('McKelvy House Photograph Collection' => array('mckelvy.date.original.display' => 'Publication Date',

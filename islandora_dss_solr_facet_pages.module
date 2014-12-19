@@ -175,7 +175,7 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
 							  'Geology Department Slide Collection',
 							  'McKelvy House Photograph Collection',
 							  'Lafayette World War II Casualties',
-							  'Alumni Publications'
+							  'Lafayette Magazine Collection'
 							  );
 
   $options = array();

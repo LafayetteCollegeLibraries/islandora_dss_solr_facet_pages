@@ -89,7 +89,7 @@ SolrQuery.FIELD_MAP = {
     'Military Rank' : 'war_casualties.description.military.rank',
     'Military Unit' : 'war_casualties.contributor.military.unit',
 
-    // Alumni
+    // Magazine
     'Series' : 'MODS.mods.relatedItem.titleInfo.title_s',
     'Volume' : 'MODS.mods.relatedItem.part.detail.volume.number_i',
     'Publication Sequence' : 'MODS.mods.identifier.local_i',
@@ -140,7 +140,7 @@ SolrQuery.FIELD_MAP = {
 
     'mckelvy.date.original.display' : 'Publication Date',
 
-    // Alumni
+    // Magazine
     'MODS.mods.originInfo.publisher_s' : 'Publisher',
     'MODS.mods.relatedItem.date.w3cdtf_dts' : 'Date',
     'MODS.mods.relatedItem.titleInfo.title_s' : 'Series',
@@ -228,11 +228,8 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'Date') {
 
-	// Simply parse for 'Geology' within the Solr query in the URL
-	// Simply parse for 'Historical' within the Solr query in the URL
-	//if(/Geology/.exec(document.URL) || /Historical/.exec(document.URL)) {
-	//if(/geology/i.exec(document.URL)) {
-	if(/alumni/i.exec(collection) || /alumni/i.exec(document.URL) ) {
+	// Simply parse for the collection or collection path alias segment
+	if(/magazine/i.exec(collection) || /magazine/i.exec(document.URL) ) {
 
 	    return 'MODS.mods.relatedItem.date.w3cdtf_dts';
 	} else if(/geology/i.exec(collection) || /geology/i.exec(document.URL) ) {
@@ -297,29 +294,27 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'Publication Date') {
 
-	//if(/mckelvy/i.exec(document.URL)) { // Resolves DSSSM-756
 	if(/mckelvy/i.exec(collection) ||
 	   /mckelvy/i.exec(document.URL)) { // Resolves DSSSM-756
 	    
 	    return 'mckelvy.date.original.display';
-	    //} else if(/geology/i.exec(document.URL)) { // Resolves DSSSM-757
+
 	} else if(/geology/i.exec(collection) ||
 		  /geology/i.exec(document.URL)) { // Resolves DSSSM-757
 
 	    return 'geology_slides_esi.date.original';
-	    //} else if(/historical/i.exec(document.URL)) { // Resolves DSS-261
+
 	} else if(/historical/i.exec(collection) ||
 		  /historical/i.exec(document.URL)) { // Resolves DSS-261
 
-	    //return 'mdl_prints.date.original';
 	    return 'dc.date.sort';
 	} else {
 
 	    return 'dc.date.sort';
 	}
     } else if(field == 'Publisher') {
-	if(/alumni/i.exec(collection) ||
-	   /alumni/i.exec(document.URL)) {
+	if(/magazine/i.exec(collection) ||
+	   /magazine/i.exec(document.URL)) {
 
 	    return 'MODS.mods.originInfo.publisher_s';
 	} else {
