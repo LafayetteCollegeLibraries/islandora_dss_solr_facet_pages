@@ -74,7 +74,7 @@ function islandora_dss_solr_facet_pages_preprocess_islandora_solr(&$variables) {
 
 	// @todo Resolves DSS-419
 	$sorted_order = 'asc';
-      } elseif(in_array($params['f'][0], array('cdm.Relation.IsPartOf:"Alumni Publications"'))) {
+      } elseif(in_array($params['f'][0], array('cdm.Relation.IsPartOf:"Lafayette Magazine Collection"'))) {
 
 	$sorted_field = 'MODS.mods.identifier.local_i';
 	//$sorted_order = 'desc';
