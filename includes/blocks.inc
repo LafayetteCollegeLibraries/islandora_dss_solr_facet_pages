@@ -82,36 +82,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
     case 'eastasia':
 
-      /*
-      $included_fields = array_merge($included_fields, array('mdl_prints.format.medium', 'cdm.Relation.IsPartOf'));
-      $excluded_fields = array_merge($excluded_fields, array('dc.subject'));
-      */
-
-      /*
-      $SORT_MAP = array();
-
-      $sort = function($u, $v) {
-
-	return ($SORT_MAP[$u['solr_field']] < $SORT_MAP[$v['solr_field']]) ? -1 : 1;
-      };
-      */
-
-      // Performance problems; Hard-coding the array
-      /*
-1. subject.ocm
-2. coverage.location.country
-3. coverage.location
-4. format.medium
-5. relation.IsPartOf
-6. date.artifact.upper
-7. date.artifact.lower
-8. date.image.upper
-9. date.image.lower
-10. creator.maker
-11. creator.company
-12. description.ethnicity
-       */
-
       $fields = array(
 		      array('solr_field' => 'eastasia.Subject.OCM',
 			    'label' => 'Subject.OCM',
@@ -243,13 +213,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 	}
       }
 
-      /*
-      // Very inefficient; Refactor
-      if(isset($sort)) {
-      
-      uasort($fields, $sort);
-      }
-      */
       switch($query_field_namespace) {
 
       case 'mckelvy':
@@ -803,14 +766,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 */
 	//if($solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
 	if(in_array($solr_field, array('MODS.mods.originInfo.publisher_s',
-				       'MODS.mods.relatedItem.titleInfo.title_s'))) {
+				       'MODS.mods.relatedItem.titleInfo.title_s',
+				       'MODS.mods.relatedItem.part.detail.volume.number_i'))) {
 
 	  // Sort ascending by the facet values
 	  ksort($result_fields);
-	} elseif(in_array($solr_field, array('MODS.mods.relatedItem.part.detail.volume.number_i'))) {
-
-	  // Sort descending by the facet values
-	  krsort($result_fields);
 	} else {
 
 	  // Sort by the most populated facets
