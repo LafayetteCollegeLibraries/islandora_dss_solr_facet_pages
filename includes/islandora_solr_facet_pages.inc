@@ -289,9 +289,6 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 				 'war_casualties.coverage.place.birth' => 'Place of Birth',
 				 'war_casualties.coverage.place.death' => 'Place of Death',
 
-				 'MODS.mods.originInfo.publisher_s' => 'Publisher',
-				 'MODS.mods.relatedItem.titleInfo.title_s' => 'Series',
-
 				 'MODS.mods.titleInfo.title_ss' => 'Title',
 				 'MODS.mods.titleInfo.subTitle_s' => 'Subtitle',
 				 'MODS.mods.titleInfo.partNumber_s' => 'Part Of',

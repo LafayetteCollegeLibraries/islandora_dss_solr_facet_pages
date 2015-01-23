@@ -174,22 +174,15 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
     case 'magazine':
 
+      // Removing Publication and Volume in accordance with DSSSM-1177
       $fields = array(array('solr_field' => 'MODS.mods.relatedItem.date.w3cdtf_dts',
 			    'label' => 'Date',
-			    'path' => ''
-			    ),
-		      array('solr_field' => 'MODS.mods.originInfo.publisher_s',
-			    'label' => 'Publisher',
 			    'path' => ''
 			    ),
 		      array('solr_field' => 'MODS.mods.relatedItem.titleInfo.title_s',
 			    'label' => 'Series',
 			    'path' => ''
-			    ),
-		      array('solr_field' => 'MODS.mods.relatedItem.part.detail.volume.number_i',
-			    'label' => 'Volume',
-			    'path' => ''
-			    ),
+			    )
 		      );
       break;
 
