@@ -6,21 +6,18 @@
 
 "use strict";
 
-    /*
-    if(ASC) oldASC = ASC;
-    if(DESC) oldDESC = DESC;
-    */
+// Initialize the global Islandora and Islandora.DSS namespaces
+var Islandora = Islandora || {};
+Islandora.DSS = Islandora.DSS || {};
 
-    // Globals
-    /*
-    var ASC = true;
-    var DESC = false;
-    */
+// Initialize the global Islandora.DSS.SolrSearch namespace
+// @todo Refactor into a Class
+Islandora.DSS.SolrSearch = Islandora.DSS.SolrSearch || { query: { params: {} } };
 
-    /**
-     * Constructor
-     *
-     */
+/**
+ * Constructor
+ *
+ */
 var LafayetteDssObjectList = function($, element, options) {
 
     this.$ = $;
@@ -60,8 +57,10 @@ var LafayetteDssObjectList = function($, element, options) {
  *
  */
 
+
+
 /**
- * AJAX-integrated page browsing
+ * Paginated browsing functionality
  *
  */
 LafayetteDssObjectList.paginationLinkHandler = function(e) {
@@ -82,6 +81,8 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
      */
 
     /**
+     * Attempt to parse the page number from the Islandora Solr Query URL
+     * Delete the key outright from the parameters Object if no such argument exists within the GET request
      * Resolves DSS-249
      *
      */
@@ -95,10 +96,13 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
 	delete params['page'];
     }
 
+    // Retrieve the initial segment of the Islandora Solr Query URL
     url = url.split('?').shift();
 
     /**
+     * Always default to the endpoint path "/islandora/search"
      * Resolves DSSSM-725
+     * @todo Refactor
      *
      */
     if(/\/browse/.exec(url)) {
@@ -119,6 +123,9 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
 	
 	if(/mdl_prints\.description\.series/.exec(facetQuery)) {
 
+	    // This should fully resolve the issue
+	    facetQuery = facetQuery.replace('%2C', ',');
+
 	    facetQuery = facetQuery.replace('Portraits: Debucourt%2C', 'Portraits: Debucourt,');
 	    facetQuery = facetQuery.replace('Portraits: Julien%2C', 'Portraits: Julien,');
 	    facetQuery = facetQuery.replace('Portraits: Martinet%2C', 'Portraits: Martinet,');
@@ -127,18 +134,18 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
 	params[facet] = facetQuery;
     }
 
+    // Update the params Object before transmitting the GET request
+    Islandora.DSS.SolrSearch.query.params = params;
+
     // Submit the GET request to the Islandora Solr endpoint
     $.get(url, params, function(data) {
 
-	    $('.islandora-solr-search-results').removeClass('loading')
+	    // Upon receiving the request...
+	    $('.islandora-solr-search-results')
+	    .removeClass('loading')
 	    .append($(data).find('.islandora-solr-search-results').children())
-	    //.prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'));
 	    .siblings('.islandora-discovery-controls').find('.pagination-count').replaceWith($(data).find('.pagination-count'));
 
-	    //.prev().find('.pagination-count').replaceWith($(data).find('.pagination-count'))
-	    //.prev().find('.pagination-count-bottom').replaceWith($(data).find('.pagination-count-bottom'));
-
-	    //.prev().find('.pagination-count-bottom').replaceWith($(data).find('.pagination-count-bottom'));
 	    $('.pagination-count-bottom').last().replaceWith($(data).find('.pagination-count-bottom'));
 	    $('.pagination li a').click(LafayetteDssObjectList.paginationLinkHandler);
 	});
@@ -146,6 +153,192 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
     $('.islandora-solr-search-results').empty().addClass('loading');
 };
 
+/**
+ * Integrating grid/list functionality from the (deprecated) islandora_dss_solr_infinite_scroll Module
+ *
+ */
+
+LafayetteDssObjectList.viewListClickHandler = function(e) {
+
+    e.preventDefault();
+
+    /**
+     * Integration for infinite scrolling functionality
+     *
+     */
+    //infiniteList.unbind();
+    //$.ias().unbind();
+    
+    // AJAX-integrated
+    var url = $(document).data('islandoraDssDateRangeSlider')['query'] || '/islandora/search/*:*';
+    
+    /**
+     * @todo Resolve
+     *
+     */
+    if(/\/browse/.exec(document.URL)) {
+	
+    } else {
+	
+	url = '/' + url;
+    }
+    
+    //var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
+    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
+    
+    /**
+     * Integrating List/Grid view widgets
+     * Refactor into a Global Object (accessed by multiple Modules)
+     * This resolves DSS-178
+     *
+     */
+    var sortParams = $(document).data('islandoraDssSolrResultsSortParams');
+    
+    params = $.extend(params, sortParams, { display: 'list' });
+    $(document).data('islandoraDssSolrResultsViewParams', params);
+    
+    var facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
+    
+    // For facetParams
+    // Refactor
+    var facetParams = {};
+    var facetIndex = 0;
+    for(var key in facetQueries) {
+	
+	for(var k in facetQueries[key]) {
+	    
+	    var facetKey = 'f[' + facetIndex + ']';
+	    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+	    facetIndex++;
+	}
+    }
+    params = $.extend(params, facetParams);
+    
+    /**
+     * Attempting to resolve issues related to GET parameter parsing
+     *
+     */
+    url = url.split('?').shift();
+
+    // Update the query URL
+    Islandora.DSS.SolrSearch.query.url = url;
+
+    // Further, attempt to override or integrate the other GET parameters
+    params = $.extend(params, Islandora.DSS.SolrSearch.query.params);
+
+    // Work-around
+    // @todo Refactor for other extensions to the widget
+    //params.page = Islandora.DSS.SolrSearch.query.params.page || params.page;
+    
+    $.get(url, params, function(data) {
+	    
+	    $('.islandora-solr-search-results').removeClass('loading').append($(data).find('.islandora-solr-search-results').children());
+	});
+
+    $('.islandora-solr-search-results').empty().addClass('loading');
+};
+
+/**
+ * 
+ *
+ */
+LafayetteDssObjectList.viewGridClickHandler = function(e) {
+
+    e.preventDefault();
+    //infiniteList.unbind();
+    //$.ias().unbind();
+
+    // AJAX-integrated
+    var url = $(document).data('islandoraDssDateRangeSlider')['query'] || '/islandora/search/*:*';
+
+    /**
+     * @todo Resolve
+     *
+     */
+    if(/\/browse/.exec(document.URL)) {
+		    
+    } else {
+	
+	url = '/' + url;
+    }
+    
+    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
+    
+    /**
+     * Integrating List/Grid view widgets
+     * Refactor into a Global Object (accessed by multiple Modules)
+     * This resolves DSS-178
+     *
+     */
+    var sortParams = $(document).data('islandoraDssSolrResultsSortParams');
+    
+    params = $.extend(params, sortParams, { display: 'grid' });
+    $(document).data('islandoraDssSolrResultsViewParams', params);
+    
+    var facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
+    
+    // For facetParams
+    // Refactor
+    var facetParams = {};
+    var facetIndex = 0;
+    for(var key in facetQueries) {
+	
+	for(var k in facetQueries[key]) {
+	    
+	    var facetKey = 'f[' + facetIndex + ']';
+	    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
+	    facetIndex++;
+	}
+    }
+    params = $.extend(params, facetParams);
+    
+    /**
+     * Attempting to resolve issues related to GET parameter parsing
+     *
+     */
+    url = url.split('?').shift();
+
+    // Update the query URL
+    Islandora.DSS.SolrSearch.query.url = url;
+
+    // Further, attempt to override or integrate the other GET parameters
+    params = $.extend(params, Islandora.DSS.SolrSearch.query.params);
+
+    // Work-around
+    // @todo Refactor for other extensions to the widget
+    //params.page = Islandora.DSS.SolrSearch.query.params.page || params.page;
+
+    $.get(url, params, function(data) {
+	    
+	    $('.islandora-solr-search-results').removeClass('loading').append($(data).find('.islandora-solr-search-results').children());
+	});
+
+    $('.islandora-solr-search-results').empty().addClass('loading');
+};
+
+/**
+ *
+ */
+LafayetteDssObjectList.displaySwitch = function() {
+
+    $('.islandora-view-list').click(LafayetteDssObjectList.viewListClickHandler);
+
+    // Transition for visibility
+    $('.islandora-view-list').toggleClass('shown');
+
+    $('.islandora-view-grid').click(LafayetteDssObjectList.viewGridClickHandler);
+
+    // Transition for visibility
+    $('.islandora-view-grid').toggleClass('shown');
+
+    // Abstract and refactor
+    //var infiniteList = new IslandoraDssSolrInfinite($, Drupal.settings.dssSolrInfinite);
+};
+
+/**
+ * Sorting functionality
+ *
+ */
 LafayetteDssObjectList.prototype = {
 
     constructor: LafayetteDssObjectList,
@@ -271,12 +464,18 @@ LafayetteDssObjectList.prototype = {
     }
 };
 
+
+
 /**
  * Drupal integration
  *
  */
 (function($, Drupal, LafayetteDssObjectList) {
 
+    /**
+     * This should invoke the constructor for the Object
+     *
+     */
     Drupal.theme.prototype.bootstrapDssObjectList = function() {
 
 	/*
@@ -346,6 +545,9 @@ LafayetteDssObjectList.prototype = {
 	    });
 
 	$('.pagination li a').click(LafayetteDssObjectList.paginationLinkHandler);
+
+	// @todo Refactor
+	LafayetteDssObjectList.displaySwitch();
     };
 
     // @todo Refactor

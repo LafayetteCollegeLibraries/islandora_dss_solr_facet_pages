@@ -4,6 +4,13 @@
  *
  */
 
+// Initialize the global Islandora and Islandora.DSS namespaces
+var Islandora = Islandora || {};
+Islandora.DSS = Islandora.DSS || {};
+
+// Initialize the global Islandora.DSS.SolrSearch namespace
+// @todo Refactor into a Class
+Islandora.DSS.SolrSearch = Islandora.DSS.SolrSearch || { query: { params: {} } };
 
 /**
  * Class for handling Islandora Solr Queries
@@ -1190,6 +1197,10 @@ SolrQuery.prototype = {
 			    url = '/islandora/search/*:*';
 			}
 
+			// Update the params Object before transmitting the GET request
+			// Resolves DSSSM-1283
+			Islandora.DSS.SolrSearch.query.params = params;
+
 			$.get(url, params, that.updatePage);
 			$('.main-container').empty().addClass('loading');
 		    } else {
@@ -1520,6 +1531,10 @@ SolrQuery.prototype = {
 			url = '/islandora/search/*:*';
 		    }
 
+		    // Update the params Object before transmitting the GET request
+		    // Resolves DSSSM-1283
+		    Islandora.DSS.SolrSearch.query.params = params;
+
 		    $.get(url, params, that.updatePage);
 		    $('.main-container').empty().addClass('loading');
 		});
@@ -1751,52 +1766,6 @@ SolrQuery.prototype = {
 
 			    facetParams = SolrQuery.getQueries(facetQueries);
 
-			    /*
-			    facetParams = {};
-
-			    var i = 0;
-			    for(key in facetQueries) {
-
-				for(k in facetQueries[key]) {
-
-				    var facetKey = 'f[' + i + ']';
-				    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
-				    i++;
-				}
-				//i++;
-			    }
-			    */
-
-			    /*
-			    $.get(query, facetParams, function(data) {
-
-				    console.log(query);
-				    console.log(facetParams);
-				    console.log(facetQueries);
-
-				    /**
-				     * Only update the facet panel if there are more than 0 results returned (otherwise, no facets shall be present)
-				     *
-				     * /
-
-				    $facetTokens = $('.islandora-solr-facet-token-list li').detach();
-				    $(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
-				    $('.islandora-solr-facet-token-list').append($facetTokens);
-				    //that.facetDateHandler();
-
-				    //$(data).find('.islandora-solr-search-results').children().appendTo($('.islandora-solr-search-results').empty());
-				    $(data).find('.main-container').children().appendTo($('.main-container').empty());
-
-				    that.facetDateHandler();
-
-				    //$('.islandora-solr-facet-list li a').click(that.facetLinkHandler);
-				    $('.islandora-solr-facet-list li a').filter(function(i, e) {
-
-					    return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
-				});
-			    */
-
 			    $(document).data('islandoraDssDateRangeFacetParams', facetParams);
 
 			    var params = $(document).data('islandoraDssSolrResultsViewParams') || {};
@@ -1825,12 +1794,15 @@ SolrQuery.prototype = {
 			    
 				url = '/islandora/search/*:*';
 			    }
+
+			    // Update the params Object before transmitting the GET request
+			    // Resolves DSSSM-1283
+			    Islandora.DSS.SolrSearch.query.params = params;
 			    
 			    $.get(url, params, that.updatePage);
 
 			    $('.main-container').empty().addClass('loading');
 			    $('.snap-trigger').toggleClass('shown').children('img').toggleClass('shown');
-			    //$(document).data('islandoraDssDateRangeSlider', $.extend($(document).data('islandoraDssDateRangeSlider'), {query: query, maxFacet: maxFacet} ));
 			},
 
 			create: function(event) {
@@ -2145,96 +2117,6 @@ SolrQuery.prototype = {
 
 	    facetParams = SolrQuery.getQueries(facetQueries);
 
-	    /*
-
-	    facetParams = {};
-	    var i = 0;
-	    for(key in facetQueries) {
-
-		for(k in facetQueries[key]) {
-
-		    var facetKey = 'f[' + i + ']';
-
-		    /**
-		     * For handling MARC relator issues
-		     * @todo Remove after re-indexing
-		     *
-		     * /
-		    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-		    //facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
-		    /**
-		     * Resolves DSSSM-533
-		     * @todo Refactor
-		     *
-		     * /
-		    facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&').replace('%2F', '/');
-
-		    i++;
-		}
-	    }
-	    */
-
-	    /*
-	    queryUrl = queryUrl.split('?')[0];
-
-	    for(key in facetQueries) {
-
-		for(k in facetQueries[key]) {
-
-		    var facetKey = 'f[' + (i - 1) + ']';
-		    //facetParams[ facetKey ] = key + ":" + facetQueries[key];
-		    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-		    i++;
-		}
-
-		//queryUrl += key + ":" + facetQueries[key];
-		//i++;
-	    }
-	    */
-
-	    //$(document).data('islandoraDssDateRangeFacetParams', facetParams);
-
-	    //queryUrl += $(document).data('islandoraDssDateRangeSlider')['query'];
-
-	    //$(document).data('islandoraDssFacetQueryParams', facetParams);
-
-	    //$.get(facetedSearchAnchor.attr('href'), function(data) {
-
-	    /*
-	    $.get(queryUrl, facetParams, function(data) {
-
-		    console.log(queryUrl);
-		    console.log(facetParams);
-		    console.log(facetQueries);
-
-		    /*
-		    //$facetTokens = $('.islandora-solr-facet-token').detach();
-		    $facetTokens = $('.islandora-solr-facet-token-list li');
-
-		    // tokenCallback: that.tokenHandler(facetedSearchAnchor, $facetTokens);
-		    that.updatePage(data, that.tokenHandler, facetedSearchAnchor, $facetTokens);
-		    * /
-
-		    if($(data).find('#page-header p.lead a.active').text() != ('0' + '\xA0' + 'Items Found')) {
-
-			$(data).find('#block-islandora-solr-facet-pages-islandora-solr-facet-pages').appendTo($('.region-slide-panel').empty());
-			$(data).find('.main-container').children().appendTo($('.main-container').empty());
-
-			// Abstract and refactor
-			var infiniteList = new IslandoraDssSolrInfinite($, Drupal.settings.dssSolrInfinite);
-			that.facetDateHandler();
-			that.facetModalHandler();
-
-			$('.islandora-solr-facet-list li a').filter(function(i, e) {
-
-				return $(e).text() != 'Show more...' && $(e).text() != 'View all values...' }).click(that.facetLinkHandler);
-		    } else {
-
-			$(data).find('.main-container').children().appendTo($('.main-container').empty());
-		    }
-		});
-	    */
-
 	    // Please see the following resource: http://nelsonwells.net/2011/10/swap-object-key-and-values-in-javascript
 	    var invert = function(obj) {
 
@@ -2282,7 +2164,6 @@ SolrQuery.prototype = {
 		 */
 		delete params['page'];
 		url = url.replace(/page=\d+&/, '');
-		//$.get(facetedSearchAnchor.attr('href'), params, that.updatePage);
 
 		$(document).data('islandoraDssDateRangeFacetParams', params);
 		//$(document).data('islandoraDssSolrResultsViewParams', params);
@@ -2301,6 +2182,10 @@ SolrQuery.prototype = {
 		    
 		    url = '/islandora/search/*:*';
 		}
+
+		// Update the params Object before transmitting the GET request
+		// Resolves DSSSM-1283
+		Islandora.DSS.SolrSearch.query.params = params;
 
 		$.get(url, params, that.updatePage);
 	    } else {
@@ -2338,6 +2223,10 @@ SolrQuery.prototype = {
 
 		    url = '/islandora/search/*:*';
 		}
+
+		// Update the params Object before transmitting the GET request
+		// Resolves DSSSM-1283
+		Islandora.DSS.SolrSearch.query.params = params;
 
 		$.get(url, params, that.updatePage);
 	    }
