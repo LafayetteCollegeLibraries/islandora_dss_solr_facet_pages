@@ -34,6 +34,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 				     'Historical Photograph Collection' => 'historical',
 				     
 				     'Lafayette Magazine Collection' => 'magazine',
+
+				     'Shakespeare Bulletin Archive' => 'shakespeare'
 				     );
 
   $filter = '';
@@ -184,6 +186,19 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 			    'path' => ''
 			    )
 		      );
+
+    case 'shakespeare':
+
+      $fields = array(array('solr_field' => 'MODS.mods.originInfo.dateIssued.w3cdtf_dt',
+			    'label' => 'Date',
+			    'path' => ''
+			    ),
+		      array('solr_field' => 'MODS.mods.relatedItem.titleInfo.title_s',
+			    'label' => 'Series',
+			    'path' => ''
+			    )
+		      );
+
       break;
 
     default:
@@ -277,28 +292,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
  *
  */
 function _islandora_dss_solr_facet_pages_marc_relator_filter($field_value, $field_name) {
-
-  /*  
-  if($field_name == 'eastasia.Format.Medium') {
-
-    $MARC_RELATOR_MAP = array(
-			      '"photonegative"' => '"Photographic negative"',
-			      '"photoprint"' => '"Photographic print"',
-			      '"slide"' => '"Photographic slide"',
-			      '"picture postcard"' => '"Picture postcard"'
-			      );
-
-    return $MARC_RELATOR_MAP[$field_value];
-
-  } elseif($field_name == 'mdl_prints.format.medium') {
-
-    $MARC_RELATOR_MAP = array(
-			      '"photoprint"' => '"lithograph"',
-			      );
-
-    return $MARC_RELATOR_MAP[$field_value];
-  }
-  */
 
   return $field_value;
 }
@@ -472,13 +465,12 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 				   'eastasia.Format.Extent',
 				   'eastasia.Contributor.Donor',
 
-				   
-
 				   'MODS.mods.titleInfo.title_ss',
 				   'MODS.mods.titleInfo.subTitle_s',
 				   'MODS.mods.titleInfo.partNumber_s',
 				   'MODS.mods.name.displayForm_s',
 				   'MODS.mods.relatedItem.date.w3cdtf_dts',
+				   'MODS.mods.relatedItem.part.date.approximate_s',
 
 				   'MODS.mods.originInfo.publisher_s',
 				   'MODS.mods.relatedItem.titleInfo.title_s'
@@ -948,16 +940,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * Resolves DSSSM-737
 	 *
 	 */
-	//if(true) {
-
-	/*
-	$ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('McKelvy House Photograph Collection' => array('mckelvy.date.original.display' => 'Publication Date',
-													    'mdl_prints.format.medium' => 'Medium'),
-							     'Geology Department Slide Collection' => array('geology_slides_esi.date.original' => 'Publication Date',
-													    'geology_slides_esi.coverage.location' => 'Coverage'),
-							     'Lafayette Newspaper Collection' => array('dc.date.sort' => 'Publication Date'),
-							     );
-	*/
 
 	/**
 	 * Resolves DSSSM-633
@@ -966,19 +948,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 *
 	 */
 	
-	/*
-	foreach($ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS as $collection_key => $field_labels) {
-	  
-	  if(preg_match("/$collection_key/", $islandora_solr_facet_query)) { // Resolves DSSSM-756
-	    
-	    if(array_key_exists($solr_field, $field_labels)) {
-	      
-	      $result_fields[$solr_field] = $field_labels[$solr_field];
-	    }
-	  }
-	}
-	*/
-
 	// Append the token element
 	$token_items[] = l('<span class="close">×</span>' . t($result_fields[$solr_field]), '#',
 			   array('attributes' => array('class' => array('islandora-solr-date-reset islandora-solr-facet-token'),
