@@ -26,6 +26,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 				     'Gerald & Rella Warner Taiwan Negative Collection' => 'eastasia',
 				     'Gerald & Rella Warner Japan Slide Collection' => 'eastasia',
 				     'Gerald & Rella Warner Souvenirs of Beijing and Tokyo' => 'eastasia',
+				     'Truku-Japanese War Commemorative Postcard Collection' => 'eastasia',
 
 				     'Marquis de Lafayette Prints Collection' => 'mdl_prints',
 				     'Geology Department Slide Collection' => 'geology_slides_esi',
