@@ -101,6 +101,10 @@ SolrQuery.FIELD_MAP = {
     'Volume' : 'MODS.mods.relatedItem.part.detail.volume.number_i',
     'Publication Sequence' : 'MODS.mods.identifier.local_i',
 
+    // https://digital.stage.lafayette.edu/collections/browse?f[0]=cdm.Relation.IsPartOf%3A%22Shakespeare%20Bulletin%20Archive%22&f[1]=MODS.mods.relatedItem.titleInfo.title_s%3A%22Shakespeare%20Bulletin%22
+    // Shakespeare Bulletin Archive
+    'Publication Title' : 'MODS.mods.relatedItem.titleInfo.title_s',
+
     // Refactor: labels
 
     'cdm.Relation.IsPartOf' : 'Relation.IsPartOf',
@@ -150,7 +154,7 @@ SolrQuery.FIELD_MAP = {
     // Magazine
     'MODS.mods.originInfo.publisher_s' : 'Publisher',
     'MODS.mods.relatedItem.date.w3cdtf_dts' : 'Date',
-    'MODS.mods.relatedItem.titleInfo.title_s' : 'Series',
+    //'MODS.mods.relatedItem.titleInfo.title_s' : 'Series',
     'MODS.mods.relatedItem.part.detail.volume.number_i' : 'Volume',
     'MODS.mods.identifier.local_i' : 'Publication Sequence'
 };
@@ -239,6 +243,9 @@ SolrQuery.fieldMap = function(field) {
 	if(/magazine/i.exec(collection) || /magazine/i.exec(document.URL) ) {
 
 	    return 'MODS.mods.relatedItem.date.w3cdtf_dts';
+	} else if(/sbarchive/i.exec(collection) || /sbarchive/i.exec(document.URL) ) {
+
+	    return 'MODS.mods.relatedItem.date.w3cdtf_dts';
 	} else if(/geology/i.exec(collection) || /geology/i.exec(document.URL) ) {
 
 	    return 'geology_slides_esi.date.original';
@@ -324,9 +331,23 @@ SolrQuery.fieldMap = function(field) {
 	   /magazine/i.exec(document.URL)) {
 
 	    return 'MODS.mods.originInfo.publisher_s';
+	} else if(/sbarchive/i.exec(collection) ||
+		  /sbarchive/i.exec(document.URL)) {
+
+	    return 'MODS.mods.originInfo.publisher_s';
 	} else {
 
 	    return 'dc.publisher';
+	}
+    } else if(field == 'MODS.mods.relatedItem.titleInfo.title_s') {
+
+	if(/sbarchive/i.exec(collection) ||
+	   /sbarchive/i.exec(document.URL)) {
+
+	    return 'Publication Title';
+	} else {
+
+	    return 'Series';
 	}
     } else {
 	
