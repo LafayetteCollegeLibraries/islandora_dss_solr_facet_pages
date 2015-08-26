@@ -168,6 +168,9 @@ LafayetteDssObjectList.viewListClickHandler = function(e) {
      */
     //infiniteList.unbind();
     //$.ias().unbind();
+
+    // Set the Global display parameters to "list"
+    Islandora.DSS.SolrSearch.query.params.display = 'list';
     
     // AJAX-integrated
     var url = $(document).data('islandoraDssDateRangeSlider')['query'] || '/islandora/search/*:*';

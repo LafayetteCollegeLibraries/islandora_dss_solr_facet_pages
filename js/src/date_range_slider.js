@@ -226,11 +226,10 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'Date') {
 
-	// Simply parse for 'Geology' within the Solr query in the URL
-	// Simply parse for 'Historical' within the Solr query in the URL
-	//if(/Geology/.exec(document.URL) || /Historical/.exec(document.URL)) {
-	//if(/geology/i.exec(document.URL)) {
-	if(/alumni/i.exec(collection) || /alumni/i.exec(document.URL) ) {
+	if(/magazine/i.exec(collection) || /magazine/i.exec(document.URL) ) {
+
+	    return 'MODS.mods.relatedItem.date.w3cdtf_dts';
+	} else if(/sbarchive/i.exec(collection) || /sbarchive/i.exec(document.URL) ) {
 
 	    return 'MODS.mods.relatedItem.date.w3cdtf_dts';
 	} else if(/geology/i.exec(collection) || /geology/i.exec(document.URL) ) {
@@ -318,6 +317,10 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Publisher') {
 	if(/alumni/i.exec(collection) ||
 	   /alumni/i.exec(document.URL)) {
+
+	    return 'MODS.mods.originInfo.publisher_s';
+	} else if(/sbarchive/i.exec(collection) ||
+		  /sbarchive/i.exec(document.URL)) {
 
 	    return 'MODS.mods.originInfo.publisher_s';
 	} else {
