@@ -21,23 +21,6 @@ var SolrQuery = function($, options) {
 
     this.$ = $;
     this.options = $.extend({}, options);
-
-    /*
-    this.options = $.extend({
-	    searchPath: '/islandora/search',
-	    query: '',
-	    fields: [],
-	    params: {},
-	    url: '',
-	}, options);
-
-    this.params = $.extend({}, this.options.params);
-    this.searchPath = this.options.searchPath || '/islandora/search/';
-
-    this.url = this.options.url || '/islandora/search/ *:*';
-
-    this.query = this.options.query || this.query(this.url);
-    */
 };
 
 /**
@@ -103,7 +86,7 @@ SolrQuery.FIELD_MAP = {
 
     // https://digital.stage.lafayette.edu/collections/browse?f[0]=cdm.Relation.IsPartOf%3A%22Shakespeare%20Bulletin%20Archive%22&f[1]=MODS.mods.relatedItem.titleInfo.title_s%3A%22Shakespeare%20Bulletin%22
     // Shakespeare Bulletin Archive
-    'Publication Title' : 'MODS.mods.relatedItem.titleInfo.title_s',
+    //'Publication Title' : 'MODS.mods.relatedItem.titleInfo.title_s',
 
     // Refactor: labels
 
@@ -176,33 +159,6 @@ SolrQuery.COLLECTION_FIELD_MAP = {
  */
 SolrQuery.marcRelatorFilter = function(fieldValue, fieldName) {
 
-    /*
-    if(fieldName == 'eastasia.Format.Medium') {
-
-	var MARC_RELATOR_MAP = {
-
-	    '"Photographic negative"': '"photonegative"',
-	    '"Photographic print"': '"photoprint"',
-	    '"Photographic slide"': '"slide"',
-	    '"Picture postcard"': '"picture postcard"'
-	};	
-
-	return MARC_RELATOR_MAP[fieldValue];
-
-	/*
-    } else if(fieldName == 'mdl_prints.format.medium') {
-
-	var MARC_RELATOR_MAP = {
-
-	    '"lithograph"': '"photoprint"'
-	};
-
-	return MARC_RELATOR_MAP[fieldValue];
-    }
-
-    }
-    */
-
     return fieldValue;
 };
 
@@ -219,17 +175,9 @@ SolrQuery.fieldMap = function(field) {
     var collection = facetQueries['cdm.Relation.IsPartOf'] || [''];
     collection = collection[0];
 
-    /*
-    if(typeof(facetQueries['cdm.Relation.IsPartOf']) !== 'undefined') {
-
-	collection = facetQueries['cdm.Relation.IsPartOf'];
-    }
-    */
-
     if(field == 'cdm.Relation.IsPartOf') {
 
 	// For the top-level collections
-	//if(/collections\/browse/.exec(document.URL)) {
 	if(/collections\/browse/.exec(collection) || /collections\/browse/.exec(document.URL) ) {
 	    
 	    return 'Choose a Collection';
@@ -256,7 +204,6 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Format.Medium') {
 
 	// Simply parse for 'Marquis' within the Solr query in the URL
-	//if(/Marquis/.exec(document.URL) || /lafayetteprints/.exec(document.URL) ) {
 	if(/Marquis/.exec(collection) || /lafayetteprints/.exec(document.URL)) {
 	    
 	    return 'mdl_prints.format.medium';
@@ -266,7 +213,6 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'Medium') {  // Resolves DSSSM-756
 
-	//if(/newspaper/i.exec(document.URL) || /historical/i.exec(document.URL) ) {
 	if(/newspaper/i.exec(collection) || /historical/i.exec(collection) ||
 	   /newspaper/i.exec(document.URL) || /historical/i.exec(document.URL) ||
 	   /mckelvy/i.exec(collection) || /mckelvy/i.exec(document.URL)) {
@@ -283,8 +229,6 @@ SolrQuery.fieldMap = function(field) {
 	 * Resolves DSS-258
 	 *
 	 */
-	//if(/historical/i.exec(document.URL) || /newspaper/i.exec(document.URL) ) {
-	//if(/newspaper/i.exec(document.URL) ) {
 	if(/newspaper/i.exec(collection) || /newspaper/i.exec(document.URL) ||
 	   /mckelvy/i.exec(collection) || /mckelvy/i.exec(document.URL) ||
 	   /historical/i.exec(collection) || /historical/i.exec(document.URL)) {
@@ -297,7 +241,6 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Date.Original') {
 
 	// Simply parse for 'Marquis' within the Solr query in the URL
-	//if(/Marquis/.exec(document.URL) || /lafayetteprints/.exec(document.URL) ) {
 	if(/Marquis/.exec(collection) ||
 	   /lafayetteprints/.exec(document.URL) ) {
 	    
@@ -341,14 +284,7 @@ SolrQuery.fieldMap = function(field) {
 	}
     } else if(field == 'MODS.mods.relatedItem.titleInfo.title_s') {
 
-	if(/sbarchive/i.exec(collection) ||
-	   /sbarchive/i.exec(document.URL)) {
-
-	    return 'Publication Title';
-	} else {
-
-	    return 'Series';
-	}
+	return "Series";
     } else {
 	
 	return SolrQuery.FIELD_MAP[field];
@@ -364,7 +300,6 @@ SolrQuery.getQuery = function(url, $, query) {
 
     var out = {};
 
-    //return $.map(url.split(' AND '), function(e, i) {
     var _queryParams = $.map(url.split(' AND '), function(e, i) {
 
 	    var paramSegments = e.split(/\:|%3A/);
@@ -398,7 +333,6 @@ SolrQuery.getFacets = function getFacets(url, $, facets, query) {
      */
     if(facets) {
 
-	//var urlSegments = facets.split(/\??&?\d\=/).map(function(e, i) { return decodeURI(e).replace('+', ' ', 'g'); });
 	/**
 	 * This must be a RegExp Object for v8 Core based browsers
 	 * Resolves DSSSM-790
@@ -442,8 +376,6 @@ SolrQuery.getFacets = function getFacets(url, $, facets, query) {
 		 */
 		paramMaxStr = /(.+?)\]/.exec(paramMaxStr)[1].replace(/%3A/g, ':', 'g');
 
-		//var paramMin = +new Date(/\[(.+?)\sT/.exec(e)[1].replace('%3A',':','g'));
-		//var paramMax = +new Date(/TO\s(.+?)\]/.exec(e)[1].replace('%3A',':','g'));
 		var paramMin = +new Date(paramMinStr);
 		var paramMax = +new Date(paramMaxStr);
 		obj[paramName] = [paramMin, paramMax];
@@ -465,30 +397,7 @@ SolrQuery.getFacets = function getFacets(url, $, facets, query) {
 		obj[paramName] = ["[" + paramMin + " TO " + paramMax + "]"];
 	    } else {
 
-		/*
-		var paramSegments = e.split(/\:|%3A/);
-
-		/*
-		  var fieldName = paramSegments[0];
-		  //return { facetId : { fieldName : paramSegments[1] }};
-		  
-		  return { fieldName : paramSegments[1] };
-		* /
-
-		var paramValue = paramSegments[1].replace(/#$/, '', 'g');
-		
-		if(typeof(obj[paramSegments[0]]) === 'undefined') {
-
-		    obj[paramSegments[0]] = [paramValue];
-		} else {
-
-		    obj[paramSegments[0]].concat(paramValue);
-		}
-		*/
-
 		var paramName = /(.+?)(\:|%3A)/.exec(e)[1];
-		//var paramSegments = e.split(/\:|%3A/);
-		//var paramValue = paramSegments[1].replace(/#$/, '', 'g');
 		var paramValue = e.split(/\:|%3A/).slice(1).join(':');
 
 		/**
@@ -510,17 +419,6 @@ SolrQuery.getFacets = function getFacets(url, $, facets, query) {
 		paramValue = paramValue.replace(/%26/g, '&', 'g');
 		paramValue = paramValue.replace(/%2F/g, '/', 'g');
 
-		/*
-		var paramValue = '';
-		for(var i in paramSegments) {
-
-		    if(typeof(paramSegments[i + 1]) !== 'undefined') {
-
-			paramValue = paramSegments[i + 1].replace(/#$/, '', 'g');
-		    }
-		}
-		*/
-
 		if(typeof(obj[paramName]) === 'undefined') {
 
 		    obj[paramName] = [paramValue];
@@ -528,7 +426,6 @@ SolrQuery.getFacets = function getFacets(url, $, facets, query) {
 
 		    obj[paramName].concat(paramValue);
 		}
-
 	    }
 
 	    return obj;
@@ -550,21 +447,6 @@ SolrQuery.getFacets = function getFacets(url, $, facets, query) {
 	});
 
     return out;
-
-    /*
-    return _facetParams.reduce(function(u, v) {
-	    
-	    for(key in u) {
-
-		if(typeof(v[key]) !== 'undefined') {
-
-		    u[key] = u[key].concat(v[key]);
-		}
-	    }
-
-	    return u;
-	});
-    */
 };
 
 SolrQuery.getFacetTokenUrl = function getFacetTokenUrl(token, $) {
@@ -572,11 +454,7 @@ SolrQuery.getFacetTokenUrl = function getFacetTokenUrl(token, $) {
     var $ = $ || jQuery;
 
     $token = $(token);
-    //facetQuery = decodeURI($(token).attr('href'));
     facetQuery = $(token).attr('href');
-
-    //facetQueryField = facetQuery.split(/\??f\[\d\]\=?/).pop();
-    //return '/islandora/search/' + query + facets;
 
     return facetQuery.replace(new RegExp("(\\?|&)f\\[\\d\\]\\=" + facetQuery.split(/\??f\[\d\]\=?/).pop()), '');
 };
@@ -640,20 +518,9 @@ SolrQuery.getQueries = function(facetQueries) {
 	for(k in facetQueries[key]) {
 
 	    var facetKey = 'f[' + i + ']';
-	    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-
-	    //if(/"(.+?)"/.exec(facetQueries[key][k])) {
-	    if(true) {
-
-		//facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
-		facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-	    } else {
-
-		facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
-	    }
+	    facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
 	    i++;
 	}
-	//i++;
     }
 
     return facetParams;
@@ -693,30 +560,6 @@ SolrQuery.prototype = {
     facets: function facets(queryUrl) {
 
 	var $ = this.$;
-
-	/*
-	facetSubString = queryUrl.split(/f\[0\]/).splice(1);
-	$.each(.split(' AND '), function(i, ) {
-
-	    });
-	*/
-	
-	//queryUrl2.split(/(\?|&)f\[\d\]\=/)
-
-	$.each(queryUrl.split(/(\?|&)f\[\d\]\=/).splice(1), function(i, facet) {
-
-		/*
-		facets = {};
-		if(facet != '?' && facet != '&') {
-
-		    var fieldSubStr = fieldStr.split(/\:|%3A/);
-		    var fieldName = fieldSubStr[0];
-		    var fieldValues = fieldSubStr[1];
-
-		    facets['name'] = fieldName;
-		}
-		*/
-	    });
     },
 
     fields: function fields(fieldStr) {
@@ -730,26 +573,6 @@ SolrQuery.prototype = {
 
 		field = {};
 		field['name'] = fieldName;
-
-		/*
-		if() {
-
-		    field['type'] = 'dateRange';
-		} else {
-		    
-		    field['type'] = 'searchField';
-		}
-
-
-
-		if() {
-
-		    field['values'] = [];
-		} else {
-
-		    field['values'] = [];
-		}
-		*/
 
 		this.fields.push(field);
 	    });
@@ -812,13 +635,6 @@ SolrQuery.prototype = {
 
     Drupal.behaviors.islandoraDssDateRangeSlider = function(context) {
 
-	/*
-	$('.islandora-solr-facet-date').last().append($('<div class=".islandora-solr-facet-date-slider"></div>').dateRangeSlider( { bounds: [ new Date($('.islandora-facet-date').first().text()),
-																	      new Date($(this).text()) ] } ));
-	*/
-
-	//max: +new Date($(this).text()) }));
-
 	var facets = document.URL.split(/f\[\d\]/);
 
 	if(Drupal.settings.islandoraDssSolrFacetPages) {
@@ -837,10 +653,7 @@ SolrQuery.prototype = {
 	 */
 
 	// Handled by Drupal instead
-	//$('#block-islandora-solr-facet-pages-islandora-solr-facet-pages h2.block-title').after('<ul class="islandora-solr-facet-token-list"></ul>');
-
 	var currentQuery = decodeURI(document.URL).split(/\?f\[0\]/)[0];
-	//currentQuery = /(islandora\/search\/.+)/.exec(document.URL)[1];
 	var m = /(islandora\/search\/.+)/.exec(currentQuery);
 	if(m) {
 
@@ -858,35 +671,12 @@ SolrQuery.prototype = {
 	$(document).data('islandoraDssDateRangeInitValues', {});
 
 	// For facetQueries
-	//var facetQueries = SolrQuery.getFacets();
 	var facetQueries = _facets;
 	$(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
 	// For facetParams
 	// Refactor
 	var facetParams = SolrQuery.getQueries(facetQueries);
-
-	/*
-	var facetParams = {};
-	var facetIndex = 0;
-
-	for(var key in facetQueries) {
-
-	    for(var k in facetQueries[key]) {
-
-		var facetKey = 'f[' + facetIndex + ']';
-		//facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-
-		/**
-		 * Resolves DSSSM-533
-		 *
-		 * /
-		//facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&');
-		facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
-		facetIndex++;
-	    }
-	}
-	*/
 
 	/**
 	 * Ensures that the sorted field is preserved for URL aliases
@@ -1018,13 +808,6 @@ SolrQuery.prototype = {
 	this.facetFormHandler = function() {
 	    
 	    // Work-around
-	    /*
-	    $('#islandora-dss-solr-facet-pages-facets-form').click(function(e) {
-
-		    e.stopImmediatePropagation();
-		});
-	    */
-
 	    /**
 	     * Implementing functionality to restrict facet selection
 	     * Resolves DSSSM-804
@@ -1093,59 +876,6 @@ SolrQuery.prototype = {
 			url = '/' + url;
 			
 			facetParams = SolrQuery.getQueries(facetQueries);
-
-			/*
-			  facetParams = {};
-
-			var facetIndex = 0;
-			for(key in facetQueries) {
-
-			    for(k in facetQueries[key]) {
-
-				var facetKey = 'f[' + facetIndex + ']';
-
-				/**
-				 * For handling MARC relator issues
-				 * @todo Remove after re-indexing
-				 *
-				 */
-				//facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-				//facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key);
-
-			/*
-				facetParams[ facetKey ] = key + ":" + SolrQuery.marcRelatorFilter(facetQueries[key][k], key).replace('%26', '&').replace('%2F', '/');
-				facetIndex++;
-			*/
-
-				//var parentUrl = facetedSearchAnchor.attr('href');
-				//parentUrl = getFacetTokenUrl(facetedSearchAnchor);
-
-			/*
-				var parentUrl = url;
-				var linkText = '';
-			*/
-
-			    /*
-			    parentUrl += /f\[\d\]/.exec(parentUrl) ? '&' : '?';
-			    var facetedSearchAnchor = $("<a href='" + parentUrl + 'f[' + (i - 1) + ']=' + key + ':"' + facetQueries[key][k] + '"\' class="islandora-solr-facet-token">' + facetQueries[key][k] + '</a>');
-			    //var facetedSearchAnchor = $("<a href='" + parentUrl + '"\' class="islandora-solr-facet-token">' + facetQueries[key][k] + '</a>');
-
-			    $('.islandora-solr-facet-token-list').append( $('<li></li>').append( facetedSearchAnchor.click(function(e) {
-
-					    that.facetLinkHandler(e, $(this));
-					})
-				    ));
-
-			    var $facetTokens = $('.islandora-solr-facet-token-list li');
-
-			    $facetTokens.children().each(function(i, facetToken) {
-
-				    $facetToken = $(facetToken);
-				    $facetToken.attr('href', SolrQuery.updateFacetTokenUrl( $facetToken, facetedSearchAnchor));
-				});
-}
-		    }
-			    */
 
 			/**
 			 * Work-around for removing improperly serialized facets
@@ -1246,53 +976,6 @@ SolrQuery.prototype = {
 			    var solrField = SolrQuery.fieldMap($(e).parent().parent().prev().text());
 			    $(document).data('islandoraDssBrowsingField', solrField);
 
-			    /*
-			    var fancyBoxContainer = $('<div class="fancy-box-container"></div>').appendTo($('body')).load('/islandora/facets/' + solrField, function() {
-
-				    $(this).dialog({ title: solrField,
-						     modal: true,
-						     minHeight: 280,
-						     minWidth: 392,
-						     beforeClose: function(event, ui) {
-
-						this.$parent = $(this);
-						
-						var fieldObjects = $(this).find('#islandora-dss-solr-facet-pages-facets-form').serializeArray().filter(function (fieldObj) {
-
-							return fieldObj.name != 'form_build_id' && fieldObj.name != 'form_id';
-						    });
-						if(fieldObjects.length == 0) {
-
-						    var that = this;
-						    $('<div class="islandora-facet-modal-alert">You have not selected any facets.</div>').appendTo($('body')).dialog({
-
-							    title: 'Warning',
-							    modal: true,
-							    resizable: false,
-							    height: 140,
-							    buttons: {
-								Close: function() {
-
-								    $( this ).dialog( "close" );
-								    $('.fancy-box-container').dialog('destroy');
-								},
-								Cancel: function() {
-
-								    $( this ).dialog( "close" );
-								}
-							    }
-							});
-						}
-
-						return fieldObjects.length > 0;
-					    }
-					});
-
-				    that.facetFormHandler();
-				});
-			    */
-
-			    //var facetParams = $(document).data('islandoraDssDateRangeFacetParams');
 			    /**
 			     * Retrieve and parse the GET parameters
 			     *
@@ -1300,27 +983,6 @@ SolrQuery.prototype = {
 			    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
 			    facetParams = SolrQuery.getQueries(facetQueries);
-
-			    /*
-			    facetParams = {};
-
-			    var facetIndex = 0;
-			    for(key in facetQueries) {
-
-				for(k in facetQueries[key]) {
-
-				    var facetKey = 'f[' + facetIndex + ']';
-				    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-
-				    /**
-				     * Resolves DSSSM-533
-				     *
-				     * /
-				    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
-				    facetIndex++;
-				}
-			    }
-			    */
 
 			    /**
 			     * Parse the Solr query from the URL
@@ -1350,35 +1012,7 @@ SolrQuery.prototype = {
 
 					var that = this;
 
-					/*
-					if(fieldObjects.length == 0) {
-
-					    $('<div class="islandora-facet-modal-alert">You have not selected any facets.</div>').appendTo($('body')).dialog({
-						    
-						    title: 'Warning',
-							modal: true,
-							resizable: false,
-							height: 140,
-							buttons: {
-							Close: function() {
-							    
-							    $( this ).dialog( "close" );
-							    $('.fancy-box-container').dialog('destroy');
-							},
-							    Cancel: function() {
-							    
-							    $( this ).dialog( "close" );
-							}
-						    }
-						});
-					*/
-
-					$('html.js body.html div.ui-dialog div.ui-dialog-titlebar a.ui-dialog-titlebar-close span.ui-icon').click(function(e) {
-
-					    });
-
 					if( $(event.target).hasClass('ui-icon-closethick') && fieldObjects.length > 0) {
-
 					    
 					    $('<div class="islandora-facet-modal-alert">You have unapplied refinements.</div>').appendTo($('body')).dialog({
 						    
@@ -1469,21 +1103,6 @@ SolrQuery.prototype = {
 		    $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
 
 		    facetParams = SolrQuery.getQueries(facetQueries);
-
-		    /*
-		    var facetIndex = 0;
-		    for(key in facetQueries) {
-
-			for(k in facetQueries[key]) {
-
-			    var facetKey = 'f[' + facetIndex + ']';
-			    //facetParams[ facetKey ] = key + ":" + facetQueries[key][k];
-			    facetParams[ facetKey ] = key + ":" + facetQueries[key][k].replace('%26', '&').replace('%2F', '/');
-			    facetIndex++;
-			}
-		    }
-		    */
-
 
 		    $(document).data('islandoraDssDateRangeFacetParams', facetParams);
 
@@ -1660,11 +1279,6 @@ SolrQuery.prototype = {
 		    options = {
 
 			// Restructure with styling
-			//min: +new Date( $facetListItems.first().children('a').text()),
-			//max: +new Date( $facetListItems.last().children('a').text()),
-
-			//min: (minDate / 10000000000) + 400,
-			//max: (maxDate / 10000000000) + 400,
 			min: minDate,
 			max: maxDate,
 			range: true,
@@ -1691,17 +1305,8 @@ SolrQuery.prototype = {
 
 			stop: function(e, ui) {
 		
-			    //$('.islandora-solr-facet-date-init').text((new Date(ui.values[0])).toString());
-			    //$('.islandora-solr-facet-date-term').text((new Date(ui.values[1])).toString());
-
 			    var dateField = SolrQuery.fieldMap($(ui.handle).parent().prev().prev().text());
 			    
-			    //var dateField = /f\[\d\]\=(.+?)\:/.exec();
-
-			    //var query = '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
-			    //var query = document.URL + ' AND ' + dateField + ':"' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']' + '"';
-
-			    // https://digital.dev.lafayette.edu/islandora/search/%2A%3A%2A?f[0]=geology_slides_esi.date.original%3A%221983-01-01T00%3A00%3A00Z%22&f[1]=geology_slides_esi.subject%3A%22Roth%2C%20Mary%20Joel%20S.%22
 			    var url = $(document).data('islandoraDssDateRangeSlider')['query'];
 			    url = '/' + url;
 
@@ -1736,18 +1341,6 @@ SolrQuery.prototype = {
 
 				menuArgs = menuArgsMatch[1];
 			    }
-
-			    // query += '&f[' + maxFacet + ']=' + dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']';
-
-			    /*
-			    if((new RegExp(dateField + ':')).exec(query) ) {
-
-				//query = query.replace( (new RegExp(dateField + '\\:\\[.+?\\]')), dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']');
-			    } else {
-
-				//query = '/islandora/search/' + dateField + ':' + '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + '] AND ' + menuArgs;
-			    }
-			    */
 
 			    // Retrieve the Solr field name for the <li> element
 			    var dateField = SolrQuery.fieldMap($facetList.prev().text());
@@ -1831,16 +1424,6 @@ SolrQuery.prototype = {
 			    $handles = $(this).children('.ui-slider-handle');
 			    $($handles[0]).addClass('ui-slider-left');
 			    $($handles[1]).addClass('ui-slider-right');
-			    
-			    //$($handles[0]).css('left', '-5%');
-			    //$($handles[0]).css('right', 'inherit');
-
-			    /*
-			    $($handles[1]).css('left', 'inherit');
-			    $($handles[1]).css('right', '0%');
-			    */
-			    //$($handles[1]).css('left', '104%');
-			    //$($handles[1]).css('right', '0%');
 			},
 		    };
 
@@ -1852,18 +1435,6 @@ SolrQuery.prototype = {
 		    var solrFieldName = SolrQuery.fieldMap($facetList.prev().text());
 
 		    facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
-		    /*
-		    facetParams = {};
-
-		    var i = 0;
-		    for(key in facetQueries) {
-
-			var facetKey = 'f[' + i + ']';
-			facetParams[ facetKey ] = key + ":" + facetQueries[key];
-
-			i++;
-		    }
-		    */
 
 		    /**
 		     * Work-around
@@ -1960,15 +1531,6 @@ SolrQuery.prototype = {
 
 	    var facets = facetedSearchAnchor.attr('href').split(/f\[\d\]/);
 
-	    /*
-	    $(document).data('islandoraDssDateRangeSlider', {
-
-		        query: /(\/islandora\/search\/.+)/.exec( facetedSearchAnchor.attr('href') )[1],
-			maxFacet: (facets.length == 1 ? 0 : facets.length - 2),
-			});
-	    */
-
-	    //var url = facetedSearchAnchor.attr('href');
 	    var url = $(document).data('islandoraDssDateRangeSlider')['query'];
 
 	    /**
@@ -1984,52 +1546,6 @@ SolrQuery.prototype = {
 
 	    var facetParams = {};
 	    var facetQueries = $(document).data('islandoraDssDateRangeFacetQueries') || {};
-
-	    /*
-	    //facetParams = $(document).data('islandoraDssFacetQueryParams') || {};
-	    var facetParams = {};
-
-	    var i = 0;
-
-	    //queryUrl.split(/(\?|&)f\[\d\]\=/).splice(1).filter(function(e, i) { return e != '?' && e != '&'; })
-
-	      facetQueries[dateField] = facetQueries[dateField] || [];
-	      facetQueries[dateField] = facetQueries[dateField].concat( '[' + new Date(ui.values[0]).toISOString() + ' TO ' + new Date(ui.values[1]).toISOString() + ']');
-	      
-	      $(document).data('islandoraDssDateRangeFacetQueries', facetQueries);
-
-	      facetParams = {};
-	    */
-
-	    /*
-
-	    $.each(queryUrl.split(/(\?|&)f\[\d\]\=/).splice(1).filter(function(e, i) { return e != '?' && e != '&' }), function(j, e) {
-
-		    var queryExpr = decodeURI(e);
-
-		    var fieldSubStr = queryExpr.split(/\:|%3A/);
-
-		    if(fieldSubStr.length == 2) {
-
-			var fieldName = fieldSubStr[0];
-			var fieldValues = fieldSubStr[1];
-		    } else {
-
-			fieldSubStr = queryExpr.split(/(\:|%3A)\[/).filter(function(e, i) { return e != ':' && e != '%3A' });
-			var fieldName = fieldSubStr[0];
-			var fieldValues = '[' + fieldSubStr[1].replace('%3A', ':', 'g');
-		    }
-
-		    //facetQueries[fieldName] = fieldValues;
-		    facetQueries[fieldName] = facetQueries[fieldName] || [];
-		    facetQueries[fieldName] = facetQueries[fieldName].concat(fieldValues);
-
-		    //var facetKey = 'f[' + i + ']';
-		    //facetParams[facetKey] = fieldName + ':' + fieldValues;
-
-		    i++;
-		});
-	    */
 
 	    var fieldName = SolrQuery.fieldMap(facetedSearchAnchor.parent().parent().prev().text());
 
