@@ -137,6 +137,14 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
     // Update the params Object before transmitting the GET request
     Islandora.DSS.SolrSearch.query.params = params;
 
+    // This ensures that the browser's history state is updated with the latest result set
+    // Resolves DSS-559
+    if(window.history.pushState) {
+
+	var historyUrl = url + '?' + $.param(params);
+	window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+    }
+
     // Submit the GET request to the Islandora Solr endpoint
     $.get(url, params, function(data) {
 
@@ -229,9 +237,13 @@ LafayetteDssObjectList.viewListClickHandler = function(e) {
     // Further, attempt to override or integrate the other GET parameters
     params = $.extend(params, Islandora.DSS.SolrSearch.query.params);
 
-    // Work-around
-    // @todo Refactor for other extensions to the widget
-    //params.page = Islandora.DSS.SolrSearch.query.params.page || params.page;
+    // This ensures that the browser's history state is updated with the latest result set
+    // Resolves DSS-559
+    if(window.history.pushState) {
+	
+	var historyUrl = url + '?' + $.param(params);
+	window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+    }
     
     $.get(url, params, function(data) {
 	    
@@ -307,9 +319,13 @@ LafayetteDssObjectList.viewGridClickHandler = function(e) {
     // Further, attempt to override or integrate the other GET parameters
     params = $.extend(params, Islandora.DSS.SolrSearch.query.params);
 
-    // Work-around
-    // @todo Refactor for other extensions to the widget
-    //params.page = Islandora.DSS.SolrSearch.query.params.page || params.page;
+    // This ensures that the browser's history state is updated with the latest result set
+    // Resolves DSS-559
+    if(window.history.pushState) {
+	
+	var historyUrl = url + '?' + $.param(params);
+	window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+    }
 
     $.get(url, params, function(data) {
 	    
@@ -353,22 +369,6 @@ LafayetteDssObjectList.prototype = {
 	$ = this.$;
 	var that = this;
 
-	/*
-
-	this._index = this.$element.children('.islandora-solr-search-result').sort(function(u, v) {
-		
-		return $(u).find(fieldSelector).text().localeCompare($(v).find(fieldSelector).text());
-	    });
-
-	if(order != this.order) {
-
-	    this._index = $(this._index.get().reverse());
-	    this.order = order;
-	}
-
-	this.$element.empty().append(this._index);
-	*/
-
 	// AJAX-integrated
 	var url = $(document).data('islandoraDssDateRangeSlider')['query'] || '/islandora/search/*:*';
 
@@ -387,17 +387,6 @@ LafayetteDssObjectList.prototype = {
 	    url = document.URL.split('?').shift();
 	}
 
-	/**
-	 * @todo Resolve
-	 *
-	 */
-	/*
-	if(!/\browse/.exec(url)) {
-
-	    url = '/' + url;
-	}
-	*/
-
 	var params = $(document).data('islandoraDssDateRangeFacetParams') || {};
 	
 	/**
@@ -407,14 +396,6 @@ LafayetteDssObjectList.prototype = {
 	delete params['page'];
 
 	var sortParam = this.options.field + ' ' + this.options.order;
-
-	// This appears to create further issues within islandora_solr
-	/*
-	if(this.options.field != 'dc.title') {
-
-	    sortParam += ',dc.title asc';
-	}
-	*/
 
 	/**
 	 * Integrating List/Grid view widgets
@@ -433,6 +414,15 @@ LafayetteDssObjectList.prototype = {
 	 * Given that this is unsupported until the AJAX-integrated theme is released, this has been disabled
 	 *
 	 */
+
+	// This ensures that the browser's history state is updated with the latest result set
+	// Resolves DSS-559
+	if(window.history.pushState) {
+	
+	    var historyUrl = url + '?' + $.param(params);
+	    window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+	}
+
 	$.get(url, params, function(data) {
 
 		$('.islandora-solr-search-results').removeClass('loading')
@@ -448,22 +438,6 @@ LafayetteDssObjectList.prototype = {
 	    });
 
 	$('.islandora-solr-search-results').empty().addClass('loading');
-
-	/**
-	 * For integration with the TinySort jQuery plug-in
-	 *
-	 */
-	/*
-	if(listGridParams['display'] == 'grid') {
-
-	    $('.islandora-basic-collection-object').tsort('dd.' + this.options.field.toLowerCase().replace(/\.sort/, '').replace('.', '-', 'g'), { order: this.options.order });
-	} else {
-
-	    $('.islandora-solr-search-result').tsort('dd.' + this.options.field.toLowerCase().replace(/\.sort/, '').replace('.', '-', 'g'), { order: this.options.order });
-	}
-	*/
-	//$('.islandora-solr-search-results').empty().addClass('loading');
-	
     }
 };
 
@@ -481,41 +455,18 @@ LafayetteDssObjectList.prototype = {
      */
     Drupal.theme.prototype.bootstrapDssObjectList = function() {
 
-	/*
-	$('.field-sort').click(function(e) {
-
-		e.preventDefault();
-		$('.field-sort').toggleClass('active');
-	    });
-	*/
-
-	//var objectList = new LafayetteDssObjectList($, $('.islandora-solr-search-result-list'), { order: $('#order-sort-select').val() });
-	/*
-	var objectList = new LafayetteDssObjectList($, $('.islandora-solr-search-result-list'), {
-
-		order: Drupal.settings.islandoraDssSolrFacetPages.order,
-		field: Drupal.settings.islandoraDssSolrFacetPages.field
-	    });
-	*/
 	var objectList = new LafayetteDssObjectList($, $('.islandora-solr-search-result-list'));
-
-	//$('.islandora-discovery-control.title-sort-control select').change(function() {
 
 	/**
 	 * Resolves DSSSM-652
 	 *
 	 */
 	$('.field-sort').click(function(e) {
-	//$('.field-sort').on('click change touchstart', function(e) {
 
 		e.preventDefault();
 		$('.field-sort.active').removeClass('active');
 		$(this).addClass('active');
 
-		//objectList.sort($(this).val(), $('#order-sort-select').val());
-		//objectList.sort($(this).val(), preg_match('/field\-sort\-(.+)/', $('.field-sort.active').attr('id'))[1]);
-
-		//objectList.sort($(this).val(), /field\-sort\-(.+)/.exec( $(this).attr('id'))[1] );
 		objectList.options.field = $('#field-sort-select').val();
 		objectList.options.order = /field\-sort\-(.+)/.exec( $(this).attr('id'))[1];
 		objectList.sort();
@@ -530,8 +481,6 @@ LafayetteDssObjectList.prototype = {
 	 * Resolves DSSSM-652
 	 *
 	 */
-	//$('#field-sort-select option').click(function(e) {
-	//$('#field-sort-select option').on('click change touchstart', function(e) {
 	$('#field-sort-select').on('change', function(e) {
 
 		objectList.options.field = $(this).val();
@@ -540,7 +489,6 @@ LafayetteDssObjectList.prototype = {
 		 * This should always set the sort order to "asc"
 		 * Resolves DSSSM-653
 		 */
-		//$('.field-sort.active').removeClass('active').siblings('.field-sort').addClass('active');
 		$('.field-sort.active').removeClass('active').parent().children('#field-sort-asc').addClass('active');
 
 		objectList.options.order = /field\-sort\-(.+)/.exec( $('.field-sort.active').attr('id'))[1];

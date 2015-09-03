@@ -959,8 +959,11 @@ SolrQuery.prototype = {
 
 			// This ensures that the browser's history state is updated with the latest result set
 			// Resolves DSS-559
-			var historyUrl = url + '?' + $.param(params);
-			window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+			if(window.history.pushState) {
+
+			    var historyUrl = url + '?' + $.param(params);
+			    window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+			}
 
 			$.get(url, params, that.updatePage);
 			$('.main-container').empty().addClass('loading');
@@ -1187,8 +1190,11 @@ SolrQuery.prototype = {
 
 		    // This ensures that the browser's history state is updated with the latest result set
 		    // Resolves DSS-559
-		    var historyUrl = url + '?' + $.param(params);
-		    window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+		    if(window.history.pushState) {
+
+			var historyUrl = url + '?' + $.param(params);
+			window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+		    }
 
 		    $.get(url, params, that.updatePage);
 		    $('.main-container').empty().addClass('loading');
@@ -1430,8 +1436,12 @@ SolrQuery.prototype = {
 
 			    // This ensures that the browser's history state is updated with the latest result set
 			    // Resolves DSS-559
-			    var historyUrl = url + '?' + $.param(params);
-			    window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+			    if(window.history.pushState) {
+
+				var historyUrl = url + '?' + $.param(params);
+				window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+			    }
+
 			    
 			    $.get(url, params, that.updatePage);
 
@@ -1746,8 +1756,11 @@ SolrQuery.prototype = {
 
 		// This ensures that the browser's history state is updated with the latest result set
 		// Resolves DSS-559
-		var historyUrl = url + '?' + $.param(params);
-		window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+		if(window.history.pushState) {
+
+		    var historyUrl = url + '?' + $.param(params);
+		    window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+		}
 
 		$.get(url, params, that.updatePage);
 	    } else {
@@ -1792,8 +1805,11 @@ SolrQuery.prototype = {
 
 		// This ensures that the browser's history state is updated with the latest result set
 		// Resolves DSS-559
-		var historyUrl = url + '?' + $.param(params);
-		window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+		if(window.history.pushState) {
+
+		    var historyUrl = url + '?' + $.param(params);
+		    window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+		}
 
 		$.get(url, params, that.updatePage);
 	    }
