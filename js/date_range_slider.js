@@ -957,6 +957,12 @@ SolrQuery.prototype = {
 			// Resolves DSSSM-1283
 			Islandora.DSS.SolrSearch.query.params = params;
 
+			// Resolves DSS-609
+			if( params.hasOwnProperty('sort') ) {
+
+			    params['sort'] = params['sort'].replace(/\+/, ' ');
+			}
+
 			// This ensures that the browser's history state is updated with the latest result set
 			// Resolves DSS-559
 			if(window.history.pushState) {
@@ -1187,6 +1193,12 @@ SolrQuery.prototype = {
 		    // Update the params Object before transmitting the GET request
 		    // Resolves DSSSM-1283
 		    Islandora.DSS.SolrSearch.query.params = params;
+
+		    // Resolves DSS-609
+		    if( params.hasOwnProperty('sort') ) {
+
+			params['sort'] = params['sort'].replace(/\+/, ' ');
+		    }
 
 		    // This ensures that the browser's history state is updated with the latest result set
 		    // Resolves DSS-559
@@ -1433,6 +1445,12 @@ SolrQuery.prototype = {
 			    // Update the params Object before transmitting the GET request
 			    // Resolves DSSSM-1283
 			    Islandora.DSS.SolrSearch.query.params = params;
+
+			    // Resolves DSS-609
+			    if( params.hasOwnProperty('sort') ) {
+
+				params['sort'] = params['sort'].replace(/\+/, ' ');
+			    }
 
 			    // This ensures that the browser's history state is updated with the latest result set
 			    // Resolves DSS-559
@@ -1754,6 +1772,12 @@ SolrQuery.prototype = {
 		// Resolves DSSSM-1283
 		Islandora.DSS.SolrSearch.query.params = params;
 
+		// Resolves DSS-609
+		if( params.hasOwnProperty('sort') ) {
+
+		    params['sort'] = params['sort'].replace(/\+/, ' ');
+		}
+
 		// This ensures that the browser's history state is updated with the latest result set
 		// Resolves DSS-559
 		if(window.history.pushState) {
@@ -1802,6 +1826,12 @@ SolrQuery.prototype = {
 		// Update the params Object before transmitting the GET request
 		// Resolves DSSSM-1283
 		Islandora.DSS.SolrSearch.query.params = params;
+
+		// Resolves DSS-609
+		if( params.hasOwnProperty('sort') ) {
+
+		    params['sort'] = params['sort'].replace(/\+/, ' ');
+		}
 
 		// This ensures that the browser's history state is updated with the latest result set
 		// Resolves DSS-559

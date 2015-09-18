@@ -313,7 +313,6 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
       if(preg_match("/c_c_$field/", $query)) {
 
 	$query = str_replace('c_c_' . $field, 'c_' . $field, $query);
-	//$query = str_replace($field, 'c_' . $field, $query);
       }
     }
   }
@@ -386,17 +385,11 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 			  'facet.mincount' => 1,
 			  'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
 			  'qt' => variable_get('islandora_solr_request_handler', 'standard'),
-			  //'facet.date' => $solr_field,
-			  //'facet.date.start' => '1826-01-01T00:00:00Z/YEAR',
-			  //'facet.date.end' => 'NOW',
-			  //'facet.date.gap' => '+1YEAR',
-			  //'facet.query' => $filter_queries
 			  );
 
     break;
 
       default:
-	//$filter_queries = preg_split('/ AND /', $query);
 	$filter_queries = $query;
 
 	// Set facet parameters.
@@ -439,26 +432,8 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     }
   }
 
-  // Hard-code default sorting
-  // Refactoring
-  //$facet_params = array_merge($facet_params, array('sort' => 'dc.title asc'));
-
-  // Ensure that sorting is preserved on facet anchors
-  /*
-  if(!array_key_exists('sort', $_GET)) {
-
-    //$facet_params['sort'] = $_GET['sort'];
-    $facet_params['sort'] = 'dc.title asc';
-  }
-  */
-
   // Solr results in JSON format.
   $result_object = json_decode($solr->search($query, 0, 0, $facet_params)->getRawResponse());
-  //$result_object = json_decode($solr->search("$solr_field:[* TO *]", 0, 0, $facet_params)->getRawResponse());
-  //$result_object = json_decode($solr->search("*:*", 0, 0, $facet_params)->getRawResponse());
-
-  //print_r($result_object);
-  //exit(1);
 
   if(isset($query_collection) and $query_collection == 'Lafayette Newspaper Collection' and $solr_field == 'dc.date.sort') {
 

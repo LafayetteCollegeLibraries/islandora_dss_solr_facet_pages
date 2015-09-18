@@ -190,18 +190,23 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
     case 'shakespeare':
 
-      $fields = array(array('solr_field' => 'MODS.mods.originInfo.dateIssued.w3cdtf_dt',
+      $fields = array(
+		      array('solr_field' => 'MODS.mods.titleInfo_s',
+			    'label' => 'Title',
+			    'path' => ''
+			    ),
+		      array('solr_field' => 'MODS.mods.originInfo.dateIssued.w3cdtf_dt',
 			    'label' => 'Date',
+			    'path' => ''
+			    ),
+		      array('solr_field' => 'MODS.mods.originInfo.publisher_s',
+			    'label' => 'Publisher',
 			    'path' => ''
 			    ),
 		      array('solr_field' => 'MODS.mods.relatedItem.titleInfo.title_s',
 			    'label' => 'Series',
 			    'path' => ''
 			    ),
-		      array('solr_field' => 'MODS.mods.originInfo.publisher_s',
-			    'label' => 'Publisher',
-			    'path' => ''
-			    )
 		      );
 
       break;
