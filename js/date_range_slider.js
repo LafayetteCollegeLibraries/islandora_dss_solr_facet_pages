@@ -140,7 +140,7 @@ SolrQuery.FIELD_MAP = {
 
     // Magazine
     'MODS.mods.originInfo.publisher_s' : 'Publisher',
-    'MODS.mods.relatedItem.date.w3cdtf_dts' : 'Date',
+    'MODS.mods.originInfo.dateIssued.w3cdtf_dt' : 'Date',
     //'MODS.mods.relatedItem.titleInfo.title_s' : 'Series',
     'MODS.mods.relatedItem.part.detail.volume.number_i' : 'Volume',
     'MODS.mods.identifier.local_i' : 'Publication Sequence',
@@ -196,9 +196,9 @@ SolrQuery.fieldMap = function(field) {
 	if(/magazine/i.exec(collection) || /magazine/i.exec(document.URL) ) {
 
 	    return 'MODS.mods.relatedItem.date.w3cdtf_dts';
-	} else if(/sbarchive/i.exec(collection) || /sbarchive/i.exec(document.URL) ) {
+	} else if(/shakespeare/i.exec(collection) || /sbarchive/i.exec(document.URL) ) {
 
-	    return 'MODS.mods.relatedItem.date.w3cdtf_dts';
+	    return 'MODS.mods.originInfo.dateIssued.w3cdtf_dt';
 	} else if(/geology/i.exec(collection) || /geology/i.exec(document.URL) ) {
 
 	    return 'geology_slides_esi.date.original';
