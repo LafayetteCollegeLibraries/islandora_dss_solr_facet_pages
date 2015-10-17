@@ -32,6 +32,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 				     'Geology Department Slide Collection' => 'geology_slides_esi',
 				     'McKelvy House Photograph Collection' => 'mckelvy',
 				     'Lafayette World War II Casualties' => 'war_casualties',
+
+				     'Lafayette Newspaper Collection' => 'newspaper',
 				     'Historical Photograph Collection' => 'historical',
 				     
 				     'Lafayette Magazine Collection' => 'magazine',
@@ -148,8 +150,19 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     case 'mdl_prints':
 
       $excluded_fields = array_merge($excluded_fields, array('geology_slides_esi.subject'));
-    //$included_fields = array_merge($included_fields, array('mdl_prints.creator'));
     break;
+    case 'newspaper':
+
+      $fields = array(array('solr_field' => 'dc.subject',
+			    'label' => 'Series',
+			    'path' => ''
+			    ),
+		      array('solr_field' => 'dc.date.sort',
+			    'label' => 'Publication Date',
+			    'path' => ''
+			    )
+		      );
+      break;
 
     case 'historical':
       
@@ -276,23 +289,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 			  ));
   }
 
-  /*
-  if(!empty($fields)) {
-
-    foreach($fields as $field) {
-
-      switch($field['solr_field']) {
-
-      case 'mdl_prints.format.medium':
-
-	break;
-      }
-      dpm($field);
-    }
-  }
-  */
-
-
   return $fields;
   }
 
@@ -344,40 +340,12 @@ function _islandora_dss_solr_facet_pages_block_callback() {
   $relation_is_part_of = '';
 
   // If the user agent is currently browsing a facet, render the filtered results...
-
-  //if(preg_match('/browse\/(.+)/', $path, $m)) {
-  //if(preg_match('/islandora\/search\/.*\?(.+)/', $path, $m)) {
-  //if(preg_match('/browse\/(.+)/', $path, $m) || preg_match('/islandora\/search\/.*\?(.+)/', $path, $m)) {
   if(preg_match('/browse\/(.+)/', $path, $m) || preg_match('/islandora\/search\/(.+)/', $path, $m)) {
 
     $path = $m[1];
     $query_params = drupal_get_query_parameters();
     $filters = array();
     $filtered_facets = array();
-
-    /*
-    //if($path == '*:*' && array_key_exists('f', $query_params)) {
-    if($path == '*:*') {
-
-      if(array_key_exists('f', $query_params)) {
-
-	foreach($query_params['f'] as $filtered_facet) {
-
-	  $filters = $query_params['f'];
-
-	  if(preg_match('/"(.+)"/', $filtered_facet, $matches)) {
-	    
-	    $filtered_facets[] = $matches[1]; 
-	  }
-	}
-      }
-    } elseif(preg_match('/islandora\/search\/(.+)?(\/|#)?/', current_path(), $m)) {
-
-      dpm($query_params);
-
-      $islandora_solr_query = $m[1];
-    }
-    */
 
     if(preg_match('/islandora\/search\/(.+)?(\/|#)?/', current_path(), $m)) {
 
@@ -693,27 +661,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  }
 	}
       }
-      /*
-      } elseif(preg_match('/McKelvy House Photograph Collection/', $islandora_solr_facet_query)) { // Resolves DSSSM-756
-
-	$ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Publication Date',
-							     'mdl_prints.format.medium' => 'Medium');
-
-	if(array_key_exists($solr_field, $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS)) {
-	    
-	  $value['label'] = $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS[$solr_field];
-	}
-      } elseif(preg_match('/Geology Department Slide Collection/', $islandora_solr_facet_query)) { // Resolves DSSSM-757
-
-	$ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS = array('mckelvy.date.original.display' => 'Publication Date',
-							     'mdl_prints.format.medium' => 'Medium');
-
-	if(array_key_exists($solr_field, $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS)) {
-	  
-	  $value['label'] = $ISLANDORA_DSS_SOLR_FACET_PAGES_FIELD_LABELS[$solr_field];
-	}
-      }
-      */
       
       $child_items = array();
       $child_items_class = array('islandora-solr-facet-list');

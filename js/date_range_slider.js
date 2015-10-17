@@ -234,8 +234,8 @@ SolrQuery.fieldMap = function(field) {
 	 * Resolves DSS-258
 	 *
 	 */
-	if(/newspaper/i.exec(collection) || /newspaper/i.exec(document.URL) ||
-	   /mckelvy/i.exec(collection) || /mckelvy/i.exec(document.URL) ||
+	//if(/newspaper/i.exec(collection) || /newspaper/i.exec(document.URL) ||
+	if(/mckelvy/i.exec(collection) || /mckelvy/i.exec(document.URL) ||
 	   /historical/i.exec(collection) || /historical/i.exec(document.URL)) {
 	    
 	    return 'dc.subject';
@@ -290,6 +290,16 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'MODS.mods.relatedItem.titleInfo.title_s') {
 
 	return "Series";
+
+    } else if(field == 'Series') {
+
+	if(/newspaper/i.exec(collection) || /newspaper/i.exec(document.URL)) {
+	    
+	    return 'dc.subject';
+	} else {
+
+	    return 'MODS.mods.relatedItem.titleInfo.title_s';
+	}
     } else {
 	
 	return SolrQuery.FIELD_MAP[field];
