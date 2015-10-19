@@ -145,6 +145,12 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
 	window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
     }
 
+    // Resolves DSS-609
+    if( params.hasOwnProperty('sort') ) {
+
+	params['sort'] = params['sort'].replace(/\+/, ' ');
+    }
+
     // Submit the GET request to the Islandora Solr endpoint
     $.get(url, params, function(data) {
 
@@ -244,6 +250,12 @@ LafayetteDssObjectList.viewListClickHandler = function(e) {
 	var historyUrl = url + '?' + $.param(params);
 	window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
     }
+
+    // Resolves DSS-609
+    if( params.hasOwnProperty('sort') ) {
+
+	params['sort'] = params['sort'].replace(/\+/, ' ');
+    }
     
     $.get(url, params, function(data) {
 	    
@@ -325,6 +337,12 @@ LafayetteDssObjectList.viewGridClickHandler = function(e) {
 	
 	var historyUrl = url + '?' + $.param(params);
 	window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+    }
+
+    // Resolves DSS-609
+    if( params.hasOwnProperty('sort') ) {
+
+	params['sort'] = params['sort'].replace(/\+/, ' ');
     }
 
     $.get(url, params, function(data) {
@@ -421,6 +439,12 @@ LafayetteDssObjectList.prototype = {
 	
 	    var historyUrl = url + '?' + $.param(params);
 	    window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
+	}
+
+	// Resolves DSS-609
+	if( params.hasOwnProperty('sort') ) {
+
+	    params['sort'] = params['sort'].replace(/\+/, ' ');
 	}
 
 	$.get(url, params, function(data) {
