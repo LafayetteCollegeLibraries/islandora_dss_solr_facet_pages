@@ -204,7 +204,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
     case 'shakespeare':
 
       $fields = array(
-		      array('solr_field' => 'MODS.mods.titleInfo_s',
+		      array('solr_field' => 'MODS.mods.relatedItem.titleInfo.title_s',
 			    'label' => 'Title',
 			    'path' => ''
 			    ),
@@ -214,10 +214,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 			    ),
 		      array('solr_field' => 'MODS.mods.originInfo.publisher_s',
 			    'label' => 'Publisher',
-			    'path' => ''
-			    ),
-		      array('solr_field' => 'MODS.mods.relatedItem.titleInfo.title_s',
-			    'label' => 'Series',
 			    'path' => ''
 			    ),
 		      );
@@ -303,6 +299,41 @@ function _islandora_dss_solr_facet_pages_marc_relator_filter($field_value, $fiel
 }
 
 /**
+ * Callback for the current Solr query
+ *
+ */
+function islandora_dss_solr_facet_pages_solr_query() {
+
+  $islandora_solr_query = NULL;
+
+  if(preg_match('/islandora\/search\/(.+)?(\/|#)?/', current_path(), $m)) {
+    
+    $islandora_solr_query = $m[1];
+  }
+
+  return $islandora_solr_query;
+}
+
+/**
+ * Callback for determining whether or not a user is "browsing"
+ *
+ */
+function islandora_dss_solr_facet_pages_browsing_path() {
+
+  // Retrieve the current path
+  $path = current_path();
+  $browsing_path = NULL;
+
+  if(preg_match('/browse\/(.+)/', $path, $m) || preg_match('/islandora\/search\/(.+)/', $path, $m)) {
+    
+    $browsing_path = $m[1];
+  }
+
+  return $browsing_path;
+}
+
+
+/**
  * @author griffinj@lafayette
  * Returns the top Solr facets for any given field
  * (Implemented in a manner similar to the ContentDM 4 advanced search feature)
@@ -310,6 +341,8 @@ function _islandora_dss_solr_facet_pages_marc_relator_filter($field_value, $fiel
  * @see islandora_solr_facet_pages_callback
  *
  */
+
+
 
 function _islandora_dss_solr_facet_pages_block_callback() {
 
@@ -319,15 +352,12 @@ function _islandora_dss_solr_facet_pages_block_callback() {
    * This resolves DSS-167
    * This resolves DSS-170
    */
-  $ISLANDORA_MARC_METADB_MAP = array(
-				     'eastasia.Format.Medium' => array(
-								       "photonegative" => 'Photographic negative',
+  $ISLANDORA_MARC_METADB_MAP = array('eastasia.Format.Medium' => array("photonegative" => 'Photographic negative',
 								       "photoprint" => 'Photographic print',
 								       "slide" => 'Photographic slide',
 								       "picture postcard" => 'Picture postcard',
 								       ),
-				     'mdl_prints.format.medium' => array(
-									 "photoprint" => 'lithograph',
+				     'mdl_prints.format.medium' => array("photoprint" => 'lithograph',
 									 )
 				     );
 
@@ -337,20 +367,18 @@ function _islandora_dss_solr_facet_pages_block_callback() {
   // Explicitly set the prefix for all facets
   $prefix = t('ALL');
 
-  $relation_is_part_of = '';
+  // The collections for the search
+  $collections = array();
 
   // If the user agent is currently browsing a facet, render the filtered results...
-  if(preg_match('/browse\/(.+)/', $path, $m) || preg_match('/islandora\/search\/(.+)/', $path, $m)) {
+  $browsing_path = islandora_dss_solr_facet_pages_browsing_path();
+  if(!is_null($browsing_path)) {
 
-    $path = $m[1];
+    $path = $browsing_path;
     $query_params = drupal_get_query_parameters();
     $filters = array();
     $filtered_facets = array();
-
-    if(preg_match('/islandora\/search\/(.+)?(\/|#)?/', current_path(), $m)) {
-
-      $islandora_solr_query = $m[1];
-    }
+    $islandora_solr_query = islandora_dss_solr_facet_pages_solr_query();
 
     if(array_key_exists('f', $query_params)) {
 
@@ -358,9 +386,17 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	$filters = $query_params['f'];
 
-	if(preg_match('/"(.+)"/', $filtered_facet, $matches)) {
-	    
-	  $filtered_facets[] = $matches[1]; 
+	if(preg_match('/(.+?)\:"(.+)"/', $filtered_facet, $matches)) {
+	  
+	  $filtered_field = $matches[1];
+	  $filtered_facet = $matches[2];
+	  $filtered_facets[] = $filtered_facet;
+
+	  // Append the collection
+	  if($filtered_field == 'cdm.Relation.IsPartOf') {
+
+	    $collections[] = $filtered_facet;
+	  }
 	}
       }
     }
@@ -406,21 +442,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
       $solr = new Apache_Solr_Service($parsed_url['host'], $parsed_url['port'], $parsed_url['path']);
 
-      /*
-      if(isset($islandora_solr_query)) {
-
-	$islandora_solr_facet_query = "$solr_field:[* TO *]";
-      } else {
-
-	$islandora_solr_facet_query = "$solr_field:[* TO *]";
-      }
-      */
-
       /**
        * Resolves issues related to full-text searches
        *
        */
-      $islandora_solr_facet_query = isset($islandora_solr_query) ? $islandora_solr_query : "$solr_field:[* TO *]";
+      $islandora_solr_facet_query = !is_null($islandora_solr_query) ? $islandora_solr_query : "$solr_field:[* TO *]";
       $SOLR_INDEXED_FIELDS = array(
 				   //'dc.title',
 				   'eastasia.Title.Japanese',
@@ -451,12 +477,11 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 				   'MODS.mods.relatedItem.part.date.approximate_s',
 
 				   'MODS.mods.originInfo.publisher_s',
-				   'MODS.mods.relatedItem.titleInfo.title_s'
+				   'MODS.mods.relatedItem.titleInfo.title_s',
+				   'foxml.all.text'
 				   );
 
       foreach($SOLR_INDEXED_FIELDS as $solr_indexed_field) { // For Solr-indexed fields with specific Analyzers (i. e. not optimized for tokenization of contents)
-
-	//$islandora_solr_facet_query = str_replace('"', '*', $islandora_solr_facet_query);
 
 	/**
 	 * This resolves DSSSM-709
@@ -483,16 +508,14 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	}
       }
 
+      // Handling for unfaceted searches
+      $filter_queries = NULL;
+
       if(!empty($filters)) {
 
-	/*
-	$query = implode(' AND ', $filters);
-
-	// Collect results.
-	$result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $query);
-	*/
-
 	$islandora_solr_facet_query = implode(' AND ', array_merge(array($islandora_solr_facet_query), $filters));
+	//$filter_queries = implode(' AND ', $filters);
+	$filter_queries = $filters;
       }
 
       /**
@@ -529,36 +552,15 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       $ISLANDORA_DSS_SOLR_LUCENE_METACHARS = array('/', ':', '?', '&');
       foreach($ISLANDORA_DSS_SOLR_LUCENE_METACHARS as $metachar) {
 
-	//$search = str_replace("$metachar", urlencode($metachar), $search);
 	$islandora_solr_facet_query = str_replace(urlencode($metachar), $metachar, $islandora_solr_facet_query);
       }
 
       // Collect results.
-      $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query);
-
-      /*
-      } else {
-	
-	// Collect results.
-	$result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix);
-      }
-      */
+      $result_fields = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $islandora_solr_facet_query, $filter_queries);
 
       // Collect results with lowercase.
       $prefix_lower = strtolower($prefix);
-      $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower, $islandora_solr_facet_query);
-
-      /*
-      if(!empty($filters)) {
-
-	$query = implode(' AND ', $filters);
-
-	$result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower, $query);
-      } else {
-	
-	$result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower);
-      }
-      */
+      $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower, $islandora_solr_facet_query, $filter_queries);
 
       // Merge uppercase with lowercase.
       /**
@@ -616,13 +618,10 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 												       'dc.date.sort' => 'Publication Date'),
 							   );
 
-      //if($islandora_solr_facet_query == '*:*') {
+
       if($islandora_solr_facet_query == '*:*'
-	 //} elseif($islandora_solr_facet_query == '*:*'
 	 or $islandora_solr_facet_query == '*: *'
 	 or empty($filtered_facets)) {
-
-	//if( (array_key_exists(0, $_GET['f']) and !preg_match('/cdm\.Relation\.IsPartOf/', $_GET['f'][0])) or preg_match('/collections\/browse/', current_path()) ) {
 
 	/**
 	 * Modify the field label
@@ -646,6 +645,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       } else {
 	
 	/**
+	 * This attempts to parse the collections from the search facets
+	 *
 	 * Terribly slow
 	 * @todo refactor with preg_match
 	 *
@@ -693,23 +694,31 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       }
       $result_fields = $filtered_result_fields;
 
-      // Iterate through the facets
+      /**
+       * Iterate through the facets
+       *
+       */
       if(!empty($result_fields)) {
 
 	// Add the field name itself
 	// Terrible, refactor
 	$items[] = "<div class='islandora-solr-facet'>{$value['label']}</div>";
 
-	/**
-	 * Anomalous sorting for faceted values on certain fields (such as "Volume" for the "Alumni Publications" Collection)
-	 * Resolves DSSSM-1081
-	 * @todo Implement
-	 *
-	 */
-	//if($solr_field == 'MODS.mods.relatedItem.part.detail.volume.number_i') {
-	if(in_array($solr_field, array('MODS.mods.originInfo.publisher_s',
-				       'MODS.mods.relatedItem.titleInfo.title_s',
-				       'MODS.mods.relatedItem.part.detail.volume.number_i'))) {
+	if(in_array('Shakespeare Bulletin Archive', $collections) and in_array($solr_field, array('MODS.mods.relatedItem.titleInfo.title_s'))) {
+
+	  // DSS-649
+	  // Sort descending for certain facet values
+	  arsort($result_fields);
+	} elseif(in_array($solr_field, array('MODS.mods.originInfo.publisher_s',
+					     'MODS.mods.relatedItem.titleInfo.title_s',
+					     'MODS.mods.relatedItem.part.detail.volume.number_i'))) {
+
+	  /**
+	   * Anomalous sorting for faceted values on certain fields (such as "Volume" for the "Alumni Publications" Collection)
+	   * Resolves DSSSM-1081
+	   * @todo Implement
+	   *
+	   */
 
 	  // Sort ascending by the facet values
 	  ksort($result_fields);
@@ -766,7 +775,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 *
 	 */
 	$islandora_solr_path = 'islandora/search/';
-	if(isset($islandora_solr_query)) {
+	if(!is_null($islandora_solr_query)) {
 
 	  $islandora_solr_path .= $islandora_solr_query;
 	} else {
@@ -776,18 +785,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 
 	foreach($result_fields as $result => $count) {
 
-	  //if(!in_array($result, $filtered_facets)) {
-
 	  $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
 	  $query = array('f' => $filter);
-	  if(isset($page)) {
-
-	    //$query['page'] = $page;
-	    /**
-	     * Faceting should not retain the current page being viewed
-	     *
-	     */
-	  }
 
 	  $class = array('islandora-solr-facet');
 
@@ -805,19 +804,15 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  }
 
 	  // For date values
-	  //if(in_array($value['label'], $date_fields)) {
 	  if(preg_match('/Date\.?/', $value['label'])) {
 
 	    $class[] = 'islandora-solr-facet-date';
-	    //$child_items[] = l(truncate_utf8(date('F, Y', strtotime($result)), 72, TRUE, TRUE), 'islandora/search/*:*', array('attributes' => array('class' => $class),
-	    //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
 	    
 	    $child_items[] = l($result, $islandora_solr_path, array(
 								    //'attributes' => array('id' => ),
 								    'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
 	  } else {
 
-	    //$child_items[] = l(truncate_utf8($result, 72, TRUE, TRUE), 'islandora/search/*:*', array(
 	    $child_items[] = l($result, $islandora_solr_path, array(
 								    //'attributes' => array('class' => $class),
 								    'query' => $query)) . "&nbsp;<span class='bucket-size'>($count)</span>";
@@ -834,7 +829,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * Resolves DSSSM-716
 	 */
 
-	//if(preg_match('/\.?[dD]ate\.?/', $value['label']) or (count($child_items) > 1 and $islandora_solr_facet_query != '*:*')) {
 	// This resolves DSS-422
 	if(preg_match('/\.?[dD]ate\.?/', $value['label']) or ($result_fields_count > 5 and $islandora_solr_facet_query != '*:*')) {
 
@@ -865,24 +859,9 @@ function _islandora_dss_solr_facet_pages_block_callback() {
     $token_items = array();
     $date_slider_buttons = array();
 
-    /*
-
-      $child_items = array();
-      $child_items_class = array('islandora-solr-facet-list');
-      if(preg_match('/\.?[dD]ate\.?/', $solr_field)) {
-
-	$child_items_class[] = 'islandora-solr-facet-date';
-      }
-
-      $child_items_id = preg_replace('/_|\./', '-', $solr_field);
-
-    */
-
     foreach($filters as $filter) {
 
       if(preg_match('/(.+\.?[dD]ate\.?.+?)\:/', $filter, $date_slider_match)) {
-
-	//$date_reset_id = preg_replace('/_|\./', '-', $date_slider_match[1]);
 
 	$filter_split = explode(':', $filter);
 	$solr_field = $filter_split[0];
@@ -928,8 +907,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  }
 	}
 
-	preg_match('/.+?\:(.+)/', $filter, $token_value_match);
-	$token_value = $token_value_match[1];
+	preg_match('/.+?\:(.+)/', $filter, $token_match);
+	$token_value = $token_match[1];
 
 	/**
 	 * Work-around for MARC relator terms

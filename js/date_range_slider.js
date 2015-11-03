@@ -209,7 +209,7 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Format.Medium') {
 
 	// Simply parse for 'Marquis' within the Solr query in the URL
-	if(/Marquis/.exec(collection) || /lafayetteprints/.exec(document.URL)) {
+	if(/marquis/i.exec(collection) || /lafayetteprints/i.exec(document.URL)) {
 	    
 	    return 'mdl_prints.format.medium';
 	} else {
@@ -234,7 +234,6 @@ SolrQuery.fieldMap = function(field) {
 	 * Resolves DSS-258
 	 *
 	 */
-	//if(/newspaper/i.exec(collection) || /newspaper/i.exec(document.URL) ||
 	if(/mckelvy/i.exec(collection) || /mckelvy/i.exec(document.URL) ||
 	   /historical/i.exec(collection) || /historical/i.exec(document.URL)) {
 	    
@@ -246,7 +245,7 @@ SolrQuery.fieldMap = function(field) {
     } else if(field == 'Date.Original') {
 
 	// Simply parse for 'Marquis' within the Solr query in the URL
-	if(/Marquis/.exec(collection) ||
+	if(/marquis/i.exec(collection) ||
 	   /lafayetteprints/.exec(document.URL) ) {
 	    
 	    return 'mdl_prints.date.original';
@@ -279,7 +278,7 @@ SolrQuery.fieldMap = function(field) {
 	   /magazine/i.exec(document.URL)) {
 
 	    return 'MODS.mods.originInfo.publisher_s';
-	} else if(/sbarchive/i.exec(collection) ||
+	} else if(/shakespeare/i.exec(collection) ||
 		  /sbarchive/i.exec(document.URL)) {
 
 	    return 'MODS.mods.originInfo.publisher_s';
@@ -299,6 +298,15 @@ SolrQuery.fieldMap = function(field) {
 	} else {
 
 	    return 'MODS.mods.relatedItem.titleInfo.title_s';
+	}
+    } else if(field == 'Title') {
+
+	if(/shakespeare/i.exec(collection) || /sbarchive/i.exec(document.URL)) {
+
+	    return 'MODS.mods.relatedItem.titleInfo.title_s';
+	} else {
+
+	    return 'MODS.mods.titleInfo_s';
 	}
     } else {
 	

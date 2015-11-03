@@ -220,7 +220,7 @@ function __dss_eastasia_islandora_solr_facet_pages_results($solr, $solr_field, $
  *   Returns an array of all the facet field values and the bucket size: eg:
  *   solr value => 123
  */
-function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $query=NULL) {
+function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $query=NULL, $filter_queries = NULL) {
 
   if(!isset($query)) {
 
@@ -317,13 +317,17 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     }
   }
 
-  // Special cases for newspapers
-  // cdm.Relation.IsPartOf:"Lafayette Newspaper Collection"
+  // Apply the Solr query to the filter if it was not passed to the callback
+  if(is_null($filter_queries)) {
+
+    $filter_queries = $query;
+  }
 
   if( preg_match('/cdm.Relation.IsPartOf:"(.+?)"/', $query, $query_collection_match) ) {
 
     $query_collection = $query_collection_match[1];
 
+    // Special cases for Lafayette Newspaper Collection
     if($query_collection == 'Lafayette Newspaper Collection' and $solr_field == 'dc.date.sort') {
 
       // Set facet parameters.
@@ -341,10 +345,10 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 			    */
 			    'facet.date.start' => '1870-01-01T00:00:00Z/MONTH',
 			    'facet.date.end' => 'NOW+1MONTH/MONTH',
-			    'facet.date.gap' => '+1MONTH',
-			    //'facet.query' => $filter_queries
+			    'facet.date.gap' => '+1MONTH'
 			    );
 
+    // Special cases for the Geology Dept. Slide Collection
     } elseif($query_collection == 'Geology Department Slide Collection' and $solr_field == 'geology_slides_esi.date.original') {
 
       // Set facet parameters.
@@ -362,8 +366,7 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 			    */
 			    'facet.date.start' => '1870-01-01T00:00:00Z/YEAR',
 			    'facet.date.end' => 'NOW+1YEAR/YEAR',
-			    'facet.date.gap' => '+1YEAR',
-			    //'facet.query' => $filter_queries
+			    'facet.date.gap' => '+1YEAR'
 			    );
 
     } else {
@@ -380,17 +383,16 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 
 	// Set facet parameters.
 	$facet_params = array('facet' => 'true',
-			  'facet.field' => $solr_field,
-			  'facet.sort' => 'count',
-			  'facet.mincount' => 1,
-			  'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
-			  'qt' => variable_get('islandora_solr_request_handler', 'standard'),
-			  );
+			      'facet.field' => $solr_field,
+			      'facet.sort' => 'count',
+			      'facet.mincount' => 1,
+			      'facet.limit' => variable_get('islandora_solr_facet_pages_facet_limit', 100000),
+			      'qt' => variable_get('islandora_solr_request_handler', 'standard'),
+			      );
 
     break;
 
       default:
-	$filter_queries = $query;
 
 	// Set facet parameters.
 	$facet_params = array('facet' => 'true',
@@ -413,8 +415,6 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
 
   if(!isset($facet_params)) {
 
-    $filter_queries = $query;
-
     // Set facet parameters.
     $facet_params = array('facet' => 'true',
 			  'facet.field' => $solr_field,
@@ -430,6 +430,25 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
       
       $facet_params['facet.prefix'] = $prefix;
     }
+  }
+
+  // Attempt to retrieve the current query and params
+  if(isset($_SESSION['islandora_dss_solr_query'])) {
+
+    $query = $_SESSION['islandora_dss_solr_query'];
+  }
+
+  if(isset($_SESSION['islandora_dss_solr_params'])) {
+
+    $current_facet_params = $_SESSION['islandora_dss_solr_params'];
+
+    $facet_params['facet.query'] = array();
+
+    foreach($current_facet_params['f'] as $facet_query) {
+
+      $facet_params['facet.query'][] = $facet_query;
+    }
+    $query = implode(' AND ', array_merge(array($query), $facet_params['facet.query']));
   }
 
   // Solr results in JSON format.
