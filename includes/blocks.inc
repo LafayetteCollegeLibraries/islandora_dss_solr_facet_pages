@@ -7,7 +7,95 @@
    *
    */
 
-function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) {
+  /**
+   * Callback for results fields
+   *
+   */
+function islandora_dss_solr_facet_pages_result_fields() {
+
+  $result_fields = array(
+    'dc.title' => 'Title.English',
+    'eastasia.Subject.OCM' => 'Subject.OCM',
+    'eastasia.Contributors.Digital' => 'Contributors.Digital',
+    'eastasia.Coverage.Location' => 'Coverage.Location',
+    'eastasia.Coverage.Location.Country' => 'Coverage.Location.Country',
+    'eastasia.Format.Medium' => 'Format.Medium',
+    'eastasia.Date.Artifact.Lower' => 'Date.Artifact.Lower',
+    'eastasia.Date.Artifact.Upper' => 'Date.Artifact.Upper',
+    'eastasia.Date.Image.Lower' => 'Date.Image.Lower',
+    'eastasia.Date.Image.Upper' => 'Date.Image.Upper',
+    'dc.contributor' => 'dc.contributor',
+    'dc.coverage' => 'dc.coverage',
+    'dc.date' => 'dc.date',
+    'dc.description' => 'dc.description',
+    'dc.format' => 'dc.format',
+    'dc.identifier' => 'dc.identifier',
+    'dc.language' => 'dc.language',
+    'dc.publisher' => 'dc.publisher',
+    'dc.rights' => 'dc.rights',
+    'dc.source' => 'dc.source',
+    'dc.subject' => 'dc.subject',
+    'dc.type' => 'dc.type',
+    'mdl_prints.subject.lcsh' => 'Subject.LCSH',
+    'mdl_prints.format.medium' => 'Format.Medium',
+    'mdl_prints.format.extent' => 'Format.Extent',
+    'mdl_prints.description' => 'Description',
+    'mdl_prints.description.provenance' => 'Description.Provenance',
+    'mdl_prints.description.series' => 'Description.Series',
+    'mdl_prints.identifier.itemnumber' => 'Identifier.ItemNumber',
+    'geology_slides.coverage.location.country' => 'coverage.location.country',
+    'geology_slides.coverage.location.state' => 'coverage.location.state',
+    'geology_slides.description.geologic.feature' => 'description.geologic.feature',
+    'geology_slides.description.critical' => 'description.critical',
+    'geology_slides_esi.subject' => 'Subject',
+    'geology_slides_esi.description.vantagepoint' => 'Vantage Point',
+    'geology_slides_esi.date.original' => 'Publication Date',
+    'mdl_prints.rights.digital' => 'Rights.Digital',
+    'mdl_prints.publisher.digital' => 'Publisher.Digital',
+    'mdl_prints.format.digital' => 'Format.Digital',
+    'cdm.Relation.IsPartOf' => 'Relation.IsPartOf',
+    'eastasia.Creator.Maker' => 'Creator.Maker',
+    'eastasia.Description.Indicia' => 'Description.Indicia',
+    'eastasia.Description.Ethnicity' => 'Description.Ethnicity',
+    'war_casualties.description.class' => 'Graduating Class',
+    'war_casualties.description.military.branch' => 'Branch',
+    'war_casualties.contributor.military.unit' => 'Military Unit',
+    'mckelvy.description.note' => 'Note',
+    'mckelvy.date.original.display' => 'Publication Date',
+    'mckelvy.source' => 'Source',
+    'mdl_prints.creator' => 'Creator',
+    'mdl_prints.publisher.original' => 'Publisher.Original',
+    'war_casualties.description.military.rank' => 'Rank',
+    'war_casualties.coverage.place.birth' => 'Place of Birth',
+    'war_casualties.coverage.place.death' => 'Place of Death',
+    'war_casualties.description.cause.death' => 'Cause of Death',
+    'war_casualties.description.honors' => 'Honors',
+    'dc.date.sort' => 'Date',
+    'mdl_prints.date.original' => 'Date.Original',
+    'MODS.mods.relatedItem.titleInfo.title_s' => 'Title',
+    'MODS.mods.relatedItem.date.w3cdtf_dts' => 'Date',
+    'MODS.mods.originInfo.publisher_s' => 'Publisher',
+    'MODS.mods.titleInfo_s' => 'Title',
+    'MODS.mods.relatedItem.part.date.approximate_s' => 'Date',
+    'MODS.mods.relatedItem.originInfo.dateIssued.approximate_s' => 'Date',
+    'MODS.mods.relatedItem.part.text.volume_s' => 'Volume',
+    'MODS.mods.relatedItem.part.text.issue_s' => 'Issue',
+    'MODS.mods.originInfo.dateIssued.w3cdtf_dt' => 'Publication Date',
+			 );
+
+  $result_fields = variable_get('islandora_dss_solr_facet_pages_result_fields', $result_fields);
+
+  return $result_fields;
+
+  }
+
+  /**
+   * Callback for collection namespaces
+   *
+   */
+function islandora_dss_solr_facet_pages_collection_namespace($collection) {
+
+  $namespace = 'dc';
 
   $query_field_namespace_map = array('East Asia Image Collection' => 'eastasia',
 				     'Japanese Imperial House Postcard Album' => 'eastasia',
@@ -41,6 +129,293 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 				     'Shakespeare Bulletin Archive' => 'shakespeare'
 				     );
 
+  if(array_key_exists($collection, $query_field_namespace_map)) {
+
+    $namespace = $query_field_namespace_map[$collection];
+  }
+
+  return $namespace;
+
+  }
+
+/**
+ * Callback for returning the faceted fields for a given collection
+ *
+ */
+function islandora_dss_solr_facet_pages_collection_fields_faceted($namespace) {
+
+  $collection_fields_faceted = array(
+				     'eastasia' => array(
+							 array(
+							       'solr_field' => 'eastasia.Subject.OCM',
+							       'label' =>  'Subject.OCM',
+							       'path' => 'eastasia-subject',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Coverage.Location.Country',
+							       'label' =>  'Coverage.Location.Country',
+							       'path' => 'eastasia-country',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Coverage.Location',
+							       'label' =>  'Coverage.Location',
+							       'path' => 'eastasia-location',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Format.Medium',
+							       'label' =>  'Format.Medium',
+							       'path' => 'eastasia-format',
+							       ),
+							 array(
+							       'solr_field' => 'cdm.Relation.IsPartOf',
+							       'label' =>  'Relation.IsPartOf',
+							       'path' => 'collections',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Date.Artifact.Upper',
+							       'label' =>  'Date.Artifact.Upper',
+							       'path' => 'eastasia-artifact-upper',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Date.Artifact.Lower',
+							       'label' =>  'Date.Artifact.Lower',
+							       'path' => 'eastasia-artifact-lower',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Date.Image.Upper',
+							       'label' =>  'Date.Image.Upper',
+							       'path' => 'eastasia-image-upper',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Date.Image.Lower',
+							       'label' =>  'Date.Image.Lower',
+							       'path' => 'eastasia-image-lower',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Creator.Maker',
+							       'label' =>  'Creator.Maker',
+							       'path' => 'eastasia-maker',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Creator.Company',
+							       'label' =>  'Creator.Company',
+							       'path' => 'eastasia-company',
+							       ),
+							 array(
+							       'solr_field' => 'eastasia.Description.Ethnicity',
+							       'label' =>  'Description.Ethnicity',
+							       'path' => 'eastasia-ethnicity',
+							       ),
+							 ),
+				     'mdl_prints' => array(
+							   array('solr_field' => 'mdl_prints.subject.lcsh',
+								 'label' =>  'Subject.LCSH',
+								 'path' => 'mdl-prints-subject',
+								 ),
+							   array(
+								 'solr_field' => 'mdl_prints.format.medium',
+								 'label' =>  'Format.Medium',
+								 'path' => 'mdl-prints-format',
+								 ),
+							   array(
+								 'solr_field' => 'mdl_prints.description.series',
+								 'label' =>  'Description.Series',
+								 'path' => 'mdl-description-series',
+								 ),
+							   array(
+								 'solr_field' => 'mdl_prints.creator',
+								 'label' =>  'Creator',
+								 'path' => 'mdl-creator',
+								 ),
+							   array(
+								 'solr_field' => 'mdl_prints.date.original',
+								 'label' =>  'Date.Original',
+								 'path' => 'mdl-date-original',
+								 ),
+							   ),
+				     'newspaper' => array(
+							  array(
+								'solr_field' => 'dc.subject',
+								'label' =>  'Series',
+								'path' => 'subjects',
+								),
+
+							  array(
+								'solr_field' => 'dc.date.sort',
+								'label' =>  'Date',
+								'path' => 'dates',
+								),
+							  ),
+				     'historical' => array(
+							   array('solr_field' => 'dc.subject',
+								 'label' =>  'Subject',
+								 'path' => 'subjects',
+								 ),
+							   array(
+								 'solr_field' => 'dc.type',
+								 'label' =>  'Medium',
+								 'path' => 'media',
+								 ),
+							   array(
+								 'solr_field' => 'dc.date.sort',
+								 'label' =>  'Publication Date',
+								 'path' => 'dates',
+								 ),
+							   ),
+				     'geology_slides_esi' => array(
+								   array(
+									 'solr_field' => 'geology_slides_esi.subject',
+									 'label' =>  'Subject',
+									 'path' => 'geology-slides-esi-subject',
+									 ),
+								   array(
+									 'solr_field' => 'geology_slides_esi.coverage.location',
+									 'label' =>  'Coverage.Location',
+									 'path' => 'geology-slides-esi-coverage-location',
+									 ),
+								   array(
+									 'solr_field' => 'geology_slides_esi.date.original',
+									 'label' =>  'Publication Date',
+									 'path' => 'geology-slides-esi-date-original',
+									 ),
+								   ),
+				     'mckelvy' => array(
+							array('solr_field' => 'dc.subject',
+							      'label' =>  'Subject',
+							      'path' => 'subjects',
+							      ),
+							array(
+							      'solr_field' => 'dc.type',
+							      'label' =>  'Medium',
+							      'path' => 'media',
+							      ),
+							array(
+							      'solr_field' => 'mckelvy.date.original.display',
+							      'label' =>  'Date.Original',
+							      'path' => 'mckelvy-date-original',
+							      ),
+							),
+				     'war_casualties' => array(
+							       array(
+								     'solr_field' => 'war_casualties.description.class',
+								     'label' =>  'Description.Class',
+								     'path' => 'war-casualties-description-class',
+								     ),
+							       array(
+								     'solr_field' => 'war_casualties.description.honors',
+								     'label' =>  'Description.Honors',
+								     'path' => 'war-casualties-description-honors',
+								     ),
+							       array(
+								     'solr_field' => 'war_casualties.description.military.branch',
+								     'label' =>  'Description.Military.Branch',
+								     'path' => 'war-casualties-description-military-branch',
+								     ),
+							       array(
+								     'solr_field' => 'war_casualties.contributor.military.unit',
+								     'label' =>  'Military Unit',
+								     'path' => 'war-casualties-description-military-unit',
+								     ),
+							       ),
+				     'magazine' => array(
+							 array('solr_field' => 'MODS.mods.relatedItem.titleInfo.title_s',
+							       'label' => 'Title',
+							       'path' => ''
+							       ),
+							 array('solr_field' => 'MODS.mods.relatedItem.date.w3cdtf_dts',
+							       'label' => 'Date',
+							       'path' => ''
+							       ),
+							 array('solr_field' => 'MODS.mods.originInfo.publisher_s',
+							       'label' => 'Publisher',
+							       'path' => ''
+							       ),
+							 ),
+				     'shakespeare' => array(
+							    array('solr_field' => 'MODS.mods.relatedItem.titleInfo.title_s',
+								  'label' => 'Title',
+								  'path' => ''
+								  ),
+							    array('solr_field' => 'MODS.mods.originInfo.dateIssued.w3cdtf_dt',
+								  'label' => 'Date',
+								  'path' => ''
+								  ),
+							    array('solr_field' => 'MODS.mods.originInfo.publisher_s',
+								  'label' => 'Publisher',
+								  'path' => ''
+								  ),
+							    ),
+				     'ldr' => array(
+						    array(
+							  'solr_field' => 'ldr.dc.contributor.author',
+							  'label' =>  'dc.contributor.author',
+							  'path' => 'ldr-contributor-author',
+							  ),
+						    array(
+							  'solr_field' => 'ldr.dc.date.accessioned',
+							  'label' =>  'dc.date.accessioned',
+							  'path' => 'ldr-date-accessioned',
+							  ),
+						    ),
+				     
+				     /*
+				     array(
+					   'solr_field' => 'dc.publisher',
+					   'label' =>  'Publisher',
+					   'path' => 'publishers',
+					   ),
+				     
+				     array(
+					   'solr_field' => 'MODS.mods.relatedItem.part.text.volume_s',
+					   'label' =>  'Volume',
+					   'path' => 'mods-relateditem-part-volume'
+					   ),
+				     */
+				     );
+  
+  $collection_fields_faceted = variable_get('islandora_dss_solr_facet_pages_collection_fields_faceted', $collection_fields_faceted);
+
+  $fields = $collection_fields_faceted[$namespace];
+
+  return $fields;
+}
+
+/**
+ * Callback for retrieving the namespace for a given faceted query
+ *
+ */
+function islandora_dss_solr_facet_pages_namespace($filter) {
+
+  $query_field_namespace = NULL;
+
+  if(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $filter, $m)) {
+
+    $query_field_namespace = $m[1];
+    if(preg_match('/"(.+?)"/', $query_field_namespace, $m)) {
+
+      $query_field_namespace = $m[1];
+    }
+
+    $query_field_namespace = islandora_dss_solr_facet_pages_collection_namespace($query_field_namespace);
+
+  } elseif(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $query_field, $m)) {
+
+    $query_field_namespace = $m[1];
+  } elseif(preg_match('/(.+?)\./', $query_field, $m) or preg_match('/(.+?)\./', $filter, $m)) {
+
+    $query_field_namespace = $m[1];
+  }
+
+  return $query_field_namespace;
+}
+
+/**
+ * Implements HOOK_dss_solr_fields().
+ * Retrieves the faceted Solr fields for a given field being queried during a faceted search
+ *
+ */
+function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) {
+
   $filter = '';
   if(!empty($filters)) {
 
@@ -50,6 +425,10 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
   $fields = array();
   $_fields = variable_get('islandora_solr_facet_pages_fields_data', array());
 
+  //dpm('trace moving solr facet pages fields');
+  //dpm($_fields);
+
+  /*
   $query_field_namespace = '';
   if(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $filter, $m)) {
 
@@ -59,13 +438,8 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
       $query_field_namespace = $m[1];
     }
 
-    if(array_key_exists($query_field_namespace, $query_field_namespace_map)) {
+    $query_field_namespace = islandora_dss_solr_facet_pages_collection_namespace($query_field_namespace);
 
-      $query_field_namespace = $query_field_namespace_map[$query_field_namespace];
-    } else {
-
-      $query_field_namespace = 'dc';
-    }
   } elseif(preg_match('/cdm\.Relation\.IsPartOf:(.+)/', $query_field, $m)) {
 
     $query_field_namespace = $m[1];
@@ -73,9 +447,13 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
     $query_field_namespace = $m[1];
   }
+  */
 
-  if(isset($query_field_namespace) ) {
+  $query_field_namespace = islandora_dss_solr_facet_pages_namespace($filter);
 
+  if(!is_null($query_field_namespace)) {
+
+    /*
     $included_fields = array();
     $excluded_fields = array();
 
@@ -104,12 +482,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 			    'label' => 'Format.Medium',
 			    'path' => 'eastasia-format'
 			    ),
-		      /*
-		      array('solr_field' => 'mdl_prints.format.medium',
-			    'label' => 'Format.Medium',
-			    'path' => 'mdl-prints-format'
-			    ),
-		      */
 		      array('solr_field' => 'cdm.Relation.IsPartOf',
 			    'label' => 'Relation.IsPartOf',
 			    'path' => 'collections'
@@ -224,6 +596,9 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
 
       break;
     }
+    */
+
+    $fields = islandora_dss_solr_facet_pages_collection_fields_faceted($query_field_namespace);
 
     if(empty($fields)) {
 
@@ -278,7 +653,6 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
      * Resolves DSSSM-682
      *
      */
-    // $fields = $_fields;
     $fields = array(array('solr_field' => 'cdm.Relation.IsPartOf',
 			  'label' => 'Relation.IsPartOf',
 			  'path' => 'collections'
@@ -286,7 +660,7 @@ function islandora_dss_solr_facet_pages_dss_solr_fields($query_field, $filters) 
   }
 
   return $fields;
-  }
+}
 
 /**
  * Work-around for MARC relator values in fields
@@ -332,6 +706,54 @@ function islandora_dss_solr_facet_pages_browsing_path() {
   return $browsing_path;
 }
 
+/**
+ * Callback for retrieving the ordering of facets (based upon the bucket size)
+ *
+ */
+function islandora_dss_solr_facet_pages_sorted_desc($collections, $field) {
+
+  $sorted_desc = FALSE;
+
+  $sorted_desc_fields = array('Shakespeare Bulletin Archive' => array('MODS.mods.relatedItem.titleInfo.title_s',
+								      'MODS.mods.originInfo.publisher_s'));
+  $sorted_desc_fields = variable_get('islandora_dss_solr_facet_pages_sorted_desc_fields', $sorted_desc_fields);
+
+  // @todo Refactor into a map..reduce
+  foreach($collections as $collection) {
+
+    if(array_key_exists($collection, $sorted_desc_fields) and in_array($field, $sorted_desc_fields[$collection])) {
+
+      $sorted_desc = TRUE;
+    }
+  }
+  
+  return $sorted_desc;
+}
+
+/**
+ * Callback for retrieving the ordreing of facets (based upon the facet itself)
+ *
+ */
+function islandora_dss_solr_facet_pages_sorted_facet_desc($collections, $field) {
+
+  $sorted_facet_desc = FALSE;
+
+  $sorted_facet_desc_fields = array('Lafayette Magazine Collection' => array('MODS.mods.originInfo.publisher_s',
+									     'MODS.mods.relatedItem.titleInfo.title_s',
+									     'MODS.mods.relatedItem.part.detail.volume.number_i'));
+  $sorted_facet_desc_fields = variable_get('islandora_dss_solr_facet_pages_sorted_facet_desc_fields', $sorted_facet_desc_fields);
+
+  // @todo Refactor into a map..reduce
+  foreach($collections as $collection) {
+
+    if(array_key_exists($collection, $sorted_facet_desc_fields) and in_array($field, $sorted_facet_desc_fields[$collection])) {
+
+      $sorted_facet_desc = TRUE;
+    }
+  }
+  
+  return $sorted_facet_desc;
+}
 
 /**
  * @author griffinj@lafayette
@@ -353,12 +775,8 @@ function _islandora_dss_solr_facet_pages_block_callback() {
    * This resolves DSS-170
    */
   $ISLANDORA_MARC_METADB_MAP = array('eastasia.Format.Medium' => array("photonegative" => 'Photographic negative',
-								       "photoprint" => 'Photographic print',
 								       "slide" => 'Photographic slide',
-								       "picture postcard" => 'Picture postcard',
-								       ),
-				     'mdl_prints.format.medium' => array("photoprint" => 'lithograph',
-									 )
+								       )
 				     );
 
   // Retrieve the current path
@@ -417,6 +835,9 @@ function _islandora_dss_solr_facet_pages_block_callback() {
     // Get available fields from variable.
     //$fields = variable_get('islandora_solr_facet_pages_fields_data', array());
     $fields = module_invoke_all('dss_solr_fields', $path, $filters);
+
+    //dpm('trace fields');
+    //dpm($fields);
 
     /**
      * Work-around
@@ -562,7 +983,6 @@ function _islandora_dss_solr_facet_pages_block_callback() {
       $prefix_lower = strtolower($prefix);
       $result_fields_lower = _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix_lower, $islandora_solr_facet_query, $filter_queries);
 
-      // Merge uppercase with lowercase.
       /**
        * Odd work-around; Uncertain as to how this behavior occurred (PHP core update?)
        * Resolves DSSSM-751
@@ -584,6 +1004,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$result_fields = $_result_fields;
       } else {
 
+	// Merge uppercase with lowercase.
 	$result_fields = array_merge($result_fields, $result_fields_lower);
       }
 
@@ -704,14 +1125,12 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	// Terrible, refactor
 	$items[] = "<div class='islandora-solr-facet'>{$value['label']}</div>";
 
-	if(in_array('Shakespeare Bulletin Archive', $collections) and in_array($solr_field, array('MODS.mods.relatedItem.titleInfo.title_s'))) {
+	if(islandora_dss_solr_facet_pages_sorted_desc($collections, $solr_field)) {
 
 	  // DSS-649
 	  // Sort descending for certain facet values
 	  arsort($result_fields);
-	} elseif(in_array($solr_field, array('MODS.mods.originInfo.publisher_s',
-					     'MODS.mods.relatedItem.titleInfo.title_s',
-					     'MODS.mods.relatedItem.part.detail.volume.number_i'))) {
+	} elseif(islandora_dss_solr_facet_pages_sorted_facet_desc($collections, $solr_field)) {
 
 	  /**
 	   * Anomalous sorting for faceted values on certain fields (such as "Volume" for the "Alumni Publications" Collection)
@@ -783,6 +1202,10 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	  $islandora_solr_path .= '*:*';
 	}
 
+	/**
+	 * Iterate through the fields
+	 *
+	 */
 	foreach($result_fields as $result => $count) {
 
 	  $filter = array_merge($filters, array($solr_field . ':"' . addslashes($result) . '"'));
@@ -869,7 +1292,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	$child_items_id = preg_replace('/_|\./', '-', $solr_field);
 	$date_reset_id = 'reset-' . $child_items_id;
 
-	$result_fields = islandora_solr_get_fields('result_fields');
+	$result_fields = islandora_dss_solr_facet_pages_result_fields();
 
 	/**
 	 * Work-around for McKelvy
@@ -883,7 +1306,7 @@ function _islandora_dss_solr_facet_pages_block_callback() {
 	 * If closed, removed; if opened, refactored
 	 *
 	 */
-	
+
 	// Append the token element
 	$token_items[] = l('<span class="close">×</span>' . t($result_fields[$solr_field]), '#',
 			   array('attributes' => array('class' => array('islandora-solr-date-reset islandora-solr-facet-token'),

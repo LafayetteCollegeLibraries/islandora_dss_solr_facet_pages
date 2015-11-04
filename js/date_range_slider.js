@@ -304,6 +304,11 @@ SolrQuery.fieldMap = function(field) {
 	if(/shakespeare/i.exec(collection) || /sbarchive/i.exec(document.URL)) {
 
 	    return 'MODS.mods.relatedItem.titleInfo.title_s';
+
+	} else if(/magazine/i.exec(collection) || /magazine/i.exec(document.URL)) {
+
+	    return 'MODS.mods.relatedItem.titleInfo.title_s';
+
 	} else {
 
 	    return 'MODS.mods.titleInfo_s';
