@@ -986,6 +986,11 @@ SolrQuery.prototype = {
 			    params['sort'] = params['sort'].replace(/\+/, ' ');
 			}
 
+			// Resolves DSS-819
+			for( var param in params ) {
+			    params[param] = params[param].replace(/\+/, ' ');
+			}
+
 			// This ensures that the browser's history state is updated with the latest result set
 			// Resolves DSS-559
 			if(window.history.pushState) {
@@ -1002,6 +1007,8 @@ SolrQuery.prototype = {
 		    }
 		});
 	};
+
+	
 
 	/**
 	 * For the modal dialog window
@@ -1221,6 +1228,11 @@ SolrQuery.prototype = {
 		    if( params.hasOwnProperty('sort') ) {
 
 			params['sort'] = params['sort'].replace(/\+/, ' ');
+		    }
+
+		    // Resolves DSS-819
+		    for( var param in params ) {
+			params[param] = params[param].replace(/\+/, ' ');
 		    }
 
 		    // This ensures that the browser's history state is updated with the latest result set
@@ -1473,6 +1485,11 @@ SolrQuery.prototype = {
 			    if( params.hasOwnProperty('sort') ) {
 
 				params['sort'] = params['sort'].replace(/\+/, ' ');
+			    }
+
+			    // Resolves DSS-819
+			    for( var param in params ) {
+				params[param] = params[param].replace(/\+/, ' ');
 			    }
 
 			    // This ensures that the browser's history state is updated with the latest result set
@@ -1801,6 +1818,11 @@ SolrQuery.prototype = {
 		    params['sort'] = params['sort'].replace(/\+/, ' ');
 		}
 
+		// Resolves DSS-819
+		for( var param in params ) {
+		    params[param] = params[param].replace(/\+/, ' ');
+		}
+
 		// This ensures that the browser's history state is updated with the latest result set
 		// Resolves DSS-559
 		if(window.history.pushState) {
@@ -1854,6 +1876,11 @@ SolrQuery.prototype = {
 		if( params.hasOwnProperty('sort') ) {
 
 		    params['sort'] = params['sort'].replace(/\+/, ' ');
+		}
+
+		// Resolves DSS-819
+		for( var param in params ) {
+		    params[param] = params[param].replace(/\+/, ' ');
 		}
 
 		// This ensures that the browser's history state is updated with the latest result set

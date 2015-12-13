@@ -451,6 +451,9 @@ function _islandora_dss_solr_facet_pages_results($solr, $solr_field, $prefix, $q
     $query = implode(' AND ', array_merge(array($query), $facet_params['facet.query']));
   }
 
+  //dpm($query);
+  //dpm($facet_params);
+
   // Solr results in JSON format.
   $result_object = json_decode($solr->search($query, 0, 0, $facet_params)->getRawResponse());
 
