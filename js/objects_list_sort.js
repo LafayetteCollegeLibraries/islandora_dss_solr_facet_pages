@@ -149,6 +149,7 @@ LafayetteDssObjectList.paginationLinkHandler = function(e) {
     if( params.hasOwnProperty('sort') ) {
 
 	params['sort'] = params['sort'].replace(/\+/, ' ');
+	params['sort'] = params['sort'].replace(/\&page\=\d+/, '');
     }
 
     // Submit the GET request to the Islandora Solr endpoint
@@ -255,6 +256,7 @@ LafayetteDssObjectList.viewListClickHandler = function(e) {
     if( params.hasOwnProperty('sort') ) {
 
 	params['sort'] = params['sort'].replace(/\+/, ' ');
+	params['sort'] = params['sort'].replace(/\&page\=\d+/, '');
     }
     
     $.get(url, params, function(data) {
@@ -343,6 +345,7 @@ LafayetteDssObjectList.viewGridClickHandler = function(e) {
     if( params.hasOwnProperty('sort') ) {
 
 	params['sort'] = params['sort'].replace(/\+/, ' ');
+	params['sort'] = params['sort'].replace(/\&page\=\d+/, '');
     }
 
     $.get(url, params, function(data) {
@@ -445,6 +448,7 @@ LafayetteDssObjectList.prototype = {
 	if( params.hasOwnProperty('sort') ) {
 
 	    params['sort'] = params['sort'].replace(/\+/, ' ');
+	    params['sort'] = params['sort'].replace(/\&page\=\d+/, '');
 	}
 
 	$.get(url, params, function(data) {

@@ -186,6 +186,8 @@ function islandora_dss_solr_facet_pages_facets_form($form, &$form_state, $solr_f
  */
 function _islandora_dss_solr_facet_pages_facets($paths, $solr_field) {
 
+  
+
   $query = '*:*';
   
   $facets = array();
@@ -210,9 +212,13 @@ function _islandora_dss_solr_facet_pages_facets($paths, $solr_field) {
     
     $facets = $_POST['f'];
   }
-  
+
+  /**
+   * Sanitizes the parameters for the query
+   *
+   */
   print drupal_render(drupal_get_form('islandora_dss_solr_facet_pages_facets_form', $solr_field, $query, $facets));
-  exit;  
+  exit;
 }
 
 /**

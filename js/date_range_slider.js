@@ -713,7 +713,6 @@ SolrQuery.prototype = {
 	var sortMatch = /sort\=(.+?) (asc|desc)/i.exec(decodeURI(document.URL));
 	if(sortMatch) {
 
-	    //facetParams['sort'] = sortMatch[1] + ' ' + sortMatch[2];
 	    var sortParams = $(document).data('islandoraDssSolrResultsSortParams') || {};
 	    $(document).data('islandoraDssSolrResultsSortParams', $.extend({sort: sortMatch[1] + ' ' + sortMatch[2] }, sortParams));
 	}
@@ -982,8 +981,8 @@ SolrQuery.prototype = {
 
 			// Resolves DSS-609
 			if( params.hasOwnProperty('sort') ) {
-
 			    params['sort'] = params['sort'].replace(/\+/, ' ');
+			    params['sort'] = params['sort'].replace(/\&page\=\d+/, '');
 			}
 
 			// Resolves DSS-819
@@ -1228,6 +1227,7 @@ SolrQuery.prototype = {
 		    if( params.hasOwnProperty('sort') ) {
 
 			params['sort'] = params['sort'].replace(/\+/, ' ');
+			params['sort'] = params['sort'].replace(/\&page\=\d+/, '');
 		    }
 
 		    // Resolves DSS-819
@@ -1485,6 +1485,7 @@ SolrQuery.prototype = {
 			    if( params.hasOwnProperty('sort') ) {
 
 				params['sort'] = params['sort'].replace(/\+/, ' ');
+				params['sort'] = params['sort'].replace(/\&page\=\d+/, '');
 			    }
 
 			    // Resolves DSS-819
@@ -1500,7 +1501,6 @@ SolrQuery.prototype = {
 				window.history.pushState({'Islandora.DSS.SolrSearch' : { 'url': url, 'params': params } }, 'DSS Search Results | Digital Scholarship Services', historyUrl);
 			    }
 
-			    
 			    $.get(url, params, that.updatePage);
 
 			    $('.main-container').empty().addClass('loading');
@@ -1816,6 +1816,7 @@ SolrQuery.prototype = {
 		if( params.hasOwnProperty('sort') ) {
 
 		    params['sort'] = params['sort'].replace(/\+/, ' ');
+		    params['sort'] = params['sort'].replace(/\&page\=\d+/, '');
 		}
 
 		// Resolves DSS-819
@@ -1876,6 +1877,7 @@ SolrQuery.prototype = {
 		if( params.hasOwnProperty('sort') ) {
 
 		    params['sort'] = params['sort'].replace(/\+/, ' ');
+		    params['sort'] = params['sort'].replace(/\&page\=\d+/, '');
 		}
 
 		// Resolves DSS-819
